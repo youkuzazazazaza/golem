@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package favor.api;
+
+option go_package = "github.com/sbgayhub/golem/host/api/favor;favorapi";
+
+
+// ==================== 收藏信息 ====================
+
+// GetInfoRequest 获取收藏信息请求
+message GetInfoRequest {}
+
+// GetInfoResponse 获取收藏信息响应（字段编号与 SDK proto 对齐）
+message GetInfoResponse {
+  uint64 used_size = 1;          // 已使用容量（字节）
+  uint64 total_size = 2;         // 总容量（字节）
+  uint64 max_file_size = 3;      // 单文件大小上限（字节）
+  int32 max_auto_upload_size = 4; // 自动上传大小上限
+  int32 max_auto_download_size = 5; // 自动下载大小上限
+}
+
+// ==================== 收藏项信息 ====================
+
+// FavorItem 收藏项信息（字段编号与 SDK proto 对齐）
+message FavorItem {
+  uint32 id = 1;           // 收藏 ID
+  int32 status = 2;        // 状态
+  string object = 3;       // 收藏对象（JSON 格式）
+  uint32 flag = 4;         // 标志
+  uint32 update_time = 5;  // 更新时间（Unix 时间戳）
+  uint32 update_seq = 6;   // 更新序列号
+  string client_id = 7;    // 客户端 ID（来源 AddItemRequest）
+  uint32 type = 8;         // 收藏类型
+  uint32 source_type = 9;  // 来源类型
+  string source_id = 10;   // 来源 ID
+}
+
+// ==================== 获取收藏项 ====================
+
+// GetFavItemRequest 获取收藏项详情请求
+message GetFavItemRequest {
+  int32 fav_id = 1; // 收藏项 ID
+}
+
+// GetFavItemResponse 获取收藏项详情响应（字段编号与 SDK proto 对齐）
+message GetFavItemResponse {
+  repeated FavorItem items = 1; // 收藏项列表
+}
+
+// BatchGetFavItemsRequest 批量获取收藏项请求
+message BatchGetFavItemsRequest {
+  repeated int32 fav_ids = 1; // 收藏项 ID 列表
+}
+
+// BatchGetFavItemsResponse 批量获取收藏项响应（字段编号与 SDK proto 对齐）
+message BatchGetFavItemsResponse {
+  repeated FavorItem items = 1; // 收藏项列表
+}
+
+// ==================== 删除收藏项 ====================
+
+// DeleteFavItemRequest 删除收藏项请求
+message DeleteFavItemRequest {
+  int32 fav_id = 1; // 收藏项 ID
+}
+
+// DeleteResult 删除结果（字段编号与 SDK proto 对齐）
+message DeleteResult {
+  int32 code = 1;   // 返回码
+  uint32 fav_id = 2; // 收藏 ID
+}
+
+// DeleteFavItemResponse 删除收藏项响应（字段编号与 SDK proto 对齐）
+message DeleteFavItemResponse {
+  repeated DeleteResult results = 1; // 删除结果列表
+}
+
+// BatchDeleteFavItemsRequest 批量删除收藏项请求
+message BatchDeleteFavItemsRequest {
+  repeated int32 fav_ids = 1; // 收藏项 ID 列表
+}
+
+// BatchDeleteFavItemsResponse 批量删除收藏项响应（字段编号与 SDK proto 对齐）
+message BatchDeleteFavItemsResponse {
+  repeated DeleteResult results = 1; // 删除结果列表
+}
+
+// ==================== 同步收藏 ====================
+
+// SyncFavorRequest 同步收藏列表请求
+message SyncFavorRequest {
+  bytes key = 1; // 同步 Key（为空时从头同步，否则增量同步）
+}
+
+// SyncFavorResponse 同步收藏列表响应（字段编号与 SDK proto 对齐）
+message SyncFavorResponse {
+  repeated FavorItem items = 1; // 收藏项列表
+  bytes key = 2;                // 下次同步 Key
+  bool has_more = 3;            // 是否还有更多数据
+}
