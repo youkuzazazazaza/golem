@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package label.api;
+
+option go_package = "github.com/sbgayhub/golem/host/api/label;labelapi";
+
+
+// ==================== 通用响应 ====================
+
+// OperateResponse 通用操作响应（字段编号与 SDK proto 对齐）
+message OperateResponse {
+  int32 code = 1;     // 状态码（0=成功）
+  string message = 2; // 提示信息
+}
+
+// ==================== 标签信息 ====================
+
+// LabelPair 标签对（字段编号与 SDK proto 对齐）
+message LabelPair {
+  string name = 1; // 标签名称
+  uint32 id = 2;   // 标签 ID
+}
+
+// ==================== 获取标签列表 ====================
+
+// ListLabelsRequest 获取标签列表请求
+message ListLabelsRequest {}
+
+// ListLabelsResponse 获取标签列表响应（字段编号与 SDK proto 对齐）
+message ListLabelsResponse {
+  uint32 count = 1;              // 标签数量
+  repeated LabelPair labels = 2; // 标签列表
+}
+
+// ==================== 添加标签 ====================
+
+// AddLabelRequest 添加标签请求
+message AddLabelRequest {
+  string name = 1; // 标签名称
+}
+
+// AddLabelResponse 添加标签响应（字段编号与 SDK proto 对齐）
+message AddLabelResponse {
+  LabelPair label = 1; // 新创建的标签
+}
+
+// ==================== 删除标签 ====================
+
+// DeleteLabelRequest 删除标签请求
+message DeleteLabelRequest {
+  string label_ids = 1; // 标签 ID 列表（逗号分隔）
+}
+
+// ==================== 更新标签 ====================
+
+// UpdateLabelRequest 更新标签请求
+message UpdateLabelRequest {
+  uint32 label_id = 1; // 标签 ID
+  string name = 2;     // 新标签名称
+}
+
+// ==================== 修改联系人标签 ====================
+
+// ModifyContactLabelsRequest 修改联系人标签请求
+message ModifyContactLabelsRequest {
+  repeated string usernames = 1; // 联系人用户名列表
+  string label_ids = 2;          // 标签 ID 列表（逗号分隔）
+}
