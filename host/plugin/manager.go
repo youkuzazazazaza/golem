@@ -10,8 +10,7 @@ import (
 
 var (
 	mu      sync.Mutex
-	plugins []*wrapper                      // 插件集合
-	events  = make(chan *plugin.Event, 100) // 事件通道
+	plugins []*wrapper // 插件集合
 )
 
 // 插件包装
@@ -146,9 +145,4 @@ func LoadPlugin(name string) error {
 
 	slog.Info("插件加载成功", "name", metadata.Name, "priority", metadata.Priority, "version", metadata.Version)
 	return nil
-}
-
-func Publish(e *plugin.Event) {
-	events <- e
-	slog.Debug("事件发布完成", "topic", e.Topic)
 }

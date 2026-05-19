@@ -22,6 +22,7 @@ const (
 	HostService_SessionHold_FullMethodName    = "/plugin.HostService/SessionHold"
 	HostService_SessionRelease_FullMethodName = "/plugin.HostService/SessionRelease"
 	HostService_CallPlugin_FullMethodName     = "/plugin.HostService/CallPlugin"
+	HostService_SaveConfig_FullMethodName     = "/plugin.HostService/SaveConfig"
 )
 
 // HostServiceClient is the client API for HostService service.
@@ -35,6 +36,8 @@ type HostServiceClient interface {
 	SessionRelease(ctx context.Context, in *SessionRelease_Request, opts ...grpc.CallOption) (*SessionRelease_Response, error)
 	// 调用其他插件
 	CallPlugin(ctx context.Context, in *CallPlugin_Request, opts ...grpc.CallOption) (*CallPlugin_Response, error)
+	// 配置管理
+	SaveConfig(ctx context.Context, in *SaveConfig_Request, opts ...grpc.CallOption) (*SaveConfig_Response, error)
 }
 
 type hostServiceClient struct {
@@ -75,6 +78,16 @@ func (c *hostServiceClient) CallPlugin(ctx context.Context, in *CallPlugin_Reque
 	return out, nil
 }
 
+func (c *hostServiceClient) SaveConfig(ctx context.Context, in *SaveConfig_Request, opts ...grpc.CallOption) (*SaveConfig_Response, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SaveConfig_Response)
+	err := c.cc.Invoke(ctx, HostService_SaveConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HostServiceServer is the server API for HostService service.
 // All implementations must embed UnimplementedHostServiceServer
 // for forward compatibility.
@@ -86,6 +99,8 @@ type HostServiceServer interface {
 	SessionRelease(context.Context, *SessionRelease_Request) (*SessionRelease_Response, error)
 	// 调用其他插件
 	CallPlugin(context.Context, *CallPlugin_Request) (*CallPlugin_Response, error)
+	// 配置管理
+	SaveConfig(context.Context, *SaveConfig_Request) (*SaveConfig_Response, error)
 	mustEmbedUnimplementedHostServiceServer()
 }
 
@@ -104,6 +119,9 @@ func (UnimplementedHostServiceServer) SessionRelease(context.Context, *SessionRe
 }
 func (UnimplementedHostServiceServer) CallPlugin(context.Context, *CallPlugin_Request) (*CallPlugin_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CallPlugin not implemented")
+}
+func (UnimplementedHostServiceServer) SaveConfig(context.Context, *SaveConfig_Request) (*SaveConfig_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveConfig not implemented")
 }
 func (UnimplementedHostServiceServer) mustEmbedUnimplementedHostServiceServer() {}
 func (UnimplementedHostServiceServer) testEmbeddedByValue()                     {}
@@ -180,6 +198,24 @@ func _HostService_CallPlugin_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HostService_SaveConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveConfig_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).SaveConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HostService_SaveConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).SaveConfig(ctx, req.(*SaveConfig_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HostService_ServiceDesc is the grpc.ServiceDesc for HostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -198,6 +234,10 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CallPlugin",
 			Handler:    _HostService_CallPlugin_Handler,
+		},
+		{
+			MethodName: "SaveConfig",
+			Handler:    _HostService_SaveConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

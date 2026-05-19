@@ -5,8 +5,17 @@ import (
 	"log/slog"
 	"slices"
 
+	"github.com/duke-git/lancet/v2/strutil"
 	"github.com/sbgayhub/golem/sdk/command"
+	"github.com/sbgayhub/golem/sdk/plugin"
 )
+
+var events = make(chan *plugin.Event, 100) // 事件通道
+
+func Publish(e *plugin.Event) {
+	events <- e
+	slog.Debug("事件发布完成", "topic", e.Topic)
+}
 
 // dispatcher 事件分发循环
 func dispatcher() {
@@ -20,7 +29,7 @@ func dispatcher() {
 			}
 
 			// 检查事件主题是否匹配插件订阅
-			if !matchesTopic(e.Topic, p.subscriptions) {
+			if !strutil.HasPrefixAny(e.Topic, p.subscriptions) {
 				continue
 			}
 

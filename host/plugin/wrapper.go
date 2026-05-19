@@ -54,14 +54,14 @@ func (h *hostService) SessionRelease(_ context.Context, req *sdk.SessionRelease_
 
 func (h *hostService) CallPlugin(_ context.Context, req *sdk.CallPlugin_Request) (*sdk.CallPlugin_Response, error) {
 	mu.Lock()
-	target := findWrapper(req.PluginId)
+	target := findWrapper(req.Capability)
 	mu.Unlock()
 
 	if target == nil {
-		return &sdk.CallPlugin_Response{Value: "插件不存在: " + req.PluginId}, nil
+		return &sdk.CallPlugin_Response{Value: "无提供对应能力的插件: " + req.Capability}, nil
 	}
 
-	if target.commandPlugin == nil {
+	if target.calledPlugin == nil {
 		return &sdk.CallPlugin_Response{Value: "插件不支持命令"}, nil
 	}
 
@@ -71,9 +71,32 @@ func (h *hostService) CallPlugin(_ context.Context, req *sdk.CallPlugin_Request)
 		_ = json.Unmarshal(req.Args, &args)
 	}
 
-	result, err := (*target.commandPlugin).OnCommand(req.Method, args)
+	result, err := (*target.calledPlugin).OnCall(req.Capability, args)
 	if err != nil {
 		return &sdk.CallPlugin_Response{Value: err.Error()}, nil
 	}
 	return &sdk.CallPlugin_Response{Value: result}, nil
+}
+
+func (h *hostService) SaveConfig(_ context.Context, req *sdk.SaveConfig_Request) (*sdk.SaveConfig_Response, error) {
+	mu.Lock()
+	w := findWrapperByName(req.PluginId)
+	mu.Unlock()
+
+	if w == nil {
+		return &sdk.SaveConfig_Response{Message: "插件不存在: " + req.PluginId}, nil
+	}
+
+	var cfg any
+	if err := json.Unmarshal(req.Data, &cfg); err != nil {
+		return &sdk.SaveConfig_Response{Message: "反序列化配置失败: " + err.Error()}, nil
+	}
+
+	w.Config.Config = cfg
+	if err := saveConfig(); err != nil {
+		return &sdk.SaveConfig_Response{Message: "保存配置失败: " + err.Error()}, nil
+	}
+
+	slog.Info("插件配置已保存", "plugin", req.PluginId)
+	return &sdk.SaveConfig_Response{}, nil
 }

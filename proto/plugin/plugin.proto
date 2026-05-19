@@ -53,6 +53,9 @@ service HostService {
 
   // 调用其他插件
   rpc CallPlugin(CallPlugin.Request) returns (CallPlugin.Response);
+
+  // 配置管理
+  rpc SaveConfig(SaveConfig.Request) returns (SaveConfig.Response); // 保存插件配置
 }
 
 // PluginService 插件服务
@@ -168,9 +171,8 @@ message SessionRelease{
 
 message CallPlugin{
   message Request {
-    string plugin_id = 1; // 目标插件ID
-    string method = 2; // 调用方法
-    bytes args = 3; // 参数(JSON编码的map[string]string)
+    string capability = 1; // 调用方法
+    bytes args = 2; // 参数(JSON编码的map[string]string)
   }
   message Response {
     string value = 1; // 返回结果
@@ -192,6 +194,7 @@ message InjectAbility{
     uint32 group = 4; // 群组管理服务地址
     uint32 session = 5; // 会话管理服务地址
     uint32 caller = 6; // 插件调用服务地址
+    uint32 config = 7; // 配置管理服务地址
   }
   message Response {
     string value = 1; // 错误信息
@@ -212,5 +215,15 @@ message SetConfig {
   }
   message Response {
     bool result = 1; // 配置注入结果
+  }
+}
+
+message SaveConfig {
+  message Request {
+    string plugin_id = 1; // 插件ID
+    bytes data = 2;       // 插件配置数据(JSON)
+  }
+  message Response {
+    string message = 1; // 错误信息
   }
 }

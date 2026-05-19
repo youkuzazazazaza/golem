@@ -165,17 +165,20 @@ func (c client) InjectAbilities(abilities []string) error {
 				contact.RegisterContactServiceServer(s, nil)
 				return s
 			})
-		case "session", "caller":
+		case "session", "caller", "config":
 			id := c.broker.NextId()
 			go c.broker.AcceptAndServe(id, func(options []grpc.ServerOption) *grpc.Server {
 				s := grpc.NewServer(options...)
 				RegisterHostServiceServer(s, HostServiceImpl)
 				return s
 			})
-			if ability == "session" {
+			switch ability {
+			case "session":
 				request.Session = id
-			} else {
+			case "caller":
 				request.Caller = id
+			case "config":
+				request.Config = id
 			}
 		}
 	}
@@ -402,6 +405,31 @@ func (s *server) InjectAbilities(ctx context.Context, request *InjectAbility_Req
 			} else {
 				client := NewHostServiceClient(conn)
 				inject(s.impl, reflect.TypeFor[CallerAbility](), CallerClient{Client: client})
+			}
+
+		case "config":
+			if request.Config == 0 {
+				slog.Error("[plugin wrapper] 宿主配置管理服务地址为空")
+				return &InjectAbility_Response{Value: "[plugin wrapper] 宿主配置管理服务地址为空"}, errors.New("[plugin wrapper] 宿主配置管理服务地址为空")
+			}
+			if conn, err := s.broker.Dial(request.Config); err != nil {
+				slog.Error("[plugin wrapper] 连接宿主配置管理服务失败", "err", err)
+				return &InjectAbility_Response{Value: err.Error()}, err
+			} else {
+				client := NewHostServiceClient(conn)
+				injectConfigSave(s.impl, func(pluginName string, data []byte) error {
+					resp, err := client.SaveConfig(context.Background(), &SaveConfig_Request{
+						PluginId: pluginName,
+						Data:     data,
+					})
+					if err != nil {
+						return err
+					}
+					if resp.Message != "" {
+						return errors.New(resp.Message)
+					}
+					return nil
+				})
 			}
 		}
 	}

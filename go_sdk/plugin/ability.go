@@ -67,3 +67,29 @@ func inject(plugin Plugin, typ reflect.Type, client any) {
 	}
 	slog.Warn("[inject] 未找到匹配的能力字段", "type", typ.Name(), "plugin", elem.Type().Name())
 }
+
+// injectConfigSave 向插件的 ConfigAbility 注入配置保存回调
+func injectConfigSave(plugin Plugin, saveFunc func(pluginName string, data []byte) error) {
+	elem := reflect.ValueOf(plugin)
+	if elem.Kind() == reflect.Pointer {
+		elem = elem.Elem()
+	}
+
+	for i := range elem.NumField() {
+		field := elem.Type().Field(i)
+		if field.Anonymous && field.Type.Kind() == reflect.Struct {
+			if _, ok := field.Type.FieldByName("hostSave"); ok {
+				fieldVal := elem.Field(i).FieldByName("hostSave")
+				if fieldVal.CanSet() {
+					fieldVal.Set(reflect.ValueOf(saveFunc))
+				} else {
+					ptr := unsafe.Pointer(fieldVal.UnsafeAddr())
+					reflect.NewAt(fieldVal.Type(), ptr).Elem().Set(reflect.ValueOf(saveFunc))
+				}
+				slog.Info("[inject] ConfigAbility.hostSave 注入成功")
+				return
+			}
+		}
+	}
+	slog.Warn("[inject] 未找到 ConfigAbility")
+}

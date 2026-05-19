@@ -16,21 +16,21 @@ type SessionClient struct {
 	Client HostServiceClient
 }
 
-func (c SessionClient) Hold(name string, sender string, duration time.Duration) {
+func (c SessionClient) Hold(p Plugin, id string, duration time.Duration) {
 	if _, err := c.Client.SessionHold(context.Background(), &SessionHold_Request{
-		PluginId: name,
-		Sender:   sender,
+		PluginId: p.GetMetadata().Name,
+		Sender:   id,
 		Duration: uint32(duration.Seconds()),
 	}); err != nil {
-		slog.Error("[session] 劫持会话失败", "plugin", name, "sender", sender, "err", err)
+		slog.Error("[session] 劫持会话失败", "plugin", p.GetMetadata().Name, "id", id, "err", err)
 	}
 }
 
-func (c SessionClient) Release(sender string) {
+func (c SessionClient) Release(id string) {
 	if _, err := c.Client.SessionRelease(context.Background(), &SessionRelease_Request{
-		Sender: sender,
+		Sender: id,
 	}); err != nil {
-		slog.Error("[session] 释放会话失败", "sender", sender, "err", err)
+		slog.Error("[session] 释放会话失败", "id", id, "err", err)
 	}
 }
 
@@ -43,9 +43,8 @@ type CallerClient struct {
 func (c CallerClient) CallPlugin(pluginId string, method string, args map[string]string) (string, error) {
 	data, _ := json.Marshal(args)
 	resp, err := c.Client.CallPlugin(context.Background(), &CallPlugin_Request{
-		PluginId: pluginId,
-		Method:   method,
-		Args:     data,
+		Capability: method,
+		Args:       data,
 	})
 	if err != nil {
 		return "", err

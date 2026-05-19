@@ -1,6 +1,10 @@
 package plugin
 
-import "reflect"
+import (
+	"encoding/json"
+	"errors"
+	"reflect"
+)
 
 // ConfigAbility 配置能力结构体，插件嵌入以声明配置
 // 插件应初始化 Config 字段为默认值
@@ -17,7 +21,20 @@ import "reflect"
 //	    }}
 //	}
 type ConfigAbility[T any] struct {
-	Config T
+	Config   T
+	hostSave func(pluginName string, data []byte) error // 宿主注入，不导出
+}
+
+// Save 保存插件配置到宿主
+func (c *ConfigAbility[T]) Save(p Plugin) error {
+	if c.hostSave == nil {
+		return errors.New("config save ability not injected")
+	}
+	data, err := json.Marshal(c.Config)
+	if err != nil {
+		return err
+	}
+	return c.hostSave(p.GetMetadata().Name, data)
 }
 
 // findConfigField 查找插件结构体中 ConfigAbility 嵌入的 Config 字段

@@ -19,8 +19,8 @@ type Lifecycle interface {
 
 // SessionAbility 会话劫持能力
 type SessionAbility interface {
-	Hold(name string, sender string, duration time.Duration) // 劫持会话
-	Release(sender string)                                   // 释放会话
+	Hold(p Plugin, id string, duration time.Duration) // 劫持会话
+	Release(id string)                                 // 释放会话
 }
 
 // CallerAbility 插件调用能力（宿主侧 wrapper 实现）
