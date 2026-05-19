@@ -1,0 +1,201 @@
+syntax = "proto3";
+
+package contact.api;
+
+option go_package = "github.com/sbgayhub/golem/host/api/contact;contactapi";
+
+// ==================== 通用响应 ====================
+
+// OperateResponse 通用操作响应（字段编号与 SDK proto 对齐）
+message OperateResponse {
+  int32 code = 1;     // 状态码（0=成功）
+  string message = 2; // 提示信息
+}
+
+// ==================== 联系人信息 ====================
+
+// ModifyContact 联系人详情（镜像协议层 ModifyContact，字段编号与 SDK Contact 对齐）
+message ModifyContact {
+  string username = 1;          // 用户名（wxid）
+  string nickname = 2;          // 昵称
+  string remark = 3;            // 备注名
+  string alias = 4;             // 微信号
+  uint32 gender = 5;            // 性别（1=男，2=女）
+  string big_avatar_url = 6;    // 大头像 URL
+  string small_avatar_url = 7;  // 小头像 URL
+  string signature = 8;         // 个性签名
+  string city = 9;              // 城市
+  string province = 10;         // 省份
+  string country = 11;          // 国家
+  uint32 contact_type = 12;     // 联系人类型（1=个人，2=群组，3=公众号，4=特殊账号）
+  string encrypt_username = 13; // 加密用户名
+  string label_id_list = 14;    // 标签 ID 列表
+  uint32 group_notify = 17;     // 群聊通知设置
+  uint32 add_contact_scene = 18; // 添加联系人场景
+  uint32 personal_card = 22;    // 个人名片标志
+  uint32 verify_flag = 24;      // 验证标志
+  string verify_info = 25;      // 验证信息
+  uint32 source = 27;           // 来源
+  string group_owner = 31;      // 群主
+  string group_data = 43;       // 群聊数据
+  string avatar_md5 = 44;       // 头像 MD5
+  int32 delete_flag = 58;       // 删除标志
+  string description = 59;      // 描述
+  string card_image_url = 60;   // 名片图片 URL
+  int32 group_status = 66;      // 群聊状态
+}
+
+// ContactInfo 联系人基础信息（字段编号与 SDK proto 对齐）
+message ContactInfo {
+  string username = 1; // 用户名（wxid）
+  string nickname = 2; // 昵称
+  string remark = 3;   // 备注名
+}
+
+// ==================== 联系人列表相关消息 ====================
+
+// ListContactsRequest 获取联系人列表请求
+message ListContactsRequest {
+  int32 contact_sequence = 1;
+  int32 group_sequence = 2;
+}
+
+// ListContactsResponse 获取联系人列表响应（字段编号与 SDK proto 对齐）
+message ListContactsResponse {
+  int32 contact_sequence = 1;
+  int32 group_sequence = 2;
+  int32 continue_flag = 3;
+  repeated string usernames = 4;
+}
+
+// ListAllContactsRequest 获取全部联系人列表请求
+message ListAllContactsRequest {
+  int32 contact_sequence = 1;
+  int32 group_sequence = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+}
+
+// ListAllContactsResponse 获取全部联系人列表响应
+message ListAllContactsResponse {
+  repeated ContactInfo contacts = 1;
+}
+
+// ==================== 联系人详情相关消息 ====================
+
+// GetContactDetailRequest 获取联系人详情请求
+message GetContactDetailRequest {
+  repeated string usernames = 1;
+  repeated string groups = 2;
+}
+
+// GetContactDetailResponse 获取联系人详情响应（字段编号与 SDK proto 对齐）
+message GetContactDetailResponse {
+  repeated ModifyContact contact_list = 1;
+}
+
+// ==================== 设置备注相关消息 ====================
+
+// SetRemarkRequest 设置联系人备注请求
+message SetRemarkRequest {
+  string username = 1;
+  string remark = 2;
+}
+
+// ==================== 搜索联系人相关消息 ====================
+
+// SearchContactRequest 搜索联系人请求
+message SearchContactRequest {
+  string keyword = 1;
+  uint32 from_scene = 2;
+  uint32 search_scene = 3;
+}
+
+// SearchContactResponse 搜索联系人响应（字段编号与 SDK proto 对齐）
+message SearchContactResponse {
+  string username = 1;
+  string nickname = 2;
+  bytes result = 3;
+}
+
+// ==================== 好友验证相关消息 ====================
+
+// VerifyUserRequest 通过好友验证请求
+message VerifyUserRequest {
+  string v1 = 1;
+  string v2 = 2;
+  int32 scene = 3;
+}
+
+// SendFriendRequest 发送好友申请请求
+message SendFriendRequest {
+  string v1 = 1;
+  string v2 = 2;
+  string content = 3;
+  int32 operate = 4;
+  int32 scene = 5;
+}
+
+// VerifyUserResponse 好友验证响应（字段编号与 SDK proto 对齐）
+message VerifyUserResponse {
+  string username = 1;
+}
+
+// ==================== 黑名单相关消息 ====================
+
+// BlacklistRequest 黑名单操作请求
+message BlacklistRequest {
+  string username = 1;
+}
+
+// ==================== 删除联系人相关消息 ====================
+
+// DeleteContactRequest 删除联系人请求
+message DeleteContactRequest {
+  string username = 1;
+}
+
+// ==================== 附近的人相关消息 ====================
+
+// LbsFindRequest 附近的人请求
+message LbsFindRequest {
+  float latitude = 1;
+  float longitude = 2;
+  uint32 operate = 3;
+}
+
+// LbsUserInfo 附近的人用户信息（字段编号与 SDK proto 对齐）
+message LbsUserInfo {
+  string username = 1;     // 用户名
+  string nickname = 2;     // 昵称
+  string distance = 3;     // 距离（字符串，由 ability 层转换为 float）
+  string province = 4;     // 省份
+  string city = 5;         // 城市
+  uint32 gender = 6;       // 性别
+  string signature = 7;    // 个性签名
+  string small_avatar = 8; // 小头像 URL
+  string big_avatar = 9;   // 大头像 URL
+}
+
+// LbsFindResponse 附近的人响应（字段编号与 SDK proto 对齐）
+message LbsFindResponse {
+  uint32 count = 1;
+  repeated LbsUserInfo list = 2;
+  uint32 state = 3;
+  uint32 flush_time = 4;
+}
+
+// ==================== 上传通讯录相关消息 ====================
+
+// UploadContactRequest 上传通讯录匹配好友请求
+message UploadContactRequest {
+  repeated string phones = 1;
+  string current_phone = 2;
+  int32 operate = 3;
+}
+
+// UploadContactResponse 上传通讯录匹配好友响应（字段编号与 SDK proto 对齐）
+message UploadContactResponse {
+  int32 code = 1;
+  string message = 2;
+}
