@@ -3,7 +3,7 @@ syntax = "proto3";
 package plugin;
 
 import "command/command.proto";
-import "message/message.proto";
+import "message/types.proto";
 
 
 // metadata 插件元数据
@@ -191,7 +191,7 @@ message InjectAbility{
     uint32 cdn = 1;
     uint32 contact = 2; // 联系人管理服务地址
     uint32 message = 3; // 消息发送服务地址
-    uint32 group = 4; // 群组管理服务地址
+    uint32 chatroom = 4; // 群组管理服务地址
     uint32 session = 5; // 会话管理服务地址
     uint32 caller = 6; // 插件调用服务地址
     uint32 config = 7; // 配置管理服务地址
