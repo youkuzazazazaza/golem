@@ -19,17 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ContactService_GetContactByKey_FullMethodName      = "/contact.ContactService/GetContactByKey"
-	ContactService_GetContactByStrategy_FullMethodName = "/contact.ContactService/GetContactByStrategy"
-	ContactService_GetGroupMembers_FullMethodName      = "/contact.ContactService/GetGroupMembers"
-	ContactService_GetContactList_FullMethodName       = "/contact.ContactService/GetContactList"
-	ContactService_SetRemark_FullMethodName            = "/contact.ContactService/SetRemark"
-	ContactService_AddFriend_FullMethodName            = "/contact.ContactService/AddFriend"
-	ContactService_VerifyFriend_FullMethodName         = "/contact.ContactService/VerifyFriend"
-	ContactService_Delete_FullMethodName               = "/contact.ContactService/Delete"
-	ContactService_BlacklistAdd_FullMethodName         = "/contact.ContactService/BlacklistAdd"
-	ContactService_BlacklistRemove_FullMethodName      = "/contact.ContactService/BlacklistRemove"
-	ContactService_Search_FullMethodName               = "/contact.ContactService/Search"
+	ContactService_Get_FullMethodName             = "/contact.ContactService/Get"
+	ContactService_List_FullMethodName            = "/contact.ContactService/List"
+	ContactService_SetRemark_FullMethodName       = "/contact.ContactService/SetRemark"
+	ContactService_AddFriend_FullMethodName       = "/contact.ContactService/AddFriend"
+	ContactService_VerifyFriend_FullMethodName    = "/contact.ContactService/VerifyFriend"
+	ContactService_Delete_FullMethodName          = "/contact.ContactService/Delete"
+	ContactService_BlacklistAdd_FullMethodName    = "/contact.ContactService/BlacklistAdd"
+	ContactService_BlacklistRemove_FullMethodName = "/contact.ContactService/BlacklistRemove"
+	ContactService_Search_FullMethodName          = "/contact.ContactService/Search"
 )
 
 // ContactServiceClient is the client API for ContactService service.
@@ -38,19 +36,17 @@ const (
 //
 // ContactService 联系人服务
 type ContactServiceClient interface {
-	// 缓存查询
-	GetContactByKey(ctx context.Context, in *GetContactByKeyRequest, opts ...grpc.CallOption) (*GetContactResponse, error)
-	GetContactByStrategy(ctx context.Context, in *GetContactByStrategyRequest, opts ...grpc.CallOption) (*GetContactResponse, error)
-	GetGroupMembers(ctx context.Context, in *GetGroupMembersRequest, opts ...grpc.CallOption) (*GetGroupMembersResponse, error)
-	// 联系人管理
-	GetContactList(ctx context.Context, in *GetContactListRequest, opts ...grpc.CallOption) (*GetContactListResponse, error)
-	SetRemark(ctx context.Context, in *SetRemarkRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	VerifyFriend(ctx context.Context, in *VerifyFriendRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	Delete(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	BlacklistAdd(ctx context.Context, in *BlacklistRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	BlacklistRemove(ctx context.Context, in *BlacklistRequest, opts ...grpc.CallOption) (*OperateResponse, error)
-	Search(ctx context.Context, in *SearchContactRequest, opts ...grpc.CallOption) (*SearchResponse, error)
+	// Get 按键查询缓存联系人, 支持前缀：username::（默认）、nickname::、remark::
+	Get(ctx context.Context, in *Get_Request, opts ...grpc.CallOption) (*Get_Response, error)
+	// List 获取联系人列表
+	List(ctx context.Context, in *List_Request, opts ...grpc.CallOption) (*List_Response, error)
+	SetRemark(ctx context.Context, in *SetRemark_Request, opts ...grpc.CallOption) (*SetRemark_Response, error)
+	AddFriend(ctx context.Context, in *AddFriend_Request, opts ...grpc.CallOption) (*AddFriend_Response, error)
+	VerifyFriend(ctx context.Context, in *VerifyFriend_Request, opts ...grpc.CallOption) (*VerifyFriend_Response, error)
+	Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error)
+	BlacklistAdd(ctx context.Context, in *BlacklistAdd_Request, opts ...grpc.CallOption) (*BlacklistAdd_Response, error)
+	BlacklistRemove(ctx context.Context, in *BlacklistRemove_Request, opts ...grpc.CallOption) (*BlacklistRemove_Response, error)
+	Search(ctx context.Context, in *Search_Request, opts ...grpc.CallOption) (*Search_Response, error)
 }
 
 type contactServiceClient struct {
@@ -61,49 +57,29 @@ func NewContactServiceClient(cc grpc.ClientConnInterface) ContactServiceClient {
 	return &contactServiceClient{cc}
 }
 
-func (c *contactServiceClient) GetContactByKey(ctx context.Context, in *GetContactByKeyRequest, opts ...grpc.CallOption) (*GetContactResponse, error) {
+func (c *contactServiceClient) Get(ctx context.Context, in *Get_Request, opts ...grpc.CallOption) (*Get_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetContactResponse)
-	err := c.cc.Invoke(ctx, ContactService_GetContactByKey_FullMethodName, in, out, cOpts...)
+	out := new(Get_Response)
+	err := c.cc.Invoke(ctx, ContactService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *contactServiceClient) GetContactByStrategy(ctx context.Context, in *GetContactByStrategyRequest, opts ...grpc.CallOption) (*GetContactResponse, error) {
+func (c *contactServiceClient) List(ctx context.Context, in *List_Request, opts ...grpc.CallOption) (*List_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetContactResponse)
-	err := c.cc.Invoke(ctx, ContactService_GetContactByStrategy_FullMethodName, in, out, cOpts...)
+	out := new(List_Response)
+	err := c.cc.Invoke(ctx, ContactService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *contactServiceClient) GetGroupMembers(ctx context.Context, in *GetGroupMembersRequest, opts ...grpc.CallOption) (*GetGroupMembersResponse, error) {
+func (c *contactServiceClient) SetRemark(ctx context.Context, in *SetRemark_Request, opts ...grpc.CallOption) (*SetRemark_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetGroupMembersResponse)
-	err := c.cc.Invoke(ctx, ContactService_GetGroupMembers_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *contactServiceClient) GetContactList(ctx context.Context, in *GetContactListRequest, opts ...grpc.CallOption) (*GetContactListResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetContactListResponse)
-	err := c.cc.Invoke(ctx, ContactService_GetContactList_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *contactServiceClient) SetRemark(ctx context.Context, in *SetRemarkRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(SetRemark_Response)
 	err := c.cc.Invoke(ctx, ContactService_SetRemark_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -111,9 +87,9 @@ func (c *contactServiceClient) SetRemark(ctx context.Context, in *SetRemarkReque
 	return out, nil
 }
 
-func (c *contactServiceClient) AddFriend(ctx context.Context, in *AddFriendRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *contactServiceClient) AddFriend(ctx context.Context, in *AddFriend_Request, opts ...grpc.CallOption) (*AddFriend_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(AddFriend_Response)
 	err := c.cc.Invoke(ctx, ContactService_AddFriend_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -121,9 +97,9 @@ func (c *contactServiceClient) AddFriend(ctx context.Context, in *AddFriendReque
 	return out, nil
 }
 
-func (c *contactServiceClient) VerifyFriend(ctx context.Context, in *VerifyFriendRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *contactServiceClient) VerifyFriend(ctx context.Context, in *VerifyFriend_Request, opts ...grpc.CallOption) (*VerifyFriend_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(VerifyFriend_Response)
 	err := c.cc.Invoke(ctx, ContactService_VerifyFriend_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -131,9 +107,9 @@ func (c *contactServiceClient) VerifyFriend(ctx context.Context, in *VerifyFrien
 	return out, nil
 }
 
-func (c *contactServiceClient) Delete(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *contactServiceClient) Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Delete_Response)
 	err := c.cc.Invoke(ctx, ContactService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -141,9 +117,9 @@ func (c *contactServiceClient) Delete(ctx context.Context, in *DeleteContactRequ
 	return out, nil
 }
 
-func (c *contactServiceClient) BlacklistAdd(ctx context.Context, in *BlacklistRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *contactServiceClient) BlacklistAdd(ctx context.Context, in *BlacklistAdd_Request, opts ...grpc.CallOption) (*BlacklistAdd_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(BlacklistAdd_Response)
 	err := c.cc.Invoke(ctx, ContactService_BlacklistAdd_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -151,9 +127,9 @@ func (c *contactServiceClient) BlacklistAdd(ctx context.Context, in *BlacklistRe
 	return out, nil
 }
 
-func (c *contactServiceClient) BlacklistRemove(ctx context.Context, in *BlacklistRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *contactServiceClient) BlacklistRemove(ctx context.Context, in *BlacklistRemove_Request, opts ...grpc.CallOption) (*BlacklistRemove_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(BlacklistRemove_Response)
 	err := c.cc.Invoke(ctx, ContactService_BlacklistRemove_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -161,9 +137,9 @@ func (c *contactServiceClient) BlacklistRemove(ctx context.Context, in *Blacklis
 	return out, nil
 }
 
-func (c *contactServiceClient) Search(ctx context.Context, in *SearchContactRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
+func (c *contactServiceClient) Search(ctx context.Context, in *Search_Request, opts ...grpc.CallOption) (*Search_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SearchResponse)
+	out := new(Search_Response)
 	err := c.cc.Invoke(ctx, ContactService_Search_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -177,19 +153,17 @@ func (c *contactServiceClient) Search(ctx context.Context, in *SearchContactRequ
 //
 // ContactService 联系人服务
 type ContactServiceServer interface {
-	// 缓存查询
-	GetContactByKey(context.Context, *GetContactByKeyRequest) (*GetContactResponse, error)
-	GetContactByStrategy(context.Context, *GetContactByStrategyRequest) (*GetContactResponse, error)
-	GetGroupMembers(context.Context, *GetGroupMembersRequest) (*GetGroupMembersResponse, error)
-	// 联系人管理
-	GetContactList(context.Context, *GetContactListRequest) (*GetContactListResponse, error)
-	SetRemark(context.Context, *SetRemarkRequest) (*OperateResponse, error)
-	AddFriend(context.Context, *AddFriendRequest) (*OperateResponse, error)
-	VerifyFriend(context.Context, *VerifyFriendRequest) (*OperateResponse, error)
-	Delete(context.Context, *DeleteContactRequest) (*OperateResponse, error)
-	BlacklistAdd(context.Context, *BlacklistRequest) (*OperateResponse, error)
-	BlacklistRemove(context.Context, *BlacklistRequest) (*OperateResponse, error)
-	Search(context.Context, *SearchContactRequest) (*SearchResponse, error)
+	// Get 按键查询缓存联系人, 支持前缀：username::（默认）、nickname::、remark::
+	Get(context.Context, *Get_Request) (*Get_Response, error)
+	// List 获取联系人列表
+	List(context.Context, *List_Request) (*List_Response, error)
+	SetRemark(context.Context, *SetRemark_Request) (*SetRemark_Response, error)
+	AddFriend(context.Context, *AddFriend_Request) (*AddFriend_Response, error)
+	VerifyFriend(context.Context, *VerifyFriend_Request) (*VerifyFriend_Response, error)
+	Delete(context.Context, *Delete_Request) (*Delete_Response, error)
+	BlacklistAdd(context.Context, *BlacklistAdd_Request) (*BlacklistAdd_Response, error)
+	BlacklistRemove(context.Context, *BlacklistRemove_Request) (*BlacklistRemove_Response, error)
+	Search(context.Context, *Search_Request) (*Search_Response, error)
 	mustEmbedUnimplementedContactServiceServer()
 }
 
@@ -200,37 +174,31 @@ type ContactServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedContactServiceServer struct{}
 
-func (UnimplementedContactServiceServer) GetContactByKey(context.Context, *GetContactByKeyRequest) (*GetContactResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetContactByKey not implemented")
+func (UnimplementedContactServiceServer) Get(context.Context, *Get_Request) (*Get_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedContactServiceServer) GetContactByStrategy(context.Context, *GetContactByStrategyRequest) (*GetContactResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetContactByStrategy not implemented")
+func (UnimplementedContactServiceServer) List(context.Context, *List_Request) (*List_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedContactServiceServer) GetGroupMembers(context.Context, *GetGroupMembersRequest) (*GetGroupMembersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMembers not implemented")
-}
-func (UnimplementedContactServiceServer) GetContactList(context.Context, *GetContactListRequest) (*GetContactListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetContactList not implemented")
-}
-func (UnimplementedContactServiceServer) SetRemark(context.Context, *SetRemarkRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) SetRemark(context.Context, *SetRemark_Request) (*SetRemark_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetRemark not implemented")
 }
-func (UnimplementedContactServiceServer) AddFriend(context.Context, *AddFriendRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) AddFriend(context.Context, *AddFriend_Request) (*AddFriend_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFriend not implemented")
 }
-func (UnimplementedContactServiceServer) VerifyFriend(context.Context, *VerifyFriendRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) VerifyFriend(context.Context, *VerifyFriend_Request) (*VerifyFriend_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyFriend not implemented")
 }
-func (UnimplementedContactServiceServer) Delete(context.Context, *DeleteContactRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) Delete(context.Context, *Delete_Request) (*Delete_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedContactServiceServer) BlacklistAdd(context.Context, *BlacklistRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) BlacklistAdd(context.Context, *BlacklistAdd_Request) (*BlacklistAdd_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlacklistAdd not implemented")
 }
-func (UnimplementedContactServiceServer) BlacklistRemove(context.Context, *BlacklistRequest) (*OperateResponse, error) {
+func (UnimplementedContactServiceServer) BlacklistRemove(context.Context, *BlacklistRemove_Request) (*BlacklistRemove_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlacklistRemove not implemented")
 }
-func (UnimplementedContactServiceServer) Search(context.Context, *SearchContactRequest) (*SearchResponse, error) {
+func (UnimplementedContactServiceServer) Search(context.Context, *Search_Request) (*Search_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
 func (UnimplementedContactServiceServer) mustEmbedUnimplementedContactServiceServer() {}
@@ -254,80 +222,44 @@ func RegisterContactServiceServer(s grpc.ServiceRegistrar, srv ContactServiceSer
 	s.RegisterService(&ContactService_ServiceDesc, srv)
 }
 
-func _ContactService_GetContactByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContactByKeyRequest)
+func _ContactService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Get_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ContactServiceServer).GetContactByKey(ctx, in)
+		return srv.(ContactServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ContactService_GetContactByKey_FullMethodName,
+		FullMethod: ContactService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).GetContactByKey(ctx, req.(*GetContactByKeyRequest))
+		return srv.(ContactServiceServer).Get(ctx, req.(*Get_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ContactService_GetContactByStrategy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContactByStrategyRequest)
+func _ContactService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(List_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ContactServiceServer).GetContactByStrategy(ctx, in)
+		return srv.(ContactServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ContactService_GetContactByStrategy_FullMethodName,
+		FullMethod: ContactService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).GetContactByStrategy(ctx, req.(*GetContactByStrategyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ContactService_GetGroupMembers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGroupMembersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ContactServiceServer).GetGroupMembers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ContactService_GetGroupMembers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).GetGroupMembers(ctx, req.(*GetGroupMembersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ContactService_GetContactList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContactListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ContactServiceServer).GetContactList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ContactService_GetContactList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).GetContactList(ctx, req.(*GetContactListRequest))
+		return srv.(ContactServiceServer).List(ctx, req.(*List_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_SetRemark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetRemarkRequest)
+	in := new(SetRemark_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -339,13 +271,13 @@ func _ContactService_SetRemark_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ContactService_SetRemark_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).SetRemark(ctx, req.(*SetRemarkRequest))
+		return srv.(ContactServiceServer).SetRemark(ctx, req.(*SetRemark_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_AddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddFriendRequest)
+	in := new(AddFriend_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -357,13 +289,13 @@ func _ContactService_AddFriend_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ContactService_AddFriend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).AddFriend(ctx, req.(*AddFriendRequest))
+		return srv.(ContactServiceServer).AddFriend(ctx, req.(*AddFriend_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_VerifyFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyFriendRequest)
+	in := new(VerifyFriend_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -375,13 +307,13 @@ func _ContactService_VerifyFriend_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: ContactService_VerifyFriend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).VerifyFriend(ctx, req.(*VerifyFriendRequest))
+		return srv.(ContactServiceServer).VerifyFriend(ctx, req.(*VerifyFriend_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteContactRequest)
+	in := new(Delete_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -393,13 +325,13 @@ func _ContactService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: ContactService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).Delete(ctx, req.(*DeleteContactRequest))
+		return srv.(ContactServiceServer).Delete(ctx, req.(*Delete_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_BlacklistAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BlacklistRequest)
+	in := new(BlacklistAdd_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -411,13 +343,13 @@ func _ContactService_BlacklistAdd_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: ContactService_BlacklistAdd_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).BlacklistAdd(ctx, req.(*BlacklistRequest))
+		return srv.(ContactServiceServer).BlacklistAdd(ctx, req.(*BlacklistAdd_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_BlacklistRemove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BlacklistRequest)
+	in := new(BlacklistRemove_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -429,13 +361,13 @@ func _ContactService_BlacklistRemove_Handler(srv interface{}, ctx context.Contex
 		FullMethod: ContactService_BlacklistRemove_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).BlacklistRemove(ctx, req.(*BlacklistRequest))
+		return srv.(ContactServiceServer).BlacklistRemove(ctx, req.(*BlacklistRemove_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ContactService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchContactRequest)
+	in := new(Search_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -447,7 +379,7 @@ func _ContactService_Search_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: ContactService_Search_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContactServiceServer).Search(ctx, req.(*SearchContactRequest))
+		return srv.(ContactServiceServer).Search(ctx, req.(*Search_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -460,20 +392,12 @@ var ContactService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ContactServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetContactByKey",
-			Handler:    _ContactService_GetContactByKey_Handler,
+			MethodName: "Get",
+			Handler:    _ContactService_Get_Handler,
 		},
 		{
-			MethodName: "GetContactByStrategy",
-			Handler:    _ContactService_GetContactByStrategy_Handler,
-		},
-		{
-			MethodName: "GetGroupMembers",
-			Handler:    _ContactService_GetGroupMembers_Handler,
-		},
-		{
-			MethodName: "GetContactList",
-			Handler:    _ContactService_GetContactList_Handler,
+			MethodName: "List",
+			Handler:    _ContactService_List_Handler,
 		},
 		{
 			MethodName: "SetRemark",

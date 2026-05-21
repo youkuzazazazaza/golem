@@ -5,8 +5,6 @@ package loginapi
 
 import (
 	"sync"
-
-	"github.com/sbgayhub/golem/host/api/util"
 )
 
 // web 登录服务 web 实现
@@ -19,12 +17,8 @@ var Get = sync.OnceValue(func() LoginService {
 
 // Login 执行扫码登录
 func (w web) Login() (*QRCodeResult, error) {
-	data, err := util.GetHttp().Get("/login/login")
-	if err != nil {
-		return nil, err
-	}
 	var resp QRCodeResult
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/login/login").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -32,12 +26,8 @@ func (w web) Login() (*QRCodeResult, error) {
 
 // Init 首次登录后初始化
 func (w web) Init() (*InitResponse, error) {
-	data, err := util.GetHttp().Get("/login/init")
-	if err != nil {
-		return nil, err
-	}
 	var resp InitResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/login/init").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -45,12 +35,8 @@ func (w web) Init() (*InitResponse, error) {
 
 // Refresh 刷新登录状态
 func (w web) Refresh() (*OperateResponse, error) {
-	data, err := util.GetHttp().Get("/login/refresh")
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/login/status").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -58,12 +44,8 @@ func (w web) Refresh() (*OperateResponse, error) {
 
 // Wakeup 唤醒登录
 func (w web) Wakeup() (*OperateResponse, error) {
-	data, err := util.GetHttp().Get("/login/wakeup")
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/login/awaken").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -71,12 +53,8 @@ func (w web) Wakeup() (*OperateResponse, error) {
 
 // Logout 登出
 func (w web) Logout() (*OperateResponse, error) {
-	data, err := util.GetHttp().Get("/login/logout")
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/login/logout").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -84,12 +62,14 @@ func (w web) Logout() (*OperateResponse, error) {
 
 // PasswordLogin 使用账号密码登录
 func (w web) PasswordLogin(req *PasswordLoginRequest) (*PasswordLoginResult, error) {
-	data, err := util.GetHttp().Post("/login/password", req)
-	if err != nil {
-		return nil, err
-	}
 	var resp PasswordLoginResult
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Post("/api/login/password").Body(map[string]any{
+		"username":    req.GetUsername(),
+		"password":    req.GetPassword(),
+		"device_type": req.GetDeviceType(),
+		"device_name": req.GetDeviceName(),
+		"device_id":   req.GetDeviceId(),
+	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

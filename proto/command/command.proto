@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package command;
+
+import "contact/contact.proto";
+
+
+// Command 命令
+message Command{
+    string cmd = 1;
+    map<string, string> args = 2;
+    contact.Contact sender = 3;
+}

@@ -1,6 +1,6 @@
 //go:build !lib
 
-package util
+package api
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/sbgayhub/golem/host/config"
@@ -74,7 +75,11 @@ func (r *Request) Query(args ...any) *Request {
 }
 
 func (r *Request) Path(path string) *Request {
-	r.uri = r.uri + path
+	if strings.HasSuffix(r.uri, "/") {
+		r.uri = r.uri + path
+	} else {
+		r.uri = r.uri + "/" + path
+	}
 	return r
 }
 
@@ -175,6 +180,17 @@ func (r *Request) DoProto(result proto.Message) error {
 		return err
 	} else {
 		if err := protojson.Unmarshal(data, result); err != nil {
+			return fmt.Errorf("[http] 反序列化出现错误: %w", err)
+		}
+	}
+	return nil
+}
+
+func (r *Request) DoJson(result any) error {
+	if data, err := r.Do(); err != nil {
+		return err
+	} else {
+		if err := json.Unmarshal(data, result); err != nil {
 			return fmt.Errorf("[http] 反序列化出现错误: %w", err)
 		}
 	}

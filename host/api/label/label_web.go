@@ -5,9 +5,8 @@ package labelapi
 
 import (
 	"fmt"
+	"strings"
 	"sync"
-
-	"github.com/sbgayhub/golem/host/api/util"
 )
 
 // web 标签服务 web 实现
@@ -20,12 +19,8 @@ var Get = sync.OnceValue(func() LabelService {
 
 // List 获取标签列表
 func (w web) List() (*ListLabelsResponse, error) {
-	data, err := util.GetHttp().Get("/labels")
-	if err != nil {
-		return nil, err
-	}
 	var resp ListLabelsResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Get("/api/labels").DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -33,13 +28,8 @@ func (w web) List() (*ListLabelsResponse, error) {
 
 // Add 添加标签
 func (w web) Add(name string) (*AddLabelResponse, error) {
-	req := AddLabelRequest{Name: name}
-	data, err := util.GetHttp().Post("/labels", &req)
-	if err != nil {
-		return nil, err
-	}
 	var resp AddLabelResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Post("/api/labels").Body(map[string]any{"name": name}).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -47,12 +37,8 @@ func (w web) Add(name string) (*AddLabelResponse, error) {
 
 // Delete 删除标签
 func (w web) Delete(labelIds string) (*OperateResponse, error) {
-	data, err := util.GetHttp().Delete(fmt.Sprintf("/labels/%s", labelIds))
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Delete(fmt.Sprintf("/api/labels/%s", labelIds)).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -60,13 +46,11 @@ func (w web) Delete(labelIds string) (*OperateResponse, error) {
 
 // Update 更新标签名称
 func (w web) Update(labelId uint32, name string) (*OperateResponse, error) {
-	req := UpdateLabelRequest{LabelId: labelId, Name: name}
-	data, err := util.GetHttp().Put(fmt.Sprintf("/labels/%d", labelId), &req)
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Put(fmt.Sprintf("/api/labels/%d", labelId)).Body(map[string]any{
+		"label_id": labelId,
+		"name":     name,
+	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -74,13 +58,10 @@ func (w web) Update(labelId uint32, name string) (*OperateResponse, error) {
 
 // ModifyContactLabels 修改联系人标签
 func (w web) ModifyContactLabels(usernames []string, labelIds string) (*OperateResponse, error) {
-	req := ModifyContactLabelsRequest{Usernames: usernames, LabelIds: labelIds}
-	data, err := util.GetHttp().Put(fmt.Sprintf("/contacts/labels/%s", usernames[0]), &req)
-	if err != nil {
-		return nil, err
-	}
 	var resp OperateResponse
-	if err := util.ParseProtoResponse(data, &resp); err != nil {
+	if err := api.GetHttp().Put(fmt.Sprintf("/api/contacts/%s/labels", strings.Join(usernames, ","))).Body(map[string]any{
+		"label_ids": labelIds,
+	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

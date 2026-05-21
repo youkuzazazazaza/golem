@@ -10,7 +10,7 @@ import (
 
 	"golem/pkg/cdn"
 
-	"github.com/sbgayhub/golem/host/api/util"
+	"github.com/sbgayhub/golem/host/api"
 )
 
 // lib CDN 服务 lib 实现（直接调用底层实现）
@@ -21,18 +21,14 @@ var Get = sync.OnceValue(func() CDNService {
 	return &lib{}
 })
 
-// UploadImage CDN 上传聊天图片（读取流数据后调用底层实现）
-func (l lib) UploadImage(receiver string, reader io.Reader, totalSize uint32) (*UploadImageResult, error) {
-	imageData, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := cdn.UploadImage(receiver, imageData)
+// UploadImage CDN 上传聊天图片
+func (l lib) UploadImage(receiver string, reader io.Reader) (*UploadImageResult, error) {
+	resp, err := cdn.UploadImage(receiver, reader)
 	if resp == nil || err != nil {
 		return nil, err
 	}
 	var result UploadImageResult
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -40,33 +36,25 @@ func (l lib) UploadImage(receiver string, reader io.Reader, totalSize uint32) (*
 
 // UploadMomentsImage CDN 上传朋友圈图片
 func (l lib) UploadMomentsImage(imageData []byte) (*UploadSnsImageResult, error) {
-	resp, err := cdn.UploadSnsImage(imageData)
+	resp, err := cdn.UploadMomentsImage(bytes.NewReader(imageData))
 	if resp == nil || err != nil {
 		return nil, err
 	}
 	var result UploadSnsImageResult
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-// UploadVideo CDN 上传聊天视频（读取流数据后调用底层实现）
-func (l lib) UploadVideo(receiver string, videoReader io.Reader, videoSize uint32, thumbReader io.Reader, thumbSize uint32, duration uint32) (*UploadVideoResult, error) {
-	videoData, err := io.ReadAll(videoReader)
-	if err != nil {
-		return nil, err
-	}
-	thumbData, err := io.ReadAll(thumbReader)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := cdn.UploadVideo(receiver, videoData, thumbData, duration)
+// UploadVideo CDN 上传聊天视频
+func (l lib) UploadVideo(receiver string, thumb []byte, reader io.Reader, duration uint32) (*UploadVideoResult, error) {
+	resp, err := cdn.UploadVideo(receiver, reader, bytes.NewReader(thumb), duration)
 	if resp == nil || err != nil {
 		return nil, err
 	}
 	var result UploadVideoResult
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -74,12 +62,12 @@ func (l lib) UploadVideo(receiver string, videoReader io.Reader, videoSize uint3
 
 // UploadMomentsVideo CDN 上传朋友圈视频
 func (l lib) UploadMomentsVideo(videoData, thumbData []byte) (*UploadSnsVideoResult, error) {
-	resp, err := cdn.UploadSnsVideo(videoData, thumbData)
+	resp, err := cdn.UploadMomentsVideo(bytes.NewReader(videoData), bytes.NewReader(thumbData))
 	if resp == nil || err != nil {
 		return nil, err
 	}
 	var result UploadSnsVideoResult
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -110,5 +98,5 @@ func (l lib) DownloadVideo(fileID, fileAesKey string) (io.ReadCloser, error) {
 
 // DownloadSnsVideo CDN 下载朋友圈视频
 func (l lib) DownloadSnsVideo(videoURL string, encKey uint64) ([]byte, error) {
-	return cdn.DownloadSnsVideo(videoURL, encKey)
+	return cdn.DownloadMomentsVideo(videoURL, encKey)
 }

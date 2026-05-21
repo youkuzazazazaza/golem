@@ -21,29 +21,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// OperateResponse 通用操作响应
-type OperateResponse struct {
+// Login 登录
+type Login struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OperateResponse) Reset() {
-	*x = OperateResponse{}
+func (x *Login) Reset() {
+	*x = Login{}
 	mi := &file_login_login_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OperateResponse) String() string {
+func (x *Login) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OperateResponse) ProtoMessage() {}
+func (*Login) ProtoMessage() {}
 
-func (x *OperateResponse) ProtoReflect() protoreflect.Message {
+func (x *Login) ProtoReflect() protoreflect.Message {
 	mi := &file_login_login_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,46 +53,32 @@ func (x *OperateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OperateResponse.ProtoReflect.Descriptor instead.
-func (*OperateResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use Login.ProtoReflect.Descriptor instead.
+func (*Login) Descriptor() ([]byte, []int) {
 	return file_login_login_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OperateResponse) GetCode() int32 {
-	if x != nil {
-		return x.Code
-	}
-	return 0
-}
-
-func (x *OperateResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-// LoginRequest 扫码登录请求
-type LoginRequest struct {
+// Init 初始化
+type Init struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoginRequest) Reset() {
-	*x = LoginRequest{}
+func (x *Init) Reset() {
+	*x = Init{}
 	mi := &file_login_login_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoginRequest) String() string {
+func (x *Init) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoginRequest) ProtoMessage() {}
+func (*Init) ProtoMessage() {}
 
-func (x *LoginRequest) ProtoReflect() protoreflect.Message {
+func (x *Init) ProtoReflect() protoreflect.Message {
 	mi := &file_login_login_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -106,13 +90,197 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
-func (*LoginRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use Init.ProtoReflect.Descriptor instead.
+func (*Init) Descriptor() ([]byte, []int) {
 	return file_login_login_proto_rawDescGZIP(), []int{1}
 }
 
-// QRCodeResult 二维码结果
-type QRCodeResult struct {
+// Refresh 刷新登录状态
+type Refresh struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Refresh) Reset() {
+	*x = Refresh{}
+	mi := &file_login_login_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Refresh) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Refresh) ProtoMessage() {}
+
+func (x *Refresh) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Refresh.ProtoReflect.Descriptor instead.
+func (*Refresh) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{2}
+}
+
+// Wakeup 唤醒登录
+type Wakeup struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Wakeup) Reset() {
+	*x = Wakeup{}
+	mi := &file_login_login_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Wakeup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Wakeup) ProtoMessage() {}
+
+func (x *Wakeup) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Wakeup.ProtoReflect.Descriptor instead.
+func (*Wakeup) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{3}
+}
+
+// Logout 登出
+type Logout struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Logout) Reset() {
+	*x = Logout{}
+	mi := &file_login_login_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Logout) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Logout) ProtoMessage() {}
+
+func (x *Logout) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Logout.ProtoReflect.Descriptor instead.
+func (*Logout) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{4}
+}
+
+// PasswordLogin 密码登录
+type PasswordLogin struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PasswordLogin) Reset() {
+	*x = PasswordLogin{}
+	mi := &file_login_login_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PasswordLogin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PasswordLogin) ProtoMessage() {}
+
+func (x *PasswordLogin) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PasswordLogin.ProtoReflect.Descriptor instead.
+func (*PasswordLogin) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{5}
+}
+
+type Login_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Login_Request) Reset() {
+	*x = Login_Request{}
+	mi := &file_login_login_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Login_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Login_Request) ProtoMessage() {}
+
+func (x *Login_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Login_Request.ProtoReflect.Descriptor instead.
+func (*Login_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{0, 0}
+}
+
+// Response 扫码登录结果
+type Login_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`                                   // 二维码 UUID
 	Data          string                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                                   // 二维码 Base64 数据
@@ -123,21 +291,21 @@ type QRCodeResult struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *QRCodeResult) Reset() {
-	*x = QRCodeResult{}
-	mi := &file_login_login_proto_msgTypes[2]
+func (x *Login_Response) Reset() {
+	*x = Login_Response{}
+	mi := &file_login_login_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *QRCodeResult) String() string {
+func (x *Login_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*QRCodeResult) ProtoMessage() {}
+func (*Login_Response) ProtoMessage() {}
 
-func (x *QRCodeResult) ProtoReflect() protoreflect.Message {
-	mi := &file_login_login_proto_msgTypes[2]
+func (x *Login_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -148,68 +316,67 @@ func (x *QRCodeResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QRCodeResult.ProtoReflect.Descriptor instead.
-func (*QRCodeResult) Descriptor() ([]byte, []int) {
-	return file_login_login_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use Login_Response.ProtoReflect.Descriptor instead.
+func (*Login_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{0, 1}
 }
 
-func (x *QRCodeResult) GetUuid() string {
+func (x *Login_Response) GetUuid() string {
 	if x != nil {
 		return x.Uuid
 	}
 	return ""
 }
 
-func (x *QRCodeResult) GetData() string {
+func (x *Login_Response) GetData() string {
 	if x != nil {
 		return x.Data
 	}
 	return ""
 }
 
-func (x *QRCodeResult) GetUrl() string {
+func (x *Login_Response) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-func (x *QRCodeResult) GetCheckTime() uint32 {
+func (x *Login_Response) GetCheckTime() uint32 {
 	if x != nil {
 		return x.CheckTime
 	}
 	return 0
 }
 
-func (x *QRCodeResult) GetExpiredTime() uint32 {
+func (x *Login_Response) GetExpiredTime() uint32 {
 	if x != nil {
 		return x.ExpiredTime
 	}
 	return 0
 }
 
-// InitRequest 初始化请求
-type InitRequest struct {
+type Init_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *InitRequest) Reset() {
-	*x = InitRequest{}
-	mi := &file_login_login_proto_msgTypes[3]
+func (x *Init_Request) Reset() {
+	*x = Init_Request{}
+	mi := &file_login_login_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *InitRequest) String() string {
+func (x *Init_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*InitRequest) ProtoMessage() {}
+func (*Init_Request) ProtoMessage() {}
 
-func (x *InitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_login_login_proto_msgTypes[3]
+func (x *Init_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -220,13 +387,12 @@ func (x *InitRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use InitRequest.ProtoReflect.Descriptor instead.
-func (*InitRequest) Descriptor() ([]byte, []int) {
-	return file_login_login_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use Init_Request.ProtoReflect.Descriptor instead.
+func (*Init_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{1, 0}
 }
 
-// InitResponse 初始化响应
-type InitResponse struct {
+type Init_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
@@ -234,21 +400,21 @@ type InitResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *InitResponse) Reset() {
-	*x = InitResponse{}
-	mi := &file_login_login_proto_msgTypes[4]
+func (x *Init_Response) Reset() {
+	*x = Init_Response{}
+	mi := &file_login_login_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *InitResponse) String() string {
+func (x *Init_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*InitResponse) ProtoMessage() {}
+func (*Init_Response) ProtoMessage() {}
 
-func (x *InitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_login_login_proto_msgTypes[4]
+func (x *Init_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -259,27 +425,290 @@ func (x *InitResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use InitResponse.ProtoReflect.Descriptor instead.
-func (*InitResponse) Descriptor() ([]byte, []int) {
-	return file_login_login_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use Init_Response.ProtoReflect.Descriptor instead.
+func (*Init_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{1, 1}
 }
 
-func (x *InitResponse) GetCode() int32 {
+func (x *Init_Response) GetCode() int32 {
 	if x != nil {
 		return x.Code
 	}
 	return 0
 }
 
-func (x *InitResponse) GetMessage() string {
+func (x *Init_Response) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
-// PasswordLoginRequest 密码登录请求
-type PasswordLoginRequest struct {
+type Refresh_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Refresh_Request) Reset() {
+	*x = Refresh_Request{}
+	mi := &file_login_login_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Refresh_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Refresh_Request) ProtoMessage() {}
+
+func (x *Refresh_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Refresh_Request.ProtoReflect.Descriptor instead.
+func (*Refresh_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{2, 0}
+}
+
+type Refresh_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Refresh_Response) Reset() {
+	*x = Refresh_Response{}
+	mi := &file_login_login_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Refresh_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Refresh_Response) ProtoMessage() {}
+
+func (x *Refresh_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Refresh_Response.ProtoReflect.Descriptor instead.
+func (*Refresh_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{2, 1}
+}
+
+func (x *Refresh_Response) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *Refresh_Response) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type Wakeup_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Wakeup_Request) Reset() {
+	*x = Wakeup_Request{}
+	mi := &file_login_login_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Wakeup_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Wakeup_Request) ProtoMessage() {}
+
+func (x *Wakeup_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Wakeup_Request.ProtoReflect.Descriptor instead.
+func (*Wakeup_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{3, 0}
+}
+
+type Wakeup_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Wakeup_Response) Reset() {
+	*x = Wakeup_Response{}
+	mi := &file_login_login_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Wakeup_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Wakeup_Response) ProtoMessage() {}
+
+func (x *Wakeup_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Wakeup_Response.ProtoReflect.Descriptor instead.
+func (*Wakeup_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{3, 1}
+}
+
+func (x *Wakeup_Response) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *Wakeup_Response) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type Logout_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Logout_Request) Reset() {
+	*x = Logout_Request{}
+	mi := &file_login_login_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Logout_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Logout_Request) ProtoMessage() {}
+
+func (x *Logout_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Logout_Request.ProtoReflect.Descriptor instead.
+func (*Logout_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{4, 0}
+}
+
+type Logout_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Logout_Response) Reset() {
+	*x = Logout_Response{}
+	mi := &file_login_login_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Logout_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Logout_Response) ProtoMessage() {}
+
+func (x *Logout_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Logout_Response.ProtoReflect.Descriptor instead.
+func (*Logout_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{4, 1}
+}
+
+func (x *Logout_Response) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *Logout_Response) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type PasswordLogin_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`                       // 微信号/手机号
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`                       // 密码（明文，会自动 MD5 加密）
@@ -290,21 +719,21 @@ type PasswordLoginRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PasswordLoginRequest) Reset() {
-	*x = PasswordLoginRequest{}
-	mi := &file_login_login_proto_msgTypes[5]
+func (x *PasswordLogin_Request) Reset() {
+	*x = PasswordLogin_Request{}
+	mi := &file_login_login_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PasswordLoginRequest) String() string {
+func (x *PasswordLogin_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PasswordLoginRequest) ProtoMessage() {}
+func (*PasswordLogin_Request) ProtoMessage() {}
 
-func (x *PasswordLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_login_login_proto_msgTypes[5]
+func (x *PasswordLogin_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,48 +744,48 @@ func (x *PasswordLoginRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PasswordLoginRequest.ProtoReflect.Descriptor instead.
-func (*PasswordLoginRequest) Descriptor() ([]byte, []int) {
-	return file_login_login_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use PasswordLogin_Request.ProtoReflect.Descriptor instead.
+func (*PasswordLogin_Request) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{5, 0}
 }
 
-func (x *PasswordLoginRequest) GetUsername() string {
+func (x *PasswordLogin_Request) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *PasswordLoginRequest) GetPassword() string {
+func (x *PasswordLogin_Request) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
 	return ""
 }
 
-func (x *PasswordLoginRequest) GetDeviceType() string {
+func (x *PasswordLogin_Request) GetDeviceType() string {
 	if x != nil {
 		return x.DeviceType
 	}
 	return ""
 }
 
-func (x *PasswordLoginRequest) GetDeviceName() string {
+func (x *PasswordLogin_Request) GetDeviceName() string {
 	if x != nil {
 		return x.DeviceName
 	}
 	return ""
 }
 
-func (x *PasswordLoginRequest) GetDeviceId() string {
+func (x *PasswordLogin_Request) GetDeviceId() string {
 	if x != nil {
 		return x.DeviceId
 	}
 	return ""
 }
 
-// PasswordLoginResult 密码登录结果
-type PasswordLoginResult struct {
+// Response 密码登录结果
+type PasswordLogin_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uin           uint32                 `protobuf:"varint,1,opt,name=uin,proto3" json:"uin,omitempty"`          // UIN
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"` // 用户名
@@ -368,21 +797,21 @@ type PasswordLoginResult struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PasswordLoginResult) Reset() {
-	*x = PasswordLoginResult{}
-	mi := &file_login_login_proto_msgTypes[6]
+func (x *PasswordLogin_Response) Reset() {
+	*x = PasswordLogin_Response{}
+	mi := &file_login_login_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PasswordLoginResult) String() string {
+func (x *PasswordLogin_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PasswordLoginResult) ProtoMessage() {}
+func (*PasswordLogin_Response) ProtoMessage() {}
 
-func (x *PasswordLoginResult) ProtoReflect() protoreflect.Message {
-	mi := &file_login_login_proto_msgTypes[6]
+func (x *PasswordLogin_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_login_login_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,47 +822,47 @@ func (x *PasswordLoginResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PasswordLoginResult.ProtoReflect.Descriptor instead.
-func (*PasswordLoginResult) Descriptor() ([]byte, []int) {
-	return file_login_login_proto_rawDescGZIP(), []int{6}
+// Deprecated: Use PasswordLogin_Response.ProtoReflect.Descriptor instead.
+func (*PasswordLogin_Response) Descriptor() ([]byte, []int) {
+	return file_login_login_proto_rawDescGZIP(), []int{5, 1}
 }
 
-func (x *PasswordLoginResult) GetUin() uint32 {
+func (x *PasswordLogin_Response) GetUin() uint32 {
 	if x != nil {
 		return x.Uin
 	}
 	return 0
 }
 
-func (x *PasswordLoginResult) GetUsername() string {
+func (x *PasswordLogin_Response) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *PasswordLoginResult) GetNickname() string {
+func (x *PasswordLogin_Response) GetNickname() string {
 	if x != nil {
 		return x.Nickname
 	}
 	return ""
 }
 
-func (x *PasswordLoginResult) GetAlias() string {
+func (x *PasswordLogin_Response) GetAlias() string {
 	if x != nil {
 		return x.Alias
 	}
 	return ""
 }
 
-func (x *PasswordLoginResult) GetEmail() string {
+func (x *PasswordLogin_Response) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *PasswordLoginResult) GetMobile() string {
+func (x *PasswordLogin_Response) GetMobile() string {
 	if x != nil {
 		return x.Mobile
 	}
@@ -444,44 +873,59 @@ var File_login_login_proto protoreflect.FileDescriptor
 
 const file_login_login_proto_rawDesc = "" +
 	"\n" +
-	"\x11login/login.proto\x12\x05login\"?\n" +
-	"\x0fOperateResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x0e\n" +
-	"\fLoginRequest\"\x8a\x01\n" +
-	"\fQRCodeResult\x12\x12\n" +
+	"\x11login/login.proto\x12\x05login\"\x9b\x01\n" +
+	"\x05Login\x1a\t\n" +
+	"\aRequest\x1a\x86\x01\n" +
+	"\bResponse\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\x12\x1d\n" +
 	"\n" +
 	"check_time\x18\x04 \x01(\rR\tcheckTime\x12!\n" +
-	"\fexpired_time\x18\x05 \x01(\rR\vexpiredTime\"\r\n" +
-	"\vInitRequest\"<\n" +
-	"\fInitResponse\x12\x12\n" +
+	"\fexpired_time\x18\x05 \x01(\rR\vexpiredTime\"K\n" +
+	"\x04Init\x1a\t\n" +
+	"\aRequest\x1a8\n" +
+	"\bResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xad\x01\n" +
-	"\x14PasswordLoginRequest\x12\x1a\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"N\n" +
+	"\aRefresh\x1a\t\n" +
+	"\aRequest\x1a8\n" +
+	"\bResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"M\n" +
+	"\x06Wakeup\x1a\t\n" +
+	"\aRequest\x1a8\n" +
+	"\bResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"M\n" +
+	"\x06Logout\x1a\t\n" +
+	"\aRequest\x1a8\n" +
+	"\bResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xcd\x02\n" +
+	"\rPasswordLogin\x1a\xa0\x01\n" +
+	"\aRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1f\n" +
 	"\vdevice_type\x18\x03 \x01(\tR\n" +
 	"deviceType\x12\x1f\n" +
 	"\vdevice_name\x18\x04 \x01(\tR\n" +
 	"deviceName\x12\x1b\n" +
-	"\tdevice_id\x18\x05 \x01(\tR\bdeviceId\"\xa3\x01\n" +
-	"\x13PasswordLoginResult\x12\x10\n" +
+	"\tdevice_id\x18\x05 \x01(\tR\bdeviceId\x1a\x98\x01\n" +
+	"\bResponse\x12\x10\n" +
 	"\x03uin\x18\x01 \x01(\rR\x03uin\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x14\n" +
 	"\x05alias\x18\x04 \x01(\tR\x05alias\x12\x14\n" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12\x16\n" +
-	"\x06mobile\x18\x06 \x01(\tR\x06mobile2\xe2\x02\n" +
-	"\fLoginService\x121\n" +
-	"\x05Login\x12\x13.login.LoginRequest\x1a\x13.login.QRCodeResult\x12/\n" +
-	"\x04Init\x12\x12.login.InitRequest\x1a\x13.login.InitResponse\x126\n" +
-	"\aRefresh\x12\x13.login.LoginRequest\x1a\x16.login.OperateResponse\x125\n" +
-	"\x06Wakeup\x12\x13.login.LoginRequest\x1a\x16.login.OperateResponse\x125\n" +
-	"\x06Logout\x12\x13.login.LoginRequest\x1a\x16.login.OperateResponse\x12H\n" +
-	"\rPasswordLogin\x12\x1b.login.PasswordLoginRequest\x1a\x1a.login.PasswordLoginResultBp\n" +
+	"\x06mobile\x18\x06 \x01(\tR\x06mobile2\xf3\x02\n" +
+	"\fLoginService\x124\n" +
+	"\x05Login\x12\x14.login.Login.Request\x1a\x15.login.Login.Response\x121\n" +
+	"\x04Init\x12\x13.login.Init.Request\x1a\x14.login.Init.Response\x12:\n" +
+	"\aRefresh\x12\x16.login.Refresh.Request\x1a\x17.login.Refresh.Response\x127\n" +
+	"\x06Wakeup\x12\x15.login.Wakeup.Request\x1a\x16.login.Wakeup.Response\x127\n" +
+	"\x06Logout\x12\x15.login.Logout.Request\x1a\x16.login.Logout.Response\x12L\n" +
+	"\rPasswordLogin\x12\x1c.login.PasswordLogin.Request\x1a\x1d.login.PasswordLogin.ResponseBp\n" +
 	"\tcom.loginB\n" +
 	"LoginProtoP\x01Z#github.com/sbgayhub/golem/sdk/login\xa2\x02\x03LXX\xaa\x02\x05Login\xca\x02\x05Login\xe2\x02\x11Login\\GPBMetadata\xea\x02\x05Loginb\x06proto3"
 
@@ -497,34 +941,45 @@ func file_login_login_proto_rawDescGZIP() []byte {
 	return file_login_login_proto_rawDescData
 }
 
-var file_login_login_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_login_login_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_login_login_proto_goTypes = []any{
-	(*OperateResponse)(nil),      // 0: login.OperateResponse
-	(*LoginRequest)(nil),         // 1: login.LoginRequest
-	(*QRCodeResult)(nil),         // 2: login.QRCodeResult
-	(*InitRequest)(nil),          // 3: login.InitRequest
-	(*InitResponse)(nil),         // 4: login.InitResponse
-	(*PasswordLoginRequest)(nil), // 5: login.PasswordLoginRequest
-	(*PasswordLoginResult)(nil),  // 6: login.PasswordLoginResult
+	(*Login)(nil),                  // 0: login.Login
+	(*Init)(nil),                   // 1: login.Init
+	(*Refresh)(nil),                // 2: login.Refresh
+	(*Wakeup)(nil),                 // 3: login.Wakeup
+	(*Logout)(nil),                 // 4: login.Logout
+	(*PasswordLogin)(nil),          // 5: login.PasswordLogin
+	(*Login_Request)(nil),          // 6: login.Login.Request
+	(*Login_Response)(nil),         // 7: login.Login.Response
+	(*Init_Request)(nil),           // 8: login.Init.Request
+	(*Init_Response)(nil),          // 9: login.Init.Response
+	(*Refresh_Request)(nil),        // 10: login.Refresh.Request
+	(*Refresh_Response)(nil),       // 11: login.Refresh.Response
+	(*Wakeup_Request)(nil),         // 12: login.Wakeup.Request
+	(*Wakeup_Response)(nil),        // 13: login.Wakeup.Response
+	(*Logout_Request)(nil),         // 14: login.Logout.Request
+	(*Logout_Response)(nil),        // 15: login.Logout.Response
+	(*PasswordLogin_Request)(nil),  // 16: login.PasswordLogin.Request
+	(*PasswordLogin_Response)(nil), // 17: login.PasswordLogin.Response
 }
 var file_login_login_proto_depIdxs = []int32{
-	1, // 0: login.LoginService.Login:input_type -> login.LoginRequest
-	3, // 1: login.LoginService.Init:input_type -> login.InitRequest
-	1, // 2: login.LoginService.Refresh:input_type -> login.LoginRequest
-	1, // 3: login.LoginService.Wakeup:input_type -> login.LoginRequest
-	1, // 4: login.LoginService.Logout:input_type -> login.LoginRequest
-	5, // 5: login.LoginService.PasswordLogin:input_type -> login.PasswordLoginRequest
-	2, // 6: login.LoginService.Login:output_type -> login.QRCodeResult
-	4, // 7: login.LoginService.Init:output_type -> login.InitResponse
-	0, // 8: login.LoginService.Refresh:output_type -> login.OperateResponse
-	0, // 9: login.LoginService.Wakeup:output_type -> login.OperateResponse
-	0, // 10: login.LoginService.Logout:output_type -> login.OperateResponse
-	6, // 11: login.LoginService.PasswordLogin:output_type -> login.PasswordLoginResult
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	6,  // 0: login.LoginService.Login:input_type -> login.Login.Request
+	8,  // 1: login.LoginService.Init:input_type -> login.Init.Request
+	10, // 2: login.LoginService.Refresh:input_type -> login.Refresh.Request
+	12, // 3: login.LoginService.Wakeup:input_type -> login.Wakeup.Request
+	14, // 4: login.LoginService.Logout:input_type -> login.Logout.Request
+	16, // 5: login.LoginService.PasswordLogin:input_type -> login.PasswordLogin.Request
+	7,  // 6: login.LoginService.Login:output_type -> login.Login.Response
+	9,  // 7: login.LoginService.Init:output_type -> login.Init.Response
+	11, // 8: login.LoginService.Refresh:output_type -> login.Refresh.Response
+	13, // 9: login.LoginService.Wakeup:output_type -> login.Wakeup.Response
+	15, // 10: login.LoginService.Logout:output_type -> login.Logout.Response
+	17, // 11: login.LoginService.PasswordLogin:output_type -> login.PasswordLogin.Response
+	6,  // [6:12] is the sub-list for method output_type
+	0,  // [0:6] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_login_login_proto_init() }
@@ -538,7 +993,7 @@ func file_login_login_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_login_login_proto_rawDesc), len(file_login_login_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

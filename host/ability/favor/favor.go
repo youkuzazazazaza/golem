@@ -4,59 +4,42 @@ package favorability
 import (
 	sdk "github.com/sbgayhub/golem/sdk/favor"
 
-	api "github.com/sbgayhub/golem/host/api/favor"
-	"github.com/sbgayhub/golem/host/api/util"
+	"github.com/sbgayhub/golem/host/api"
+	favorapi "github.com/sbgayhub/golem/host/api/favor"
 )
 
 // ability 收藏能力实现（直连型）
 type ability struct {
-	api api.FavorService
+	api favorapi.FavorService
 }
 
 func init() {
-	sdk.Instance = &ability{api: api.Get()}
+	sdk.Instance = &ability{api: favorapi.Get()}
 }
 
 // GetInfo 获取收藏容量信息
-func (a ability) GetInfo() (*sdk.FavorInfo, error) {
+func (a ability) GetInfo() (*sdk.GetInfo_Info, error) {
 	resp, err := a.api.GetInfo()
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.FavorInfo
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.GetInfo_Info
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
 // GetItem 获取收藏项详情
-func (a ability) GetItem(favId int32) ([]*sdk.FavorItem, error) {
+func (a ability) GetItem(favId int32) ([]*sdk.Item, error) {
 	resp, err := a.api.GetItem(favId)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	items := make([]*sdk.FavorItem, 0, len(resp.Items))
+	items := make([]*sdk.Item, 0, len(resp.Items))
 	for _, item := range resp.Items {
-		var sdkItem sdk.FavorItem
-		if err := util.TransformProto(item, &sdkItem); err != nil {
-			return nil, err
-		}
-		items = append(items, &sdkItem)
-	}
-	return items, nil
-}
-
-// BatchGetItems 批量获取收藏项
-func (a ability) BatchGetItems(favIds []int32) ([]*sdk.FavorItem, error) {
-	resp, err := a.api.BatchGetItems(favIds)
-	if resp == nil || err != nil {
-		return nil, err
-	}
-	items := make([]*sdk.FavorItem, 0, len(resp.Items))
-	for _, item := range resp.Items {
-		var sdkItem sdk.FavorItem
-		if err := util.TransformProto(item, &sdkItem); err != nil {
+		var sdkItem sdk.Item
+		if err := api.TransformProto(item, &sdkItem); err != nil {
 			return nil, err
 		}
 		items = append(items, &sdkItem)
@@ -65,47 +48,30 @@ func (a ability) BatchGetItems(favIds []int32) ([]*sdk.FavorItem, error) {
 }
 
 // Delete 删除收藏项
-func (a ability) Delete(favId int32) ([]*sdk.DeleteResult, error) {
+func (a ability) Delete(favId int32) error {
 	resp, err := a.api.Delete(favId)
 	if resp == nil || err != nil {
-		return nil, err
+		return err
 	}
-	results := make([]*sdk.DeleteResult, 0, len(resp.Results))
+	results := make([]*sdk.Delete_Result, 0, len(resp.Results))
 	for _, r := range resp.Results {
-		var sdkResult sdk.DeleteResult
-		if err := util.TransformProto(r, &sdkResult); err != nil {
-			return nil, err
+		var sdkResult sdk.Delete_Result
+		if err := api.TransformProto(r, &sdkResult); err != nil {
+			return err
 		}
 		results = append(results, &sdkResult)
 	}
-	return results, nil
-}
-
-// BatchDelete 批量删除收藏项
-func (a ability) BatchDelete(favIds []int32) ([]*sdk.DeleteResult, error) {
-	resp, err := a.api.BatchDelete(favIds)
-	if resp == nil || err != nil {
-		return nil, err
-	}
-	results := make([]*sdk.DeleteResult, 0, len(resp.Results))
-	for _, r := range resp.Results {
-		var sdkResult sdk.DeleteResult
-		if err := util.TransformProto(r, &sdkResult); err != nil {
-			return nil, err
-		}
-		results = append(results, &sdkResult)
-	}
-	return results, nil
+	return nil
 }
 
 // Sync 同步收藏列表
-func (a ability) Sync(key []byte) (*sdk.SyncFavorResponse, error) {
+func (a ability) Sync(key []byte) (*sdk.Sync_Response, error) {
 	resp, err := a.api.Sync(key)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.SyncFavorResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.Sync_Response
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil

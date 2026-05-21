@@ -25,8 +25,8 @@ type ConfigAbility[T any] struct {
 	hostSave func(pluginName string, data []byte) error // 宿主注入，不导出
 }
 
-// Save 保存插件配置到宿主
-func (c *ConfigAbility[T]) Save(p Plugin) error {
+// SaveConfig 保存插件配置到宿主
+func (c *ConfigAbility[T]) SaveConfig(p Plugin) error {
 	if c.hostSave == nil {
 		return errors.New("config save ability not injected")
 	}

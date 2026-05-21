@@ -6,6 +6,7 @@ package loginapi
 import (
 	"sync"
 
+	baseapi "github.com/sbgayhub/golem/host/api/base"
 	"golem/pkg/login"
 )
 
@@ -23,12 +24,15 @@ func (l lib) Login() (*QRCodeResult, error) {
 	if resp == nil || err != nil {
 		return nil, err
 	}
+	qrcode := baseapi.Buffer{Data: []byte(resp.Data)}
+	uuid := resp.UUID
+	checkTime := resp.CheckTime
+	expiredTime := resp.ExpiredTime
 	return &QRCodeResult{
-		Uuid:        resp.UUID,
-		Data:        resp.Data,
-		Url:         resp.Url,
-		CheckTime:   resp.CheckTime,
-		ExpiredTime: resp.ExpiredTime,
+		Qrcode:      &qrcode,
+		Uuid:        &uuid,
+		CheckTime:   &checkTime,
+		ExpiredTime: &expiredTime,
 	}, nil
 }
 

@@ -19,12 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	FavorService_GetInfo_FullMethodName       = "/favor.FavorService/GetInfo"
-	FavorService_GetItem_FullMethodName       = "/favor.FavorService/GetItem"
-	FavorService_BatchGetItems_FullMethodName = "/favor.FavorService/BatchGetItems"
-	FavorService_Delete_FullMethodName        = "/favor.FavorService/Delete"
-	FavorService_BatchDelete_FullMethodName   = "/favor.FavorService/BatchDelete"
-	FavorService_Sync_FullMethodName          = "/favor.FavorService/Sync"
+	FavorService_GetInfo_FullMethodName = "/favor.FavorService/GetInfo"
+	FavorService_GetItem_FullMethodName = "/favor.FavorService/GetItem"
+	FavorService_Delete_FullMethodName  = "/favor.FavorService/Delete"
+	FavorService_Sync_FullMethodName    = "/favor.FavorService/Sync"
 )
 
 // FavorServiceClient is the client API for FavorService service.
@@ -34,17 +32,13 @@ const (
 // FavorService 收藏服务
 type FavorServiceClient interface {
 	// GetInfo 获取收藏容量信息
-	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
+	GetInfo(ctx context.Context, in *GetInfo_Request, opts ...grpc.CallOption) (*GetInfo_Response, error)
 	// GetItem 获取收藏项详情
-	GetItem(ctx context.Context, in *GetFavItemRequest, opts ...grpc.CallOption) (*GetFavItemResponse, error)
-	// BatchGetItems 批量获取收藏项
-	BatchGetItems(ctx context.Context, in *BatchGetFavItemsRequest, opts ...grpc.CallOption) (*BatchGetFavItemsResponse, error)
+	GetItem(ctx context.Context, in *GetItem_Request, opts ...grpc.CallOption) (*GetItem_Response, error)
 	// Delete 删除收藏项
-	Delete(ctx context.Context, in *DeleteFavItemRequest, opts ...grpc.CallOption) (*DeleteFavItemResponse, error)
-	// BatchDelete 批量删除收藏项
-	BatchDelete(ctx context.Context, in *BatchDeleteFavItemsRequest, opts ...grpc.CallOption) (*BatchDeleteFavItemsResponse, error)
+	Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error)
 	// Sync 同步收藏列表
-	Sync(ctx context.Context, in *SyncFavorRequest, opts ...grpc.CallOption) (*SyncFavorResponse, error)
+	Sync(ctx context.Context, in *Sync_Request, opts ...grpc.CallOption) (*Sync_Response, error)
 }
 
 type favorServiceClient struct {
@@ -55,9 +49,9 @@ func NewFavorServiceClient(cc grpc.ClientConnInterface) FavorServiceClient {
 	return &favorServiceClient{cc}
 }
 
-func (c *favorServiceClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
+func (c *favorServiceClient) GetInfo(ctx context.Context, in *GetInfo_Request, opts ...grpc.CallOption) (*GetInfo_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetInfoResponse)
+	out := new(GetInfo_Response)
 	err := c.cc.Invoke(ctx, FavorService_GetInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -65,9 +59,9 @@ func (c *favorServiceClient) GetInfo(ctx context.Context, in *GetInfoRequest, op
 	return out, nil
 }
 
-func (c *favorServiceClient) GetItem(ctx context.Context, in *GetFavItemRequest, opts ...grpc.CallOption) (*GetFavItemResponse, error) {
+func (c *favorServiceClient) GetItem(ctx context.Context, in *GetItem_Request, opts ...grpc.CallOption) (*GetItem_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetFavItemResponse)
+	out := new(GetItem_Response)
 	err := c.cc.Invoke(ctx, FavorService_GetItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -75,19 +69,9 @@ func (c *favorServiceClient) GetItem(ctx context.Context, in *GetFavItemRequest,
 	return out, nil
 }
 
-func (c *favorServiceClient) BatchGetItems(ctx context.Context, in *BatchGetFavItemsRequest, opts ...grpc.CallOption) (*BatchGetFavItemsResponse, error) {
+func (c *favorServiceClient) Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BatchGetFavItemsResponse)
-	err := c.cc.Invoke(ctx, FavorService_BatchGetItems_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *favorServiceClient) Delete(ctx context.Context, in *DeleteFavItemRequest, opts ...grpc.CallOption) (*DeleteFavItemResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteFavItemResponse)
+	out := new(Delete_Response)
 	err := c.cc.Invoke(ctx, FavorService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -95,19 +79,9 @@ func (c *favorServiceClient) Delete(ctx context.Context, in *DeleteFavItemReques
 	return out, nil
 }
 
-func (c *favorServiceClient) BatchDelete(ctx context.Context, in *BatchDeleteFavItemsRequest, opts ...grpc.CallOption) (*BatchDeleteFavItemsResponse, error) {
+func (c *favorServiceClient) Sync(ctx context.Context, in *Sync_Request, opts ...grpc.CallOption) (*Sync_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BatchDeleteFavItemsResponse)
-	err := c.cc.Invoke(ctx, FavorService_BatchDelete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *favorServiceClient) Sync(ctx context.Context, in *SyncFavorRequest, opts ...grpc.CallOption) (*SyncFavorResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncFavorResponse)
+	out := new(Sync_Response)
 	err := c.cc.Invoke(ctx, FavorService_Sync_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -122,17 +96,13 @@ func (c *favorServiceClient) Sync(ctx context.Context, in *SyncFavorRequest, opt
 // FavorService 收藏服务
 type FavorServiceServer interface {
 	// GetInfo 获取收藏容量信息
-	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
+	GetInfo(context.Context, *GetInfo_Request) (*GetInfo_Response, error)
 	// GetItem 获取收藏项详情
-	GetItem(context.Context, *GetFavItemRequest) (*GetFavItemResponse, error)
-	// BatchGetItems 批量获取收藏项
-	BatchGetItems(context.Context, *BatchGetFavItemsRequest) (*BatchGetFavItemsResponse, error)
+	GetItem(context.Context, *GetItem_Request) (*GetItem_Response, error)
 	// Delete 删除收藏项
-	Delete(context.Context, *DeleteFavItemRequest) (*DeleteFavItemResponse, error)
-	// BatchDelete 批量删除收藏项
-	BatchDelete(context.Context, *BatchDeleteFavItemsRequest) (*BatchDeleteFavItemsResponse, error)
+	Delete(context.Context, *Delete_Request) (*Delete_Response, error)
 	// Sync 同步收藏列表
-	Sync(context.Context, *SyncFavorRequest) (*SyncFavorResponse, error)
+	Sync(context.Context, *Sync_Request) (*Sync_Response, error)
 	mustEmbedUnimplementedFavorServiceServer()
 }
 
@@ -143,22 +113,16 @@ type FavorServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedFavorServiceServer struct{}
 
-func (UnimplementedFavorServiceServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
+func (UnimplementedFavorServiceServer) GetInfo(context.Context, *GetInfo_Request) (*GetInfo_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
 }
-func (UnimplementedFavorServiceServer) GetItem(context.Context, *GetFavItemRequest) (*GetFavItemResponse, error) {
+func (UnimplementedFavorServiceServer) GetItem(context.Context, *GetItem_Request) (*GetItem_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetItem not implemented")
 }
-func (UnimplementedFavorServiceServer) BatchGetItems(context.Context, *BatchGetFavItemsRequest) (*BatchGetFavItemsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchGetItems not implemented")
-}
-func (UnimplementedFavorServiceServer) Delete(context.Context, *DeleteFavItemRequest) (*DeleteFavItemResponse, error) {
+func (UnimplementedFavorServiceServer) Delete(context.Context, *Delete_Request) (*Delete_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedFavorServiceServer) BatchDelete(context.Context, *BatchDeleteFavItemsRequest) (*BatchDeleteFavItemsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchDelete not implemented")
-}
-func (UnimplementedFavorServiceServer) Sync(context.Context, *SyncFavorRequest) (*SyncFavorResponse, error) {
+func (UnimplementedFavorServiceServer) Sync(context.Context, *Sync_Request) (*Sync_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Sync not implemented")
 }
 func (UnimplementedFavorServiceServer) mustEmbedUnimplementedFavorServiceServer() {}
@@ -183,7 +147,7 @@ func RegisterFavorServiceServer(s grpc.ServiceRegistrar, srv FavorServiceServer)
 }
 
 func _FavorService_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetInfoRequest)
+	in := new(GetInfo_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -195,13 +159,13 @@ func _FavorService_GetInfo_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: FavorService_GetInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).GetInfo(ctx, req.(*GetInfoRequest))
+		return srv.(FavorServiceServer).GetInfo(ctx, req.(*GetInfo_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FavorService_GetItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFavItemRequest)
+	in := new(GetItem_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -213,31 +177,13 @@ func _FavorService_GetItem_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: FavorService_GetItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).GetItem(ctx, req.(*GetFavItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _FavorService_BatchGetItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchGetFavItemsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FavorServiceServer).BatchGetItems(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: FavorService_BatchGetItems_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).BatchGetItems(ctx, req.(*BatchGetFavItemsRequest))
+		return srv.(FavorServiceServer).GetItem(ctx, req.(*GetItem_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FavorService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteFavItemRequest)
+	in := new(Delete_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -249,31 +195,13 @@ func _FavorService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: FavorService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).Delete(ctx, req.(*DeleteFavItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _FavorService_BatchDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchDeleteFavItemsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FavorServiceServer).BatchDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: FavorService_BatchDelete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).BatchDelete(ctx, req.(*BatchDeleteFavItemsRequest))
+		return srv.(FavorServiceServer).Delete(ctx, req.(*Delete_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _FavorService_Sync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncFavorRequest)
+	in := new(Sync_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -285,7 +213,7 @@ func _FavorService_Sync_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: FavorService_Sync_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FavorServiceServer).Sync(ctx, req.(*SyncFavorRequest))
+		return srv.(FavorServiceServer).Sync(ctx, req.(*Sync_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -306,16 +234,8 @@ var FavorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FavorService_GetItem_Handler,
 		},
 		{
-			MethodName: "BatchGetItems",
-			Handler:    _FavorService_BatchGetItems_Handler,
-		},
-		{
 			MethodName: "Delete",
 			Handler:    _FavorService_Delete_Handler,
-		},
-		{
-			MethodName: "BatchDelete",
-			Handler:    _FavorService_BatchDelete_Handler,
 		},
 		{
 			MethodName: "Sync",

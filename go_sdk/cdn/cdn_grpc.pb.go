@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CDNService_UploadImage_FullMethodName        = "/cdn.CDNService/UploadImage"
-	CDNService_UploadVideo_FullMethodName        = "/cdn.CDNService/UploadVideo"
-	CDNService_DownloadImage_FullMethodName      = "/cdn.CDNService/DownloadImage"
-	CDNService_DownloadVideo_FullMethodName      = "/cdn.CDNService/DownloadVideo"
-	CDNService_UploadMomentsImage_FullMethodName = "/cdn.CDNService/UploadMomentsImage"
-	CDNService_UploadMomentsVideo_FullMethodName = "/cdn.CDNService/UploadMomentsVideo"
-	CDNService_DownloadVideoCover_FullMethodName = "/cdn.CDNService/DownloadVideoCover"
-	CDNService_DownloadSnsVideo_FullMethodName   = "/cdn.CDNService/DownloadSnsVideo"
+	CDNService_UploadImage_FullMethodName          = "/cdn.CDNService/UploadImage"
+	CDNService_UploadVideo_FullMethodName          = "/cdn.CDNService/UploadVideo"
+	CDNService_DownloadImage_FullMethodName        = "/cdn.CDNService/DownloadImage"
+	CDNService_DownloadVideo_FullMethodName        = "/cdn.CDNService/DownloadVideo"
+	CDNService_UploadMomentsImage_FullMethodName   = "/cdn.CDNService/UploadMomentsImage"
+	CDNService_UploadMomentsVideo_FullMethodName   = "/cdn.CDNService/UploadMomentsVideo"
+	CDNService_DownloadVideoCover_FullMethodName   = "/cdn.CDNService/DownloadVideoCover"
+	CDNService_DownloadMomentsVideo_FullMethodName = "/cdn.CDNService/DownloadMomentsVideo"
 )
 
 // CDNServiceClient is the client API for CDNService service.
@@ -36,22 +36,22 @@ const (
 // CDNService CDN 文件上传/下载服务
 type CDNServiceClient interface {
 	// 客户端流式上传聊天图片
-	UploadImage(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadImageChunk, UploadImageResponse], error)
+	UploadImage(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadImage_Chunk, UploadImage_Response], error)
 	// 客户端流式上传聊天视频
-	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadVideoChunk, UploadVideoResponse], error)
+	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadVideo_Chunk, UploadVideo_Response], error)
 	// 服务端流式下载高清图片
-	DownloadImage(ctx context.Context, in *DownloadImageRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadImageChunk], error)
+	DownloadImage(ctx context.Context, in *DownloadImage_Request, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadImage_Chunk], error)
 	// 服务端流式下载聊天视频
-	DownloadVideo(ctx context.Context, in *DownloadVideoRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadVideoChunk], error)
+	DownloadVideo(ctx context.Context, in *DownloadVideo_Request, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadVideo_Chunk], error)
 	// 非流式接口（小文件）
 	// CDN 上传朋友圈图片
-	UploadMomentsImage(ctx context.Context, in *UploadMomentsImageRequest, opts ...grpc.CallOption) (*UploadMomentsImageResponse, error)
+	UploadMomentsImage(ctx context.Context, in *UploadMomentsImage_Request, opts ...grpc.CallOption) (*UploadMomentsImage_Response, error)
 	// CDN 上传朋友圈视频
-	UploadMomentsVideo(ctx context.Context, in *UploadMomentsVideoRequest, opts ...grpc.CallOption) (*UploadMomentsVideoResponse, error)
+	UploadMomentsVideo(ctx context.Context, in *UploadMomentsVideo_Request, opts ...grpc.CallOption) (*UploadMomentsVideo_Response, error)
 	// CDN 下载视频封面
-	DownloadVideoCover(ctx context.Context, in *DownloadVideoCoverRequest, opts ...grpc.CallOption) (*DownloadVideoCoverResponse, error)
+	DownloadVideoCover(ctx context.Context, in *DownloadVideoCover_Request, opts ...grpc.CallOption) (*DownloadVideoCover_Response, error)
 	// CDN 下载朋友圈视频
-	DownloadSnsVideo(ctx context.Context, in *DownloadSnsVideoRequest, opts ...grpc.CallOption) (*DownloadMomentsVideoResponse, error)
+	DownloadMomentsVideo(ctx context.Context, in *DownloadMomentsVideo_Request, opts ...grpc.CallOption) (*DownloadMomentsVideo_Response, error)
 }
 
 type cDNServiceClient struct {
@@ -62,39 +62,39 @@ func NewCDNServiceClient(cc grpc.ClientConnInterface) CDNServiceClient {
 	return &cDNServiceClient{cc}
 }
 
-func (c *cDNServiceClient) UploadImage(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadImageChunk, UploadImageResponse], error) {
+func (c *cDNServiceClient) UploadImage(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadImage_Chunk, UploadImage_Response], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CDNService_ServiceDesc.Streams[0], CDNService_UploadImage_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[UploadImageChunk, UploadImageResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[UploadImage_Chunk, UploadImage_Response]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_UploadImageClient = grpc.ClientStreamingClient[UploadImageChunk, UploadImageResponse]
+type CDNService_UploadImageClient = grpc.ClientStreamingClient[UploadImage_Chunk, UploadImage_Response]
 
-func (c *cDNServiceClient) UploadVideo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadVideoChunk, UploadVideoResponse], error) {
+func (c *cDNServiceClient) UploadVideo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadVideo_Chunk, UploadVideo_Response], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CDNService_ServiceDesc.Streams[1], CDNService_UploadVideo_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[UploadVideoChunk, UploadVideoResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[UploadVideo_Chunk, UploadVideo_Response]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_UploadVideoClient = grpc.ClientStreamingClient[UploadVideoChunk, UploadVideoResponse]
+type CDNService_UploadVideoClient = grpc.ClientStreamingClient[UploadVideo_Chunk, UploadVideo_Response]
 
-func (c *cDNServiceClient) DownloadImage(ctx context.Context, in *DownloadImageRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadImageChunk], error) {
+func (c *cDNServiceClient) DownloadImage(ctx context.Context, in *DownloadImage_Request, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadImage_Chunk], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CDNService_ServiceDesc.Streams[2], CDNService_DownloadImage_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[DownloadImageRequest, DownloadImageChunk]{ClientStream: stream}
+	x := &grpc.GenericClientStream[DownloadImage_Request, DownloadImage_Chunk]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -105,15 +105,15 @@ func (c *cDNServiceClient) DownloadImage(ctx context.Context, in *DownloadImageR
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_DownloadImageClient = grpc.ServerStreamingClient[DownloadImageChunk]
+type CDNService_DownloadImageClient = grpc.ServerStreamingClient[DownloadImage_Chunk]
 
-func (c *cDNServiceClient) DownloadVideo(ctx context.Context, in *DownloadVideoRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadVideoChunk], error) {
+func (c *cDNServiceClient) DownloadVideo(ctx context.Context, in *DownloadVideo_Request, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadVideo_Chunk], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CDNService_ServiceDesc.Streams[3], CDNService_DownloadVideo_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[DownloadVideoRequest, DownloadVideoChunk]{ClientStream: stream}
+	x := &grpc.GenericClientStream[DownloadVideo_Request, DownloadVideo_Chunk]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -124,11 +124,11 @@ func (c *cDNServiceClient) DownloadVideo(ctx context.Context, in *DownloadVideoR
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_DownloadVideoClient = grpc.ServerStreamingClient[DownloadVideoChunk]
+type CDNService_DownloadVideoClient = grpc.ServerStreamingClient[DownloadVideo_Chunk]
 
-func (c *cDNServiceClient) UploadMomentsImage(ctx context.Context, in *UploadMomentsImageRequest, opts ...grpc.CallOption) (*UploadMomentsImageResponse, error) {
+func (c *cDNServiceClient) UploadMomentsImage(ctx context.Context, in *UploadMomentsImage_Request, opts ...grpc.CallOption) (*UploadMomentsImage_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UploadMomentsImageResponse)
+	out := new(UploadMomentsImage_Response)
 	err := c.cc.Invoke(ctx, CDNService_UploadMomentsImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -136,9 +136,9 @@ func (c *cDNServiceClient) UploadMomentsImage(ctx context.Context, in *UploadMom
 	return out, nil
 }
 
-func (c *cDNServiceClient) UploadMomentsVideo(ctx context.Context, in *UploadMomentsVideoRequest, opts ...grpc.CallOption) (*UploadMomentsVideoResponse, error) {
+func (c *cDNServiceClient) UploadMomentsVideo(ctx context.Context, in *UploadMomentsVideo_Request, opts ...grpc.CallOption) (*UploadMomentsVideo_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UploadMomentsVideoResponse)
+	out := new(UploadMomentsVideo_Response)
 	err := c.cc.Invoke(ctx, CDNService_UploadMomentsVideo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -146,9 +146,9 @@ func (c *cDNServiceClient) UploadMomentsVideo(ctx context.Context, in *UploadMom
 	return out, nil
 }
 
-func (c *cDNServiceClient) DownloadVideoCover(ctx context.Context, in *DownloadVideoCoverRequest, opts ...grpc.CallOption) (*DownloadVideoCoverResponse, error) {
+func (c *cDNServiceClient) DownloadVideoCover(ctx context.Context, in *DownloadVideoCover_Request, opts ...grpc.CallOption) (*DownloadVideoCover_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DownloadVideoCoverResponse)
+	out := new(DownloadVideoCover_Response)
 	err := c.cc.Invoke(ctx, CDNService_DownloadVideoCover_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -156,10 +156,10 @@ func (c *cDNServiceClient) DownloadVideoCover(ctx context.Context, in *DownloadV
 	return out, nil
 }
 
-func (c *cDNServiceClient) DownloadSnsVideo(ctx context.Context, in *DownloadSnsVideoRequest, opts ...grpc.CallOption) (*DownloadMomentsVideoResponse, error) {
+func (c *cDNServiceClient) DownloadMomentsVideo(ctx context.Context, in *DownloadMomentsVideo_Request, opts ...grpc.CallOption) (*DownloadMomentsVideo_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DownloadMomentsVideoResponse)
-	err := c.cc.Invoke(ctx, CDNService_DownloadSnsVideo_FullMethodName, in, out, cOpts...)
+	out := new(DownloadMomentsVideo_Response)
+	err := c.cc.Invoke(ctx, CDNService_DownloadMomentsVideo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -173,22 +173,22 @@ func (c *cDNServiceClient) DownloadSnsVideo(ctx context.Context, in *DownloadSns
 // CDNService CDN 文件上传/下载服务
 type CDNServiceServer interface {
 	// 客户端流式上传聊天图片
-	UploadImage(grpc.ClientStreamingServer[UploadImageChunk, UploadImageResponse]) error
+	UploadImage(grpc.ClientStreamingServer[UploadImage_Chunk, UploadImage_Response]) error
 	// 客户端流式上传聊天视频
-	UploadVideo(grpc.ClientStreamingServer[UploadVideoChunk, UploadVideoResponse]) error
+	UploadVideo(grpc.ClientStreamingServer[UploadVideo_Chunk, UploadVideo_Response]) error
 	// 服务端流式下载高清图片
-	DownloadImage(*DownloadImageRequest, grpc.ServerStreamingServer[DownloadImageChunk]) error
+	DownloadImage(*DownloadImage_Request, grpc.ServerStreamingServer[DownloadImage_Chunk]) error
 	// 服务端流式下载聊天视频
-	DownloadVideo(*DownloadVideoRequest, grpc.ServerStreamingServer[DownloadVideoChunk]) error
+	DownloadVideo(*DownloadVideo_Request, grpc.ServerStreamingServer[DownloadVideo_Chunk]) error
 	// 非流式接口（小文件）
 	// CDN 上传朋友圈图片
-	UploadMomentsImage(context.Context, *UploadMomentsImageRequest) (*UploadMomentsImageResponse, error)
+	UploadMomentsImage(context.Context, *UploadMomentsImage_Request) (*UploadMomentsImage_Response, error)
 	// CDN 上传朋友圈视频
-	UploadMomentsVideo(context.Context, *UploadMomentsVideoRequest) (*UploadMomentsVideoResponse, error)
+	UploadMomentsVideo(context.Context, *UploadMomentsVideo_Request) (*UploadMomentsVideo_Response, error)
 	// CDN 下载视频封面
-	DownloadVideoCover(context.Context, *DownloadVideoCoverRequest) (*DownloadVideoCoverResponse, error)
+	DownloadVideoCover(context.Context, *DownloadVideoCover_Request) (*DownloadVideoCover_Response, error)
 	// CDN 下载朋友圈视频
-	DownloadSnsVideo(context.Context, *DownloadSnsVideoRequest) (*DownloadMomentsVideoResponse, error)
+	DownloadMomentsVideo(context.Context, *DownloadMomentsVideo_Request) (*DownloadMomentsVideo_Response, error)
 	mustEmbedUnimplementedCDNServiceServer()
 }
 
@@ -199,29 +199,29 @@ type CDNServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCDNServiceServer struct{}
 
-func (UnimplementedCDNServiceServer) UploadImage(grpc.ClientStreamingServer[UploadImageChunk, UploadImageResponse]) error {
+func (UnimplementedCDNServiceServer) UploadImage(grpc.ClientStreamingServer[UploadImage_Chunk, UploadImage_Response]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadImage not implemented")
 }
-func (UnimplementedCDNServiceServer) UploadVideo(grpc.ClientStreamingServer[UploadVideoChunk, UploadVideoResponse]) error {
+func (UnimplementedCDNServiceServer) UploadVideo(grpc.ClientStreamingServer[UploadVideo_Chunk, UploadVideo_Response]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadVideo not implemented")
 }
-func (UnimplementedCDNServiceServer) DownloadImage(*DownloadImageRequest, grpc.ServerStreamingServer[DownloadImageChunk]) error {
+func (UnimplementedCDNServiceServer) DownloadImage(*DownloadImage_Request, grpc.ServerStreamingServer[DownloadImage_Chunk]) error {
 	return status.Errorf(codes.Unimplemented, "method DownloadImage not implemented")
 }
-func (UnimplementedCDNServiceServer) DownloadVideo(*DownloadVideoRequest, grpc.ServerStreamingServer[DownloadVideoChunk]) error {
+func (UnimplementedCDNServiceServer) DownloadVideo(*DownloadVideo_Request, grpc.ServerStreamingServer[DownloadVideo_Chunk]) error {
 	return status.Errorf(codes.Unimplemented, "method DownloadVideo not implemented")
 }
-func (UnimplementedCDNServiceServer) UploadMomentsImage(context.Context, *UploadMomentsImageRequest) (*UploadMomentsImageResponse, error) {
+func (UnimplementedCDNServiceServer) UploadMomentsImage(context.Context, *UploadMomentsImage_Request) (*UploadMomentsImage_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadMomentsImage not implemented")
 }
-func (UnimplementedCDNServiceServer) UploadMomentsVideo(context.Context, *UploadMomentsVideoRequest) (*UploadMomentsVideoResponse, error) {
+func (UnimplementedCDNServiceServer) UploadMomentsVideo(context.Context, *UploadMomentsVideo_Request) (*UploadMomentsVideo_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadMomentsVideo not implemented")
 }
-func (UnimplementedCDNServiceServer) DownloadVideoCover(context.Context, *DownloadVideoCoverRequest) (*DownloadVideoCoverResponse, error) {
+func (UnimplementedCDNServiceServer) DownloadVideoCover(context.Context, *DownloadVideoCover_Request) (*DownloadVideoCover_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadVideoCover not implemented")
 }
-func (UnimplementedCDNServiceServer) DownloadSnsVideo(context.Context, *DownloadSnsVideoRequest) (*DownloadMomentsVideoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadSnsVideo not implemented")
+func (UnimplementedCDNServiceServer) DownloadMomentsVideo(context.Context, *DownloadMomentsVideo_Request) (*DownloadMomentsVideo_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadMomentsVideo not implemented")
 }
 func (UnimplementedCDNServiceServer) mustEmbedUnimplementedCDNServiceServer() {}
 func (UnimplementedCDNServiceServer) testEmbeddedByValue()                    {}
@@ -245,43 +245,43 @@ func RegisterCDNServiceServer(s grpc.ServiceRegistrar, srv CDNServiceServer) {
 }
 
 func _CDNService_UploadImage_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CDNServiceServer).UploadImage(&grpc.GenericServerStream[UploadImageChunk, UploadImageResponse]{ServerStream: stream})
+	return srv.(CDNServiceServer).UploadImage(&grpc.GenericServerStream[UploadImage_Chunk, UploadImage_Response]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_UploadImageServer = grpc.ClientStreamingServer[UploadImageChunk, UploadImageResponse]
+type CDNService_UploadImageServer = grpc.ClientStreamingServer[UploadImage_Chunk, UploadImage_Response]
 
 func _CDNService_UploadVideo_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CDNServiceServer).UploadVideo(&grpc.GenericServerStream[UploadVideoChunk, UploadVideoResponse]{ServerStream: stream})
+	return srv.(CDNServiceServer).UploadVideo(&grpc.GenericServerStream[UploadVideo_Chunk, UploadVideo_Response]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_UploadVideoServer = grpc.ClientStreamingServer[UploadVideoChunk, UploadVideoResponse]
+type CDNService_UploadVideoServer = grpc.ClientStreamingServer[UploadVideo_Chunk, UploadVideo_Response]
 
 func _CDNService_DownloadImage_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(DownloadImageRequest)
+	m := new(DownloadImage_Request)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(CDNServiceServer).DownloadImage(m, &grpc.GenericServerStream[DownloadImageRequest, DownloadImageChunk]{ServerStream: stream})
+	return srv.(CDNServiceServer).DownloadImage(m, &grpc.GenericServerStream[DownloadImage_Request, DownloadImage_Chunk]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_DownloadImageServer = grpc.ServerStreamingServer[DownloadImageChunk]
+type CDNService_DownloadImageServer = grpc.ServerStreamingServer[DownloadImage_Chunk]
 
 func _CDNService_DownloadVideo_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(DownloadVideoRequest)
+	m := new(DownloadVideo_Request)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(CDNServiceServer).DownloadVideo(m, &grpc.GenericServerStream[DownloadVideoRequest, DownloadVideoChunk]{ServerStream: stream})
+	return srv.(CDNServiceServer).DownloadVideo(m, &grpc.GenericServerStream[DownloadVideo_Request, DownloadVideo_Chunk]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CDNService_DownloadVideoServer = grpc.ServerStreamingServer[DownloadVideoChunk]
+type CDNService_DownloadVideoServer = grpc.ServerStreamingServer[DownloadVideo_Chunk]
 
 func _CDNService_UploadMomentsImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadMomentsImageRequest)
+	in := new(UploadMomentsImage_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -293,13 +293,13 @@ func _CDNService_UploadMomentsImage_Handler(srv interface{}, ctx context.Context
 		FullMethod: CDNService_UploadMomentsImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CDNServiceServer).UploadMomentsImage(ctx, req.(*UploadMomentsImageRequest))
+		return srv.(CDNServiceServer).UploadMomentsImage(ctx, req.(*UploadMomentsImage_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CDNService_UploadMomentsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadMomentsVideoRequest)
+	in := new(UploadMomentsVideo_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -311,13 +311,13 @@ func _CDNService_UploadMomentsVideo_Handler(srv interface{}, ctx context.Context
 		FullMethod: CDNService_UploadMomentsVideo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CDNServiceServer).UploadMomentsVideo(ctx, req.(*UploadMomentsVideoRequest))
+		return srv.(CDNServiceServer).UploadMomentsVideo(ctx, req.(*UploadMomentsVideo_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CDNService_DownloadVideoCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadVideoCoverRequest)
+	in := new(DownloadVideoCover_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -329,25 +329,25 @@ func _CDNService_DownloadVideoCover_Handler(srv interface{}, ctx context.Context
 		FullMethod: CDNService_DownloadVideoCover_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CDNServiceServer).DownloadVideoCover(ctx, req.(*DownloadVideoCoverRequest))
+		return srv.(CDNServiceServer).DownloadVideoCover(ctx, req.(*DownloadVideoCover_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CDNService_DownloadSnsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadSnsVideoRequest)
+func _CDNService_DownloadMomentsVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadMomentsVideo_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CDNServiceServer).DownloadSnsVideo(ctx, in)
+		return srv.(CDNServiceServer).DownloadMomentsVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CDNService_DownloadSnsVideo_FullMethodName,
+		FullMethod: CDNService_DownloadMomentsVideo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CDNServiceServer).DownloadSnsVideo(ctx, req.(*DownloadSnsVideoRequest))
+		return srv.(CDNServiceServer).DownloadMomentsVideo(ctx, req.(*DownloadMomentsVideo_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -372,8 +372,8 @@ var CDNService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CDNService_DownloadVideoCover_Handler,
 		},
 		{
-			MethodName: "DownloadSnsVideo",
-			Handler:    _CDNService_DownloadSnsVideo_Handler,
+			MethodName: "DownloadMomentsVideo",
+			Handler:    _CDNService_DownloadMomentsVideo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

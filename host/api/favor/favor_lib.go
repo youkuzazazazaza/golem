@@ -8,7 +8,8 @@ import (
 
 	"golem/pkg/favor"
 
-	"github.com/sbgayhub/golem/host/api/util"
+	"github.com/sbgayhub/golem/host/api"
+	baseapi "github.com/sbgayhub/golem/host/api/base"
 )
 
 // lib 收藏服务 lib 实现（直接调用底层实现）
@@ -26,7 +27,7 @@ func (l lib) GetInfo() (*GetInfoResponse, error) {
 		return nil, err
 	}
 	var result GetInfoResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -41,7 +42,7 @@ func (l lib) GetItem(favId int32) (*GetFavItemResponse, error) {
 	items := make([]*FavorItem, 0, len(resp.GetObjects()))
 	for _, obj := range resp.GetObjects() {
 		var item FavorItem
-		if err := util.TransformProto(obj, &item); err != nil {
+		if err := api.TransformProto(obj, &item); err != nil {
 			return nil, err
 		}
 		items = append(items, &item)
@@ -55,15 +56,16 @@ func (l lib) BatchGetItems(favIds []int32) (*BatchGetFavItemsResponse, error) {
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	items := make([]*FavorItem, 0, len(resp.GetObjects()))
+	objects := make([]*FavorItem, 0, len(resp.GetObjects()))
 	for _, obj := range resp.GetObjects() {
 		var item FavorItem
-		if err := util.TransformProto(obj, &item); err != nil {
+		if err := api.TransformProto(obj, &item); err != nil {
 			return nil, err
 		}
-		items = append(items, &item)
+		objects = append(objects, &item)
 	}
-	return &BatchGetFavItemsResponse{Items: items}, nil
+	count := resp.GetCount()
+	return &BatchGetFavItemsResponse{Count: &count, Objects: objects}, nil
 }
 
 // Delete 删除收藏项
@@ -75,7 +77,7 @@ func (l lib) Delete(favId int32) (*DeleteFavItemResponse, error) {
 	results := make([]*DeleteResult, 0, len(resp.GetResults()))
 	for _, r := range resp.GetResults() {
 		var result DeleteResult
-		if err := util.TransformProto(r, &result); err != nil {
+		if err := api.TransformProto(r, &result); err != nil {
 			return nil, err
 		}
 		results = append(results, &result)
@@ -92,31 +94,34 @@ func (l lib) BatchDelete(favIds []int32) (*BatchDeleteFavItemsResponse, error) {
 	results := make([]*DeleteResult, 0, len(resp.GetResults()))
 	for _, r := range resp.GetResults() {
 		var result DeleteResult
-		if err := util.TransformProto(r, &result); err != nil {
+		if err := api.TransformProto(r, &result); err != nil {
 			return nil, err
 		}
 		results = append(results, &result)
 	}
-	return &BatchDeleteFavItemsResponse{Results: results}, nil
+	count := resp.GetCount()
+	return &BatchDeleteFavItemsResponse{Count: &count, Results: results}, nil
 }
 
 // Sync 同步收藏列表
+// 注意：golem Sync() 返回已解析的 SyncResult（Items/Key/HasMore），
+// 需要手动构造与 golem SyncResponse proto 对齐的 SyncFavorResponse。
 func (l lib) Sync(key []byte) (*SyncFavorResponse, error) {
 	resp, err := favor.Sync(key)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	items := make([]*FavorItem, 0, len(resp.Items))
-	for _, item := range resp.Items {
-		var favorItem FavorItem
-		if err := util.TransformProto(item, &favorItem); err != nil {
-			return nil, err
-		}
-		items = append(items, &favorItem)
+
+	keyBuf := baseapi.Buffer{Data: resp.Key}
+	var continueFlag uint32
+	if resp.HasMore {
+		continueFlag = 1
 	}
+	code := int32(0)
+
 	return &SyncFavorResponse{
-		Items:   items,
-		Key:     resp.Key,
-		HasMore: resp.HasMore,
+		Code:         &code,
+		Key:          &keyBuf,
+		ContinueFlag: &continueFlag,
 	}, nil
 }

@@ -4,11 +4,9 @@ package contactapi
 // ContactService 联系人服务 API 接口（返回 API proto 类型）
 type ContactService interface {
 	// List 获取联系人列表（增量同步）
-	List(contactSequence, groupSequence int32) (*ListContactsResponse, error)
-	// ListAll 获取全部联系人列表（分页查询）
-	ListAll(contactSequence, groupSequence, offset, limit int32) ([]*ContactInfo, error)
+	List() ([]string, error)
 	// Detail 获取联系人详细信息
-	Detail(usernames, groups []string) (*GetContactDetailResponse, error)
+	Detail(usernames []string) (*GetContactDetailResponse, error)
 	// SetRemark 设置联系人备注
 	SetRemark(username, remark string) (*OperateResponse, error)
 	// Search 搜索联系人
@@ -24,7 +22,7 @@ type ContactService interface {
 	// Delete 删除联系人
 	Delete(username string) (*OperateResponse, error)
 	// LbsFind 附近的人
-	LbsFind(latitude, longitude float32, operate uint32) (*LbsFindResponse, error)
+	LbsFind(latitude, longitude float32, operate uint32) (*LbsResponse, error)
 	// UploadContact 上传通讯录匹配好友
 	UploadContact(phones []string, currentPhone string, operate int32) (*UploadContactResponse, error)
 }

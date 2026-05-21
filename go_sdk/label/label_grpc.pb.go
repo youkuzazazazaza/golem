@@ -33,15 +33,15 @@ const (
 // LabelService 标签服务
 type LabelServiceClient interface {
 	// List 获取标签列表
-	List(ctx context.Context, in *ListLabelsRequest, opts ...grpc.CallOption) (*ListLabelsResponse, error)
+	List(ctx context.Context, in *List_Request, opts ...grpc.CallOption) (*List_Response, error)
 	// Add 添加标签
-	Add(ctx context.Context, in *AddLabelRequest, opts ...grpc.CallOption) (*AddLabelResponse, error)
+	Add(ctx context.Context, in *Add_Request, opts ...grpc.CallOption) (*Add_Response, error)
 	// Delete 删除标签
-	Delete(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error)
 	// Update 更新标签名称
-	Update(ctx context.Context, in *UpdateLabelRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	Update(ctx context.Context, in *Update_Request, opts ...grpc.CallOption) (*Update_Response, error)
 	// ModifyContactLabels 修改联系人标签
-	ModifyContactLabels(ctx context.Context, in *ModifyContactLabelsRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	ModifyContactLabels(ctx context.Context, in *ModifyContact_Request, opts ...grpc.CallOption) (*ModifyContact_Response, error)
 }
 
 type labelServiceClient struct {
@@ -52,9 +52,9 @@ func NewLabelServiceClient(cc grpc.ClientConnInterface) LabelServiceClient {
 	return &labelServiceClient{cc}
 }
 
-func (c *labelServiceClient) List(ctx context.Context, in *ListLabelsRequest, opts ...grpc.CallOption) (*ListLabelsResponse, error) {
+func (c *labelServiceClient) List(ctx context.Context, in *List_Request, opts ...grpc.CallOption) (*List_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListLabelsResponse)
+	out := new(List_Response)
 	err := c.cc.Invoke(ctx, LabelService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -62,9 +62,9 @@ func (c *labelServiceClient) List(ctx context.Context, in *ListLabelsRequest, op
 	return out, nil
 }
 
-func (c *labelServiceClient) Add(ctx context.Context, in *AddLabelRequest, opts ...grpc.CallOption) (*AddLabelResponse, error) {
+func (c *labelServiceClient) Add(ctx context.Context, in *Add_Request, opts ...grpc.CallOption) (*Add_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddLabelResponse)
+	out := new(Add_Response)
 	err := c.cc.Invoke(ctx, LabelService_Add_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -72,9 +72,9 @@ func (c *labelServiceClient) Add(ctx context.Context, in *AddLabelRequest, opts 
 	return out, nil
 }
 
-func (c *labelServiceClient) Delete(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *labelServiceClient) Delete(ctx context.Context, in *Delete_Request, opts ...grpc.CallOption) (*Delete_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Delete_Response)
 	err := c.cc.Invoke(ctx, LabelService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -82,9 +82,9 @@ func (c *labelServiceClient) Delete(ctx context.Context, in *DeleteLabelRequest,
 	return out, nil
 }
 
-func (c *labelServiceClient) Update(ctx context.Context, in *UpdateLabelRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *labelServiceClient) Update(ctx context.Context, in *Update_Request, opts ...grpc.CallOption) (*Update_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Update_Response)
 	err := c.cc.Invoke(ctx, LabelService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -92,9 +92,9 @@ func (c *labelServiceClient) Update(ctx context.Context, in *UpdateLabelRequest,
 	return out, nil
 }
 
-func (c *labelServiceClient) ModifyContactLabels(ctx context.Context, in *ModifyContactLabelsRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *labelServiceClient) ModifyContactLabels(ctx context.Context, in *ModifyContact_Request, opts ...grpc.CallOption) (*ModifyContact_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(ModifyContact_Response)
 	err := c.cc.Invoke(ctx, LabelService_ModifyContactLabels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -109,15 +109,15 @@ func (c *labelServiceClient) ModifyContactLabels(ctx context.Context, in *Modify
 // LabelService 标签服务
 type LabelServiceServer interface {
 	// List 获取标签列表
-	List(context.Context, *ListLabelsRequest) (*ListLabelsResponse, error)
+	List(context.Context, *List_Request) (*List_Response, error)
 	// Add 添加标签
-	Add(context.Context, *AddLabelRequest) (*AddLabelResponse, error)
+	Add(context.Context, *Add_Request) (*Add_Response, error)
 	// Delete 删除标签
-	Delete(context.Context, *DeleteLabelRequest) (*OperateResponse, error)
+	Delete(context.Context, *Delete_Request) (*Delete_Response, error)
 	// Update 更新标签名称
-	Update(context.Context, *UpdateLabelRequest) (*OperateResponse, error)
+	Update(context.Context, *Update_Request) (*Update_Response, error)
 	// ModifyContactLabels 修改联系人标签
-	ModifyContactLabels(context.Context, *ModifyContactLabelsRequest) (*OperateResponse, error)
+	ModifyContactLabels(context.Context, *ModifyContact_Request) (*ModifyContact_Response, error)
 	mustEmbedUnimplementedLabelServiceServer()
 }
 
@@ -128,19 +128,19 @@ type LabelServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLabelServiceServer struct{}
 
-func (UnimplementedLabelServiceServer) List(context.Context, *ListLabelsRequest) (*ListLabelsResponse, error) {
+func (UnimplementedLabelServiceServer) List(context.Context, *List_Request) (*List_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedLabelServiceServer) Add(context.Context, *AddLabelRequest) (*AddLabelResponse, error) {
+func (UnimplementedLabelServiceServer) Add(context.Context, *Add_Request) (*Add_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
 }
-func (UnimplementedLabelServiceServer) Delete(context.Context, *DeleteLabelRequest) (*OperateResponse, error) {
+func (UnimplementedLabelServiceServer) Delete(context.Context, *Delete_Request) (*Delete_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedLabelServiceServer) Update(context.Context, *UpdateLabelRequest) (*OperateResponse, error) {
+func (UnimplementedLabelServiceServer) Update(context.Context, *Update_Request) (*Update_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedLabelServiceServer) ModifyContactLabels(context.Context, *ModifyContactLabelsRequest) (*OperateResponse, error) {
+func (UnimplementedLabelServiceServer) ModifyContactLabels(context.Context, *ModifyContact_Request) (*ModifyContact_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyContactLabels not implemented")
 }
 func (UnimplementedLabelServiceServer) mustEmbedUnimplementedLabelServiceServer() {}
@@ -165,7 +165,7 @@ func RegisterLabelServiceServer(s grpc.ServiceRegistrar, srv LabelServiceServer)
 }
 
 func _LabelService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListLabelsRequest)
+	in := new(List_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -177,13 +177,13 @@ func _LabelService_List_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: LabelService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelServiceServer).List(ctx, req.(*ListLabelsRequest))
+		return srv.(LabelServiceServer).List(ctx, req.(*List_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LabelService_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddLabelRequest)
+	in := new(Add_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -195,13 +195,13 @@ func _LabelService_Add_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: LabelService_Add_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelServiceServer).Add(ctx, req.(*AddLabelRequest))
+		return srv.(LabelServiceServer).Add(ctx, req.(*Add_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LabelService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteLabelRequest)
+	in := new(Delete_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -213,13 +213,13 @@ func _LabelService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: LabelService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelServiceServer).Delete(ctx, req.(*DeleteLabelRequest))
+		return srv.(LabelServiceServer).Delete(ctx, req.(*Delete_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LabelService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateLabelRequest)
+	in := new(Update_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -231,13 +231,13 @@ func _LabelService_Update_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: LabelService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelServiceServer).Update(ctx, req.(*UpdateLabelRequest))
+		return srv.(LabelServiceServer).Update(ctx, req.(*Update_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LabelService_ModifyContactLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ModifyContactLabelsRequest)
+	in := new(ModifyContact_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ func _LabelService_ModifyContactLabels_Handler(srv interface{}, ctx context.Cont
 		FullMethod: LabelService_ModifyContactLabels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelServiceServer).ModifyContactLabels(ctx, req.(*ModifyContactLabelsRequest))
+		return srv.(LabelServiceServer).ModifyContactLabels(ctx, req.(*ModifyContact_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }

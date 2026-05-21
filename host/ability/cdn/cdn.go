@@ -4,68 +4,68 @@ package cdnability
 import (
 	"io"
 
+	"github.com/sbgayhub/golem/host/api"
 	sdk "github.com/sbgayhub/golem/sdk/cdn"
 
-	api "github.com/sbgayhub/golem/host/api/cdn"
-	"github.com/sbgayhub/golem/host/api/util"
+	cdnapi "github.com/sbgayhub/golem/host/api/cdn"
 )
 
 // ability CDN 能力实现
 type ability struct {
-	api api.CDNService
+	api cdnapi.CDNService
 }
 
 func init() {
-	sdk.Instance = &ability{api: api.Get()}
+	sdk.Instance = &ability{api: cdnapi.Get()}
 }
 
 // UploadImage CDN 上传聊天图片
-func (a ability) UploadImage(receiver string, reader io.Reader) (*sdk.UploadImageResponse, error) {
+func (a ability) UploadImage(receiver string, reader io.Reader) (*sdk.UploadImage_Response, error) {
 	resp, err := a.api.UploadImage(receiver, reader)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.UploadImageResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.UploadImage_Response
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
 // UploadMomentsImage CDN 上传朋友圈图片
-func (a ability) UploadMomentsImage(imageData []byte) (*sdk.UploadMomentsImageResponse, error) {
+func (a ability) UploadMomentsImage(imageData []byte) (*sdk.UploadMomentsImage_Response, error) {
 	resp, err := a.api.UploadMomentsImage(imageData)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.UploadMomentsImageResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.UploadMomentsImage_Response
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
 // UploadVideo CDN 上传聊天视频
-func (a ability) UploadVideo(receiver string, thumb []byte, reader io.Reader, duration uint32) (*sdk.UploadVideoResponse, error) {
+func (a ability) UploadVideo(receiver string, thumb []byte, reader io.Reader, duration uint32) (*sdk.UploadVideo_Response, error) {
 	resp, err := a.api.UploadVideo(receiver, thumb, reader, duration)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.UploadVideoResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.UploadVideo_Response
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
 // UploadMomentsVideo CDN 上传朋友圈视频
-func (a ability) UploadMomentsVideo(videoData, thumbData []byte) (*sdk.UploadMomentsVideoResponse, error) {
+func (a ability) UploadMomentsVideo(videoData, thumbData []byte) (*sdk.UploadMomentsVideo_Response, error) {
 	resp, err := a.api.UploadMomentsVideo(videoData, thumbData)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result sdk.UploadMomentsVideoResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result sdk.UploadMomentsVideo_Response
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -86,7 +86,7 @@ func (a ability) DownloadVideo(fileID, fileAesKey string) (io.ReadCloser, error)
 	return a.api.DownloadVideo(fileID, fileAesKey)
 }
 
-// DownloadSnsVideo CDN 下载朋友圈视频
-func (a ability) DownloadSnsVideo(videoURL string, encKey uint64) ([]byte, error) {
+// DownloadMomentsVideo CDN 下载朋友圈视频
+func (a ability) DownloadMomentsVideo(videoURL string, encKey uint64) ([]byte, error) {
 	return a.api.DownloadSnsVideo(videoURL, encKey)
 }

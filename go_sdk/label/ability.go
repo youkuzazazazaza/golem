@@ -7,11 +7,11 @@ type Ability interface {
 	// Add 添加标签
 	Add(name string) (*LabelPair, error)
 	// Delete 删除标签
-	Delete(labelIds string) (*OperateResponse, error)
+	Delete(labelIds string) (*Delete_Response, error)
 	// Update 更新标签名称
-	Update(labelId uint32, name string) (*OperateResponse, error)
+	Update(labelId uint32, name string) (*Update_Response, error)
 	// ModifyContactLabels 修改联系人标签
-	ModifyContactLabels(usernames []string, labelIds string) (*OperateResponse, error)
+	ModifyContactLabels(usernames []string, labelIds string) (*ModifyContact_Response, error)
 }
 
 // Instance 标签能力实例（由 host/ability 层注入）

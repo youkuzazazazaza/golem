@@ -8,7 +8,7 @@ import (
 
 	"golem/pkg/contact"
 
-	"github.com/sbgayhub/golem/host/api/util"
+	"github.com/sbgayhub/golem/host/api"
 )
 
 // lib 联系人服务 lib 实现（直接调用底层实现）
@@ -20,45 +20,20 @@ var Get = sync.OnceValue(func() ContactService {
 })
 
 // List 获取联系人列表（增量同步）
-func (l lib) List(contactSequence, groupSequence int32) (*ListContactsResponse, error) {
-	resp, err := contact.List(contactSequence, groupSequence)
-	if resp == nil || err != nil {
-		return nil, err
-	}
-	var result ListContactsResponse
-	if err := util.TransformProto(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// ListAll 获取全部联系人列表（分页查询）
-func (l lib) ListAll(contactSequence, groupSequence, offset, limit int32) ([]*ContactInfo, error) {
-	resp, err := contact.ListAll(contactSequence, groupSequence, offset, limit)
-	if err != nil {
-		return nil, err
-	}
-	result := make([]*ContactInfo, len(resp))
-	for i, c := range resp {
-		result[i] = &ContactInfo{
-			Username: c.GetUsername(),
-			Nickname: c.GetNickname(),
-			Remark:   c.GetRemark(),
-		}
-	}
-	return result, nil
+func (l lib) List() ([]string, error) {
+	return contact.List()
 }
 
 // Detail 获取联系人详细信息
-func (l lib) Detail(usernames, groups []string) (*GetContactDetailResponse, error) {
-	resp, err := contact.Detail(usernames, groups)
+func (l lib) Detail(usernames []string) (*GetContactDetailResponse, error) {
+	resp, err := contact.Detail(usernames)
 	if resp == nil || err != nil {
 		return nil, err
 	}
 	var result GetContactDetailResponse
 	for _, mc := range resp.GetContactList() {
 		var apiContact ModifyContact
-		if err := util.TransformProto(mc, &apiContact); err != nil {
+		if err := api.TransformProto(mc, &apiContact); err != nil {
 			return nil, err
 		}
 		result.ContactList = append(result.ContactList, &apiContact)
@@ -73,7 +48,7 @@ func (l lib) SetRemark(username, remark string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -86,8 +61,8 @@ func (l lib) Search(keyword string, fromScene, searchScene uint32) (*SearchConta
 		return nil, err
 	}
 	return &SearchContactResponse{
-		Username: resp.GetUsername().GetValue(),
-		Nickname: resp.GetNickname().GetValue(),
+		Username: resp.GetUsername(),
+		Nickname: resp.GetNickname(),
 	}, nil
 }
 
@@ -98,7 +73,7 @@ func (l lib) Verify(v1, v2 string, scene int) (*VerifyUserResponse, error) {
 		return nil, err
 	}
 	var result VerifyUserResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -111,7 +86,7 @@ func (l lib) Request(v1, v2, content string, operate, scene int) (*VerifyUserRes
 		return nil, err
 	}
 	var result VerifyUserResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -124,7 +99,7 @@ func (l lib) BlacklistAdd(username string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -137,7 +112,7 @@ func (l lib) BlacklistRemove(username string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -150,20 +125,20 @@ func (l lib) Delete(username string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
 // LbsFind 附近的人
-func (l lib) LbsFind(latitude, longitude float32, operate uint32) (*LbsFindResponse, error) {
+func (l lib) LbsFind(latitude, longitude float32, operate uint32) (*LbsResponse, error) {
 	resp, err := contact.LbsFind(latitude, longitude, operate)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result LbsFindResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	var result LbsResponse
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -176,7 +151,7 @@ func (l lib) UploadContact(phones []string, currentPhone string, operate int32) 
 		return nil, err
 	}
 	var result UploadContactResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil

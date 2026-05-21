@@ -21,29 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// UploadImageChunk 上传图片分块
-type UploadImageChunk struct {
+type UploadImage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Receiver      string                 `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty"` // 接收者 wxid
-	Data          []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`         // 后续包携带数据
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadImageChunk) Reset() {
-	*x = UploadImageChunk{}
+func (x *UploadImage) Reset() {
+	*x = UploadImage{}
 	mi := &file_cdn_cdn_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadImageChunk) String() string {
+func (x *UploadImage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadImageChunk) ProtoMessage() {}
+func (*UploadImage) ProtoMessage() {}
 
-func (x *UploadImageChunk) ProtoReflect() protoreflect.Message {
+func (x *UploadImage) ProtoReflect() protoreflect.Message {
 	mi := &file_cdn_cdn_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,27 +52,448 @@ func (x *UploadImageChunk) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadImageChunk.ProtoReflect.Descriptor instead.
-func (*UploadImageChunk) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadImage.ProtoReflect.Descriptor instead.
+func (*UploadImage) Descriptor() ([]byte, []int) {
 	return file_cdn_cdn_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UploadImageChunk) GetReceiver() string {
+type UploadVideo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadVideo) Reset() {
+	*x = UploadVideo{}
+	mi := &file_cdn_cdn_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadVideo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadVideo) ProtoMessage() {}
+
+func (x *UploadVideo) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadVideo.ProtoReflect.Descriptor instead.
+func (*UploadVideo) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{1}
+}
+
+type DownloadImage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadImage) Reset() {
+	*x = DownloadImage{}
+	mi := &file_cdn_cdn_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadImage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadImage) ProtoMessage() {}
+
+func (x *DownloadImage) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadImage.ProtoReflect.Descriptor instead.
+func (*DownloadImage) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{2}
+}
+
+type DownloadVideo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadVideo) Reset() {
+	*x = DownloadVideo{}
+	mi := &file_cdn_cdn_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadVideo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadVideo) ProtoMessage() {}
+
+func (x *DownloadVideo) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadVideo.ProtoReflect.Descriptor instead.
+func (*DownloadVideo) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{3}
+}
+
+type UploadMomentsImage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMomentsImage) Reset() {
+	*x = UploadMomentsImage{}
+	mi := &file_cdn_cdn_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMomentsImage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMomentsImage) ProtoMessage() {}
+
+func (x *UploadMomentsImage) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMomentsImage.ProtoReflect.Descriptor instead.
+func (*UploadMomentsImage) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{4}
+}
+
+type UploadMomentsVideo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMomentsVideo) Reset() {
+	*x = UploadMomentsVideo{}
+	mi := &file_cdn_cdn_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMomentsVideo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMomentsVideo) ProtoMessage() {}
+
+func (x *UploadMomentsVideo) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMomentsVideo.ProtoReflect.Descriptor instead.
+func (*UploadMomentsVideo) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{5}
+}
+
+type DownloadVideoCover struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadVideoCover) Reset() {
+	*x = DownloadVideoCover{}
+	mi := &file_cdn_cdn_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadVideoCover) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadVideoCover) ProtoMessage() {}
+
+func (x *DownloadVideoCover) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadVideoCover.ProtoReflect.Descriptor instead.
+func (*DownloadVideoCover) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{6}
+}
+
+type DownloadMomentsVideo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadMomentsVideo) Reset() {
+	*x = DownloadMomentsVideo{}
+	mi := &file_cdn_cdn_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadMomentsVideo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadMomentsVideo) ProtoMessage() {}
+
+func (x *DownloadMomentsVideo) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadMomentsVideo.ProtoReflect.Descriptor instead.
+func (*DownloadMomentsVideo) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{7}
+}
+
+type UploadImage_Chunk struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Receiver      string                 `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty"` // 接收者 wxid
+	Data          []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`         // 后续包携带数据
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadImage_Chunk) Reset() {
+	*x = UploadImage_Chunk{}
+	mi := &file_cdn_cdn_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadImage_Chunk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadImage_Chunk) ProtoMessage() {}
+
+func (x *UploadImage_Chunk) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadImage_Chunk.ProtoReflect.Descriptor instead.
+func (*UploadImage_Chunk) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{0, 0}
+}
+
+func (x *UploadImage_Chunk) GetReceiver() string {
 	if x != nil {
 		return x.Receiver
 	}
 	return ""
 }
 
-func (x *UploadImageChunk) GetData() []byte {
+func (x *UploadImage_Chunk) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// UploadVideoChunk 上传视频分块
-type UploadVideoChunk struct {
+type UploadImage_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AesKey        *string                `protobuf:"bytes,1,opt,name=aes_key,json=aesKey,proto3,oneof" json:"aes_key,omitempty"`                  // 图片加密 AES 密钥（hex编码）
+	FileId        *string                `protobuf:"bytes,2,opt,name=file_id,json=fileId,proto3,oneof" json:"file_id,omitempty"`                  // CDN 文件ID
+	NewMsgId      *uint64                `protobuf:"varint,3,opt,name=new_msg_id,json=newMsgId,proto3,oneof" json:"new_msg_id,omitempty"`         // 新消息ID
+	CreateTime    *uint32                `protobuf:"varint,4,opt,name=create_time,json=createTime,proto3,oneof" json:"create_time,omitempty"`     // 创建时间
+	FileSize      *uint32                `protobuf:"varint,5,opt,name=file_size,json=fileSize,proto3,oneof" json:"file_size,omitempty"`           // 文件大小
+	FileMd5       *string                `protobuf:"bytes,6,opt,name=file_md5,json=fileMd5,proto3,oneof" json:"file_md5,omitempty"`               // 文件MD5
+	FileWidth     *uint32                `protobuf:"varint,7,opt,name=file_width,json=fileWidth,proto3,oneof" json:"file_width,omitempty"`        // 图片宽度
+	FileHeight    *uint32                `protobuf:"varint,8,opt,name=file_height,json=fileHeight,proto3,oneof" json:"file_height,omitempty"`     // 图片高度
+	ThumbSize     *uint32                `protobuf:"varint,9,opt,name=thumb_size,json=thumbSize,proto3,oneof" json:"thumb_size,omitempty"`        // 缩略图大小
+	ThumbMd5      *string                `protobuf:"bytes,10,opt,name=thumb_md5,json=thumbMd5,proto3,oneof" json:"thumb_md5,omitempty"`           // 缩略图MD5
+	ThumbWidth    *uint32                `protobuf:"varint,11,opt,name=thumb_width,json=thumbWidth,proto3,oneof" json:"thumb_width,omitempty"`    // 缩略图宽度
+	ThumbHeight   *uint32                `protobuf:"varint,12,opt,name=thumb_height,json=thumbHeight,proto3,oneof" json:"thumb_height,omitempty"` // 缩略图高度
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadImage_Response) Reset() {
+	*x = UploadImage_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadImage_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadImage_Response) ProtoMessage() {}
+
+func (x *UploadImage_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadImage_Response.ProtoReflect.Descriptor instead.
+func (*UploadImage_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{0, 1}
+}
+
+func (x *UploadImage_Response) GetAesKey() string {
+	if x != nil && x.AesKey != nil {
+		return *x.AesKey
+	}
+	return ""
+}
+
+func (x *UploadImage_Response) GetFileId() string {
+	if x != nil && x.FileId != nil {
+		return *x.FileId
+	}
+	return ""
+}
+
+func (x *UploadImage_Response) GetNewMsgId() uint64 {
+	if x != nil && x.NewMsgId != nil {
+		return *x.NewMsgId
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetCreateTime() uint32 {
+	if x != nil && x.CreateTime != nil {
+		return *x.CreateTime
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetFileSize() uint32 {
+	if x != nil && x.FileSize != nil {
+		return *x.FileSize
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetFileMd5() string {
+	if x != nil && x.FileMd5 != nil {
+		return *x.FileMd5
+	}
+	return ""
+}
+
+func (x *UploadImage_Response) GetFileWidth() uint32 {
+	if x != nil && x.FileWidth != nil {
+		return *x.FileWidth
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetFileHeight() uint32 {
+	if x != nil && x.FileHeight != nil {
+		return *x.FileHeight
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetThumbSize() uint32 {
+	if x != nil && x.ThumbSize != nil {
+		return *x.ThumbSize
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetThumbMd5() string {
+	if x != nil && x.ThumbMd5 != nil {
+		return *x.ThumbMd5
+	}
+	return ""
+}
+
+func (x *UploadImage_Response) GetThumbWidth() uint32 {
+	if x != nil && x.ThumbWidth != nil {
+		return *x.ThumbWidth
+	}
+	return 0
+}
+
+func (x *UploadImage_Response) GetThumbHeight() uint32 {
+	if x != nil && x.ThumbHeight != nil {
+		return *x.ThumbHeight
+	}
+	return 0
+}
+
+type UploadVideo_Chunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Receiver      string                 `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty"`  // 第一个包携带元数据
 	Duration      uint32                 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"` // 视频时长（秒）
@@ -85,21 +503,21 @@ type UploadVideoChunk struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadVideoChunk) Reset() {
-	*x = UploadVideoChunk{}
-	mi := &file_cdn_cdn_proto_msgTypes[1]
+func (x *UploadVideo_Chunk) Reset() {
+	*x = UploadVideo_Chunk{}
+	mi := &file_cdn_cdn_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadVideoChunk) String() string {
+func (x *UploadVideo_Chunk) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadVideoChunk) ProtoMessage() {}
+func (*UploadVideo_Chunk) ProtoMessage() {}
 
-func (x *UploadVideoChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[1]
+func (x *UploadVideo_Chunk) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -110,62 +528,189 @@ func (x *UploadVideoChunk) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadVideoChunk.ProtoReflect.Descriptor instead.
-func (*UploadVideoChunk) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use UploadVideo_Chunk.ProtoReflect.Descriptor instead.
+func (*UploadVideo_Chunk) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{1, 0}
 }
 
-func (x *UploadVideoChunk) GetReceiver() string {
+func (x *UploadVideo_Chunk) GetReceiver() string {
 	if x != nil {
 		return x.Receiver
 	}
 	return ""
 }
 
-func (x *UploadVideoChunk) GetDuration() uint32 {
+func (x *UploadVideo_Chunk) GetDuration() uint32 {
 	if x != nil {
 		return x.Duration
 	}
 	return 0
 }
 
-func (x *UploadVideoChunk) GetThumb() []byte {
+func (x *UploadVideo_Chunk) GetThumb() []byte {
 	if x != nil {
 		return x.Thumb
 	}
 	return nil
 }
 
-func (x *UploadVideoChunk) GetData() []byte {
+func (x *UploadVideo_Chunk) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// DownloadImageChunk 下载图片分块
-type DownloadImageChunk struct {
+type UploadVideo_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AesKey        *string                `protobuf:"bytes,1,opt,name=aes_key,json=aesKey,proto3,oneof" json:"aes_key,omitempty"`           // 视频加密 AES 密钥（hex编码）
+	FileId        *string                `protobuf:"bytes,2,opt,name=file_id,json=fileId,proto3,oneof" json:"file_id,omitempty"`           // CDN 文件ID
+	FileSize      *uint32                `protobuf:"varint,3,opt,name=file_size,json=fileSize,proto3,oneof" json:"file_size,omitempty"`    // 视频文件大小
+	ThumbSize     *uint32                `protobuf:"varint,4,opt,name=thumb_size,json=thumbSize,proto3,oneof" json:"thumb_size,omitempty"` // 缩略图大小
+	FileMd5       *string                `protobuf:"bytes,5,opt,name=file_md5,json=fileMd5,proto3,oneof" json:"file_md5,omitempty"`        // 视频MD5
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadVideo_Response) Reset() {
+	*x = UploadVideo_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadVideo_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadVideo_Response) ProtoMessage() {}
+
+func (x *UploadVideo_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadVideo_Response.ProtoReflect.Descriptor instead.
+func (*UploadVideo_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{1, 1}
+}
+
+func (x *UploadVideo_Response) GetAesKey() string {
+	if x != nil && x.AesKey != nil {
+		return *x.AesKey
+	}
+	return ""
+}
+
+func (x *UploadVideo_Response) GetFileId() string {
+	if x != nil && x.FileId != nil {
+		return *x.FileId
+	}
+	return ""
+}
+
+func (x *UploadVideo_Response) GetFileSize() uint32 {
+	if x != nil && x.FileSize != nil {
+		return *x.FileSize
+	}
+	return 0
+}
+
+func (x *UploadVideo_Response) GetThumbSize() uint32 {
+	if x != nil && x.ThumbSize != nil {
+		return *x.ThumbSize
+	}
+	return 0
+}
+
+func (x *UploadVideo_Response) GetFileMd5() string {
+	if x != nil && x.FileMd5 != nil {
+		return *x.FileMd5
+	}
+	return ""
+}
+
+type DownloadImage_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"` // CDN 文件ID
+	AesKey        string                 `protobuf:"bytes,2,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"` // AES 密钥（hex编码）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadImage_Request) Reset() {
+	*x = DownloadImage_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadImage_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadImage_Request) ProtoMessage() {}
+
+func (x *DownloadImage_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadImage_Request.ProtoReflect.Descriptor instead.
+func (*DownloadImage_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *DownloadImage_Request) GetFileId() string {
+	if x != nil {
+		return x.FileId
+	}
+	return ""
+}
+
+func (x *DownloadImage_Request) GetAesKey() string {
+	if x != nil {
+		return x.AesKey
+	}
+	return ""
+}
+
+type DownloadImage_Chunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"` // 图片数据块
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DownloadImageChunk) Reset() {
-	*x = DownloadImageChunk{}
-	mi := &file_cdn_cdn_proto_msgTypes[2]
+func (x *DownloadImage_Chunk) Reset() {
+	*x = DownloadImage_Chunk{}
+	mi := &file_cdn_cdn_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DownloadImageChunk) String() string {
+func (x *DownloadImage_Chunk) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DownloadImageChunk) ProtoMessage() {}
+func (*DownloadImage_Chunk) ProtoMessage() {}
 
-func (x *DownloadImageChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[2]
+func (x *DownloadImage_Chunk) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -176,41 +721,92 @@ func (x *DownloadImageChunk) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DownloadImageChunk.ProtoReflect.Descriptor instead.
-func (*DownloadImageChunk) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use DownloadImage_Chunk.ProtoReflect.Descriptor instead.
+func (*DownloadImage_Chunk) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{2, 1}
 }
 
-func (x *DownloadImageChunk) GetData() []byte {
+func (x *DownloadImage_Chunk) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// DownloadVideoChunk 下载视频分块
-type DownloadVideoChunk struct {
+type DownloadVideo_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"` // CDN 文件ID
+	AesKey        string                 `protobuf:"bytes,2,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"` // AES 密钥（hex编码）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadVideo_Request) Reset() {
+	*x = DownloadVideo_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadVideo_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadVideo_Request) ProtoMessage() {}
+
+func (x *DownloadVideo_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadVideo_Request.ProtoReflect.Descriptor instead.
+func (*DownloadVideo_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *DownloadVideo_Request) GetFileId() string {
+	if x != nil {
+		return x.FileId
+	}
+	return ""
+}
+
+func (x *DownloadVideo_Request) GetAesKey() string {
+	if x != nil {
+		return x.AesKey
+	}
+	return ""
+}
+
+type DownloadVideo_Chunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"` // 视频数据块
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DownloadVideoChunk) Reset() {
-	*x = DownloadVideoChunk{}
-	mi := &file_cdn_cdn_proto_msgTypes[3]
+func (x *DownloadVideo_Chunk) Reset() {
+	*x = DownloadVideo_Chunk{}
+	mi := &file_cdn_cdn_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DownloadVideoChunk) String() string {
+func (x *DownloadVideo_Chunk) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DownloadVideoChunk) ProtoMessage() {}
+func (*DownloadVideo_Chunk) ProtoMessage() {}
 
-func (x *DownloadVideoChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[3]
+func (x *DownloadVideo_Chunk) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -221,41 +817,40 @@ func (x *DownloadVideoChunk) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DownloadVideoChunk.ProtoReflect.Descriptor instead.
-func (*DownloadVideoChunk) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use DownloadVideo_Chunk.ProtoReflect.Descriptor instead.
+func (*DownloadVideo_Chunk) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{3, 1}
 }
 
-func (x *DownloadVideoChunk) GetData() []byte {
+func (x *DownloadVideo_Chunk) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// UploadMomentsImageRequest CDN 上传朋友圈图片请求
-type UploadMomentsImageRequest struct {
+type UploadMomentsImage_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"` // 图片二进制数据
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadMomentsImageRequest) Reset() {
-	*x = UploadMomentsImageRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[4]
+func (x *UploadMomentsImage_Request) Reset() {
+	*x = UploadMomentsImage_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadMomentsImageRequest) String() string {
+func (x *UploadMomentsImage_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadMomentsImageRequest) ProtoMessage() {}
+func (*UploadMomentsImage_Request) ProtoMessage() {}
 
-func (x *UploadMomentsImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[4]
+func (x *UploadMomentsImage_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -266,20 +861,103 @@ func (x *UploadMomentsImageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadMomentsImageRequest.ProtoReflect.Descriptor instead.
-func (*UploadMomentsImageRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use UploadMomentsImage_Request.ProtoReflect.Descriptor instead.
+func (*UploadMomentsImage_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{4, 0}
 }
 
-func (x *UploadMomentsImageRequest) GetData() []byte {
+func (x *UploadMomentsImage_Request) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// UploadMomentsVideoRequest CDN 上传朋友圈视频请求
-type UploadMomentsVideoRequest struct {
+type UploadMomentsImage_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileUrl       *string                `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3,oneof" json:"file_url,omitempty"`              // CDN 文件URL
+	ThumbUrl      *string                `protobuf:"bytes,2,opt,name=thumb_url,json=thumbUrl,proto3,oneof" json:"thumb_url,omitempty"`           // CDN 缩略图URL
+	FileKey       *string                `protobuf:"bytes,3,opt,name=file_key,json=fileKey,proto3,oneof" json:"file_key,omitempty"`              // 文件Key
+	FileMd5       *string                `protobuf:"bytes,4,opt,name=file_md5,json=fileMd5,proto3,oneof" json:"file_md5,omitempty"`              // 文件MD5
+	ImageWidth    *uint32                `protobuf:"varint,5,opt,name=image_width,json=imageWidth,proto3,oneof" json:"image_width,omitempty"`    // 图片宽度
+	ImageHeight   *uint32                `protobuf:"varint,6,opt,name=image_height,json=imageHeight,proto3,oneof" json:"image_height,omitempty"` // 图片高度
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMomentsImage_Response) Reset() {
+	*x = UploadMomentsImage_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMomentsImage_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMomentsImage_Response) ProtoMessage() {}
+
+func (x *UploadMomentsImage_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMomentsImage_Response.ProtoReflect.Descriptor instead.
+func (*UploadMomentsImage_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{4, 1}
+}
+
+func (x *UploadMomentsImage_Response) GetFileUrl() string {
+	if x != nil && x.FileUrl != nil {
+		return *x.FileUrl
+	}
+	return ""
+}
+
+func (x *UploadMomentsImage_Response) GetThumbUrl() string {
+	if x != nil && x.ThumbUrl != nil {
+		return *x.ThumbUrl
+	}
+	return ""
+}
+
+func (x *UploadMomentsImage_Response) GetFileKey() string {
+	if x != nil && x.FileKey != nil {
+		return *x.FileKey
+	}
+	return ""
+}
+
+func (x *UploadMomentsImage_Response) GetFileMd5() string {
+	if x != nil && x.FileMd5 != nil {
+		return *x.FileMd5
+	}
+	return ""
+}
+
+func (x *UploadMomentsImage_Response) GetImageWidth() uint32 {
+	if x != nil && x.ImageWidth != nil {
+		return *x.ImageWidth
+	}
+	return 0
+}
+
+func (x *UploadMomentsImage_Response) GetImageHeight() uint32 {
+	if x != nil && x.ImageHeight != nil {
+		return *x.ImageHeight
+	}
+	return 0
+}
+
+type UploadMomentsVideo_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	VideoData     []byte                 `protobuf:"bytes,1,opt,name=video_data,json=videoData,proto3" json:"video_data,omitempty"` // 视频二进制数据
 	ThumbData     []byte                 `protobuf:"bytes,2,opt,name=thumb_data,json=thumbData,proto3" json:"thumb_data,omitempty"` // 缩略图二进制数据
@@ -287,21 +965,21 @@ type UploadMomentsVideoRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadMomentsVideoRequest) Reset() {
-	*x = UploadMomentsVideoRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[5]
+func (x *UploadMomentsVideo_Request) Reset() {
+	*x = UploadMomentsVideo_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadMomentsVideoRequest) String() string {
+func (x *UploadMomentsVideo_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadMomentsVideoRequest) ProtoMessage() {}
+func (*UploadMomentsVideo_Request) ProtoMessage() {}
 
-func (x *UploadMomentsVideoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[5]
+func (x *UploadMomentsVideo_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -312,59 +990,50 @@ func (x *UploadMomentsVideoRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadMomentsVideoRequest.ProtoReflect.Descriptor instead.
-func (*UploadMomentsVideoRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use UploadMomentsVideo_Request.ProtoReflect.Descriptor instead.
+func (*UploadMomentsVideo_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{5, 0}
 }
 
-func (x *UploadMomentsVideoRequest) GetVideoData() []byte {
+func (x *UploadMomentsVideo_Request) GetVideoData() []byte {
 	if x != nil {
 		return x.VideoData
 	}
 	return nil
 }
 
-func (x *UploadMomentsVideoRequest) GetThumbData() []byte {
+func (x *UploadMomentsVideo_Request) GetThumbData() []byte {
 	if x != nil {
 		return x.ThumbData
 	}
 	return nil
 }
 
-// UploadImageResponse 上传图片响应
-type UploadImageResponse struct {
+type UploadMomentsVideo_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AesKey        string                 `protobuf:"bytes,1,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"`                  // 图片加密 AES 密钥（hex编码）
-	FileId        string                 `protobuf:"bytes,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`                  // CDN 文件ID
-	NewMsgId      uint64                 `protobuf:"varint,3,opt,name=new_msg_id,json=newMsgId,proto3" json:"new_msg_id,omitempty"`         // 新消息ID
-	CreateTime    uint32                 `protobuf:"varint,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`     // 创建时间
-	FileSize      uint32                 `protobuf:"varint,5,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`           // 文件大小
-	FileMd5       string                 `protobuf:"bytes,6,opt,name=file_md5,json=fileMd5,proto3" json:"file_md5,omitempty"`               // 文件MD5
-	FileWidth     uint32                 `protobuf:"varint,7,opt,name=file_width,json=fileWidth,proto3" json:"file_width,omitempty"`        // 图片宽度
-	FileHeight    uint32                 `protobuf:"varint,8,opt,name=file_height,json=fileHeight,proto3" json:"file_height,omitempty"`     // 图片高度
-	ThumbSize     uint32                 `protobuf:"varint,9,opt,name=thumb_size,json=thumbSize,proto3" json:"thumb_size,omitempty"`        // 缩略图大小
-	ThumbMd5      string                 `protobuf:"bytes,10,opt,name=thumb_md5,json=thumbMd5,proto3" json:"thumb_md5,omitempty"`           // 缩略图MD5
-	ThumbWidth    uint32                 `protobuf:"varint,11,opt,name=thumb_width,json=thumbWidth,proto3" json:"thumb_width,omitempty"`    // 缩略图宽度
-	ThumbHeight   uint32                 `protobuf:"varint,12,opt,name=thumb_height,json=thumbHeight,proto3" json:"thumb_height,omitempty"` // 缩略图高度
+	FileUrl       *string                `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3,oneof" json:"file_url,omitempty"`    // CDN 视频URL
+	ThumbUrl      *string                `protobuf:"bytes,2,opt,name=thumb_url,json=thumbUrl,proto3,oneof" json:"thumb_url,omitempty"` // CDN 缩略图URL
+	FileId        *string                `protobuf:"bytes,3,opt,name=file_id,json=fileId,proto3,oneof" json:"file_id,omitempty"`       // 文件ID
+	FileKey       *string                `protobuf:"bytes,4,opt,name=file_key,json=fileKey,proto3,oneof" json:"file_key,omitempty"`    // 文件Key
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadImageResponse) Reset() {
-	*x = UploadImageResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[6]
+func (x *UploadMomentsVideo_Response) Reset() {
+	*x = UploadMomentsVideo_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadImageResponse) String() string {
+func (x *UploadMomentsVideo_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadImageResponse) ProtoMessage() {}
+func (*UploadMomentsVideo_Response) ProtoMessage() {}
 
-func (x *UploadImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[6]
+func (x *UploadMomentsVideo_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -375,508 +1044,40 @@ func (x *UploadImageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadImageResponse.ProtoReflect.Descriptor instead.
-func (*UploadImageResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{6}
+// Deprecated: Use UploadMomentsVideo_Response.ProtoReflect.Descriptor instead.
+func (*UploadMomentsVideo_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{5, 1}
 }
 
-func (x *UploadImageResponse) GetAesKey() string {
-	if x != nil {
-		return x.AesKey
+func (x *UploadMomentsVideo_Response) GetFileUrl() string {
+	if x != nil && x.FileUrl != nil {
+		return *x.FileUrl
 	}
 	return ""
 }
 
-func (x *UploadImageResponse) GetFileId() string {
-	if x != nil {
-		return x.FileId
+func (x *UploadMomentsVideo_Response) GetThumbUrl() string {
+	if x != nil && x.ThumbUrl != nil {
+		return *x.ThumbUrl
 	}
 	return ""
 }
 
-func (x *UploadImageResponse) GetNewMsgId() uint64 {
-	if x != nil {
-		return x.NewMsgId
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetCreateTime() uint32 {
-	if x != nil {
-		return x.CreateTime
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetFileSize() uint32 {
-	if x != nil {
-		return x.FileSize
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetFileMd5() string {
-	if x != nil {
-		return x.FileMd5
+func (x *UploadMomentsVideo_Response) GetFileId() string {
+	if x != nil && x.FileId != nil {
+		return *x.FileId
 	}
 	return ""
 }
 
-func (x *UploadImageResponse) GetFileWidth() uint32 {
-	if x != nil {
-		return x.FileWidth
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetFileHeight() uint32 {
-	if x != nil {
-		return x.FileHeight
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetThumbSize() uint32 {
-	if x != nil {
-		return x.ThumbSize
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetThumbMd5() string {
-	if x != nil {
-		return x.ThumbMd5
+func (x *UploadMomentsVideo_Response) GetFileKey() string {
+	if x != nil && x.FileKey != nil {
+		return *x.FileKey
 	}
 	return ""
 }
 
-func (x *UploadImageResponse) GetThumbWidth() uint32 {
-	if x != nil {
-		return x.ThumbWidth
-	}
-	return 0
-}
-
-func (x *UploadImageResponse) GetThumbHeight() uint32 {
-	if x != nil {
-		return x.ThumbHeight
-	}
-	return 0
-}
-
-// UploadMomentsImageResponse 上传朋友圈图片响应
-type UploadMomentsImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileUrl       string                 `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`              // CDN 文件URL
-	ThumbUrl      string                 `protobuf:"bytes,2,opt,name=thumb_url,json=thumbUrl,proto3" json:"thumb_url,omitempty"`           // CDN 缩略图URL
-	FileKey       string                 `protobuf:"bytes,3,opt,name=file_key,json=fileKey,proto3" json:"file_key,omitempty"`              // 文件Key
-	FileMd5       string                 `protobuf:"bytes,4,opt,name=file_md5,json=fileMd5,proto3" json:"file_md5,omitempty"`              // 文件MD5
-	ImageWidth    uint32                 `protobuf:"varint,5,opt,name=image_width,json=imageWidth,proto3" json:"image_width,omitempty"`    // 图片宽度
-	ImageHeight   uint32                 `protobuf:"varint,6,opt,name=image_height,json=imageHeight,proto3" json:"image_height,omitempty"` // 图片高度
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UploadMomentsImageResponse) Reset() {
-	*x = UploadMomentsImageResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UploadMomentsImageResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UploadMomentsImageResponse) ProtoMessage() {}
-
-func (x *UploadMomentsImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UploadMomentsImageResponse.ProtoReflect.Descriptor instead.
-func (*UploadMomentsImageResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *UploadMomentsImageResponse) GetFileUrl() string {
-	if x != nil {
-		return x.FileUrl
-	}
-	return ""
-}
-
-func (x *UploadMomentsImageResponse) GetThumbUrl() string {
-	if x != nil {
-		return x.ThumbUrl
-	}
-	return ""
-}
-
-func (x *UploadMomentsImageResponse) GetFileKey() string {
-	if x != nil {
-		return x.FileKey
-	}
-	return ""
-}
-
-func (x *UploadMomentsImageResponse) GetFileMd5() string {
-	if x != nil {
-		return x.FileMd5
-	}
-	return ""
-}
-
-func (x *UploadMomentsImageResponse) GetImageWidth() uint32 {
-	if x != nil {
-		return x.ImageWidth
-	}
-	return 0
-}
-
-func (x *UploadMomentsImageResponse) GetImageHeight() uint32 {
-	if x != nil {
-		return x.ImageHeight
-	}
-	return 0
-}
-
-// UploadVideoResponse 上传视频响应
-type UploadVideoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AesKey        string                 `protobuf:"bytes,1,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"`           // 视频加密 AES 密钥（hex编码）
-	FileId        string                 `protobuf:"bytes,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`           // CDN 文件ID
-	FileSize      uint32                 `protobuf:"varint,3,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`    // 视频文件大小
-	ThumbSize     uint32                 `protobuf:"varint,4,opt,name=thumb_size,json=thumbSize,proto3" json:"thumb_size,omitempty"` // 缩略图大小
-	FileMd5       string                 `protobuf:"bytes,5,opt,name=file_md5,json=fileMd5,proto3" json:"file_md5,omitempty"`        // 视频MD5
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UploadVideoResponse) Reset() {
-	*x = UploadVideoResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UploadVideoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UploadVideoResponse) ProtoMessage() {}
-
-func (x *UploadVideoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UploadVideoResponse.ProtoReflect.Descriptor instead.
-func (*UploadVideoResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *UploadVideoResponse) GetAesKey() string {
-	if x != nil {
-		return x.AesKey
-	}
-	return ""
-}
-
-func (x *UploadVideoResponse) GetFileId() string {
-	if x != nil {
-		return x.FileId
-	}
-	return ""
-}
-
-func (x *UploadVideoResponse) GetFileSize() uint32 {
-	if x != nil {
-		return x.FileSize
-	}
-	return 0
-}
-
-func (x *UploadVideoResponse) GetThumbSize() uint32 {
-	if x != nil {
-		return x.ThumbSize
-	}
-	return 0
-}
-
-func (x *UploadVideoResponse) GetFileMd5() string {
-	if x != nil {
-		return x.FileMd5
-	}
-	return ""
-}
-
-// UploadMomentsVideoResponse 上传朋友圈视频响应
-type UploadMomentsVideoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileUrl       string                 `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`    // CDN 视频URL
-	ThumbUrl      string                 `protobuf:"bytes,2,opt,name=thumb_url,json=thumbUrl,proto3" json:"thumb_url,omitempty"` // CDN 缩略图URL
-	FileId        string                 `protobuf:"bytes,3,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`       // 文件ID
-	FileKey       string                 `protobuf:"bytes,4,opt,name=file_key,json=fileKey,proto3" json:"file_key,omitempty"`    // 文件Key
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UploadMomentsVideoResponse) Reset() {
-	*x = UploadMomentsVideoResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UploadMomentsVideoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UploadMomentsVideoResponse) ProtoMessage() {}
-
-func (x *UploadMomentsVideoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UploadMomentsVideoResponse.ProtoReflect.Descriptor instead.
-func (*UploadMomentsVideoResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *UploadMomentsVideoResponse) GetFileUrl() string {
-	if x != nil {
-		return x.FileUrl
-	}
-	return ""
-}
-
-func (x *UploadMomentsVideoResponse) GetThumbUrl() string {
-	if x != nil {
-		return x.ThumbUrl
-	}
-	return ""
-}
-
-func (x *UploadMomentsVideoResponse) GetFileId() string {
-	if x != nil {
-		return x.FileId
-	}
-	return ""
-}
-
-func (x *UploadMomentsVideoResponse) GetFileKey() string {
-	if x != nil {
-		return x.FileKey
-	}
-	return ""
-}
-
-// DownloadImageResponse 下载图片响应（非流式）
-type DownloadImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadImageResponse) Reset() {
-	*x = DownloadImageResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadImageResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadImageResponse) ProtoMessage() {}
-
-func (x *DownloadImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadImageResponse.ProtoReflect.Descriptor instead.
-func (*DownloadImageResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *DownloadImageResponse) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// DownloadVideoCoverResponse 下载视频封面响应
-type DownloadVideoCoverResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadVideoCoverResponse) Reset() {
-	*x = DownloadVideoCoverResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadVideoCoverResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadVideoCoverResponse) ProtoMessage() {}
-
-func (x *DownloadVideoCoverResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadVideoCoverResponse.ProtoReflect.Descriptor instead.
-func (*DownloadVideoCoverResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *DownloadVideoCoverResponse) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// DownloadVideoResponse 下载视频响应（非流式）
-type DownloadVideoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadVideoResponse) Reset() {
-	*x = DownloadVideoResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadVideoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadVideoResponse) ProtoMessage() {}
-
-func (x *DownloadVideoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadVideoResponse.ProtoReflect.Descriptor instead.
-func (*DownloadVideoResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *DownloadVideoResponse) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// DownloadSnsVideoResponse 下载朋友圈视频响应
-type DownloadMomentsVideoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadMomentsVideoResponse) Reset() {
-	*x = DownloadMomentsVideoResponse{}
-	mi := &file_cdn_cdn_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadMomentsVideoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadMomentsVideoResponse) ProtoMessage() {}
-
-func (x *DownloadMomentsVideoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadMomentsVideoResponse.ProtoReflect.Descriptor instead.
-func (*DownloadMomentsVideoResponse) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *DownloadMomentsVideoResponse) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-// DownloadImageRequest CDN 下载高清图片请求
-type DownloadImageRequest struct {
+type DownloadVideoCover_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"` // CDN 文件ID
 	AesKey        string                 `protobuf:"bytes,2,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"` // AES 密钥（hex编码）
@@ -884,21 +1085,21 @@ type DownloadImageRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DownloadImageRequest) Reset() {
-	*x = DownloadImageRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[14]
+func (x *DownloadVideoCover_Request) Reset() {
+	*x = DownloadVideoCover_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DownloadImageRequest) String() string {
+func (x *DownloadVideoCover_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DownloadImageRequest) ProtoMessage() {}
+func (*DownloadVideoCover_Request) ProtoMessage() {}
 
-func (x *DownloadImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[14]
+func (x *DownloadVideoCover_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -909,49 +1110,47 @@ func (x *DownloadImageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DownloadImageRequest.ProtoReflect.Descriptor instead.
-func (*DownloadImageRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{14}
+// Deprecated: Use DownloadVideoCover_Request.ProtoReflect.Descriptor instead.
+func (*DownloadVideoCover_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{6, 0}
 }
 
-func (x *DownloadImageRequest) GetFileId() string {
+func (x *DownloadVideoCover_Request) GetFileId() string {
 	if x != nil {
 		return x.FileId
 	}
 	return ""
 }
 
-func (x *DownloadImageRequest) GetAesKey() string {
+func (x *DownloadVideoCover_Request) GetAesKey() string {
 	if x != nil {
 		return x.AesKey
 	}
 	return ""
 }
 
-// DownloadVideoCoverRequest CDN 下载视频封面请求
-type DownloadVideoCoverRequest struct {
+type DownloadVideoCover_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"` // CDN 文件ID
-	AesKey        string                 `protobuf:"bytes,2,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"` // AES 密钥（hex编码）
+	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DownloadVideoCoverRequest) Reset() {
-	*x = DownloadVideoCoverRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[15]
+func (x *DownloadVideoCover_Response) Reset() {
+	*x = DownloadVideoCover_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DownloadVideoCoverRequest) String() string {
+func (x *DownloadVideoCover_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DownloadVideoCoverRequest) ProtoMessage() {}
+func (*DownloadVideoCover_Response) ProtoMessage() {}
 
-func (x *DownloadVideoCoverRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[15]
+func (x *DownloadVideoCover_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -962,80 +1161,19 @@ func (x *DownloadVideoCoverRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DownloadVideoCoverRequest.ProtoReflect.Descriptor instead.
-func (*DownloadVideoCoverRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{15}
+// Deprecated: Use DownloadVideoCover_Response.ProtoReflect.Descriptor instead.
+func (*DownloadVideoCover_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{6, 1}
 }
 
-func (x *DownloadVideoCoverRequest) GetFileId() string {
+func (x *DownloadVideoCover_Response) GetData() []byte {
 	if x != nil {
-		return x.FileId
+		return x.Data
 	}
-	return ""
+	return nil
 }
 
-func (x *DownloadVideoCoverRequest) GetAesKey() string {
-	if x != nil {
-		return x.AesKey
-	}
-	return ""
-}
-
-// DownloadVideoRequest CDN 下载聊天视频请求
-type DownloadVideoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        string                 `protobuf:"bytes,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"` // CDN 文件ID
-	AesKey        string                 `protobuf:"bytes,2,opt,name=aes_key,json=aesKey,proto3" json:"aes_key,omitempty"` // AES 密钥（hex编码）
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadVideoRequest) Reset() {
-	*x = DownloadVideoRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadVideoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadVideoRequest) ProtoMessage() {}
-
-func (x *DownloadVideoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadVideoRequest.ProtoReflect.Descriptor instead.
-func (*DownloadVideoRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *DownloadVideoRequest) GetFileId() string {
-	if x != nil {
-		return x.FileId
-	}
-	return ""
-}
-
-func (x *DownloadVideoRequest) GetAesKey() string {
-	if x != nil {
-		return x.AesKey
-	}
-	return ""
-}
-
-// DownloadSnsVideoRequest CDN 下载朋友圈视频请求
-type DownloadSnsVideoRequest struct {
+type DownloadMomentsVideo_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	VideoUrl      string                 `protobuf:"bytes,1,opt,name=video_url,json=videoUrl,proto3" json:"video_url,omitempty"` // 加密视频 URL
 	EncKey        uint64                 `protobuf:"varint,2,opt,name=enc_key,json=encKey,proto3" json:"enc_key,omitempty"`      // 解密密钥
@@ -1043,21 +1181,21 @@ type DownloadSnsVideoRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DownloadSnsVideoRequest) Reset() {
-	*x = DownloadSnsVideoRequest{}
-	mi := &file_cdn_cdn_proto_msgTypes[17]
+func (x *DownloadMomentsVideo_Request) Reset() {
+	*x = DownloadMomentsVideo_Request{}
+	mi := &file_cdn_cdn_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DownloadSnsVideoRequest) String() string {
+func (x *DownloadMomentsVideo_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DownloadSnsVideoRequest) ProtoMessage() {}
+func (*DownloadMomentsVideo_Request) ProtoMessage() {}
 
-func (x *DownloadSnsVideoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cdn_cdn_proto_msgTypes[17]
+func (x *DownloadMomentsVideo_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,119 +1206,205 @@ func (x *DownloadSnsVideoRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DownloadSnsVideoRequest.ProtoReflect.Descriptor instead.
-func (*DownloadSnsVideoRequest) Descriptor() ([]byte, []int) {
-	return file_cdn_cdn_proto_rawDescGZIP(), []int{17}
+// Deprecated: Use DownloadMomentsVideo_Request.ProtoReflect.Descriptor instead.
+func (*DownloadMomentsVideo_Request) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{7, 0}
 }
 
-func (x *DownloadSnsVideoRequest) GetVideoUrl() string {
+func (x *DownloadMomentsVideo_Request) GetVideoUrl() string {
 	if x != nil {
 		return x.VideoUrl
 	}
 	return ""
 }
 
-func (x *DownloadSnsVideoRequest) GetEncKey() uint64 {
+func (x *DownloadMomentsVideo_Request) GetEncKey() uint64 {
 	if x != nil {
 		return x.EncKey
 	}
 	return 0
 }
 
+type DownloadMomentsVideo_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadMomentsVideo_Response) Reset() {
+	*x = DownloadMomentsVideo_Response{}
+	mi := &file_cdn_cdn_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadMomentsVideo_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadMomentsVideo_Response) ProtoMessage() {}
+
+func (x *DownloadMomentsVideo_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_cdn_cdn_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadMomentsVideo_Response.ProtoReflect.Descriptor instead.
+func (*DownloadMomentsVideo_Response) Descriptor() ([]byte, []int) {
+	return file_cdn_cdn_proto_rawDescGZIP(), []int{7, 1}
+}
+
+func (x *DownloadMomentsVideo_Response) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_cdn_cdn_proto protoreflect.FileDescriptor
 
 const file_cdn_cdn_proto_rawDesc = "" +
 	"\n" +
-	"\rcdn/cdn.proto\x12\x03cdn\"B\n" +
-	"\x10UploadImageChunk\x12\x1a\n" +
+	"\rcdn/cdn.proto\x12\x03cdn\"\xa7\x05\n" +
+	"\vUploadImage\x1a7\n" +
+	"\x05Chunk\x12\x1a\n" +
 	"\breceiver\x18\x01 \x01(\tR\breceiver\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\"t\n" +
-	"\x10UploadVideoChunk\x12\x1a\n" +
+	"\x04data\x18\x02 \x01(\fR\x04data\x1a\xde\x04\n" +
+	"\bResponse\x12\x1c\n" +
+	"\aaes_key\x18\x01 \x01(\tH\x00R\x06aesKey\x88\x01\x01\x12\x1c\n" +
+	"\afile_id\x18\x02 \x01(\tH\x01R\x06fileId\x88\x01\x01\x12!\n" +
+	"\n" +
+	"new_msg_id\x18\x03 \x01(\x04H\x02R\bnewMsgId\x88\x01\x01\x12$\n" +
+	"\vcreate_time\x18\x04 \x01(\rH\x03R\n" +
+	"createTime\x88\x01\x01\x12 \n" +
+	"\tfile_size\x18\x05 \x01(\rH\x04R\bfileSize\x88\x01\x01\x12\x1e\n" +
+	"\bfile_md5\x18\x06 \x01(\tH\x05R\afileMd5\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"file_width\x18\a \x01(\rH\x06R\tfileWidth\x88\x01\x01\x12$\n" +
+	"\vfile_height\x18\b \x01(\rH\aR\n" +
+	"fileHeight\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"thumb_size\x18\t \x01(\rH\bR\tthumbSize\x88\x01\x01\x12 \n" +
+	"\tthumb_md5\x18\n" +
+	" \x01(\tH\tR\bthumbMd5\x88\x01\x01\x12$\n" +
+	"\vthumb_width\x18\v \x01(\rH\n" +
+	"R\n" +
+	"thumbWidth\x88\x01\x01\x12&\n" +
+	"\fthumb_height\x18\f \x01(\rH\vR\vthumbHeight\x88\x01\x01B\n" +
+	"\n" +
+	"\b_aes_keyB\n" +
+	"\n" +
+	"\b_file_idB\r\n" +
+	"\v_new_msg_idB\x0e\n" +
+	"\f_create_timeB\f\n" +
+	"\n" +
+	"_file_sizeB\v\n" +
+	"\t_file_md5B\r\n" +
+	"\v_file_widthB\x0e\n" +
+	"\f_file_heightB\r\n" +
+	"\v_thumb_sizeB\f\n" +
+	"\n" +
+	"_thumb_md5B\x0e\n" +
+	"\f_thumb_widthB\x0f\n" +
+	"\r_thumb_height\"\xe9\x02\n" +
+	"\vUploadVideo\x1ai\n" +
+	"\x05Chunk\x12\x1a\n" +
 	"\breceiver\x18\x01 \x01(\tR\breceiver\x12\x1a\n" +
 	"\bduration\x18\x02 \x01(\rR\bduration\x12\x14\n" +
 	"\x05thumb\x18\x03 \x01(\fR\x05thumb\x12\x12\n" +
-	"\x04data\x18\x04 \x01(\fR\x04data\"(\n" +
-	"\x12DownloadImageChunk\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"(\n" +
-	"\x12DownloadVideoChunk\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"/\n" +
-	"\x19UploadMomentsImageRequest\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"Y\n" +
-	"\x19UploadMomentsVideoRequest\x12\x1d\n" +
+	"\x04data\x18\x04 \x01(\fR\x04data\x1a\xee\x01\n" +
+	"\bResponse\x12\x1c\n" +
+	"\aaes_key\x18\x01 \x01(\tH\x00R\x06aesKey\x88\x01\x01\x12\x1c\n" +
+	"\afile_id\x18\x02 \x01(\tH\x01R\x06fileId\x88\x01\x01\x12 \n" +
+	"\tfile_size\x18\x03 \x01(\rH\x02R\bfileSize\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"thumb_size\x18\x04 \x01(\rH\x03R\tthumbSize\x88\x01\x01\x12\x1e\n" +
+	"\bfile_md5\x18\x05 \x01(\tH\x04R\afileMd5\x88\x01\x01B\n" +
+	"\n" +
+	"\b_aes_keyB\n" +
+	"\n" +
+	"\b_file_idB\f\n" +
+	"\n" +
+	"_file_sizeB\r\n" +
+	"\v_thumb_sizeB\v\n" +
+	"\t_file_md5\"i\n" +
+	"\rDownloadImage\x1a;\n" +
+	"\aRequest\x12\x17\n" +
+	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x17\n" +
+	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\x1a\x1b\n" +
+	"\x05Chunk\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"i\n" +
+	"\rDownloadVideo\x1a;\n" +
+	"\aRequest\x12\x17\n" +
+	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x17\n" +
+	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\x1a\x1b\n" +
+	"\x05Chunk\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"\xe6\x02\n" +
+	"\x12UploadMomentsImage\x1a\x1d\n" +
+	"\aRequest\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\x1a\xb0\x02\n" +
+	"\bResponse\x12\x1e\n" +
+	"\bfile_url\x18\x01 \x01(\tH\x00R\afileUrl\x88\x01\x01\x12 \n" +
+	"\tthumb_url\x18\x02 \x01(\tH\x01R\bthumbUrl\x88\x01\x01\x12\x1e\n" +
+	"\bfile_key\x18\x03 \x01(\tH\x02R\afileKey\x88\x01\x01\x12\x1e\n" +
+	"\bfile_md5\x18\x04 \x01(\tH\x03R\afileMd5\x88\x01\x01\x12$\n" +
+	"\vimage_width\x18\x05 \x01(\rH\x04R\n" +
+	"imageWidth\x88\x01\x01\x12&\n" +
+	"\fimage_height\x18\x06 \x01(\rH\x05R\vimageHeight\x88\x01\x01B\v\n" +
+	"\t_file_urlB\f\n" +
+	"\n" +
+	"_thumb_urlB\v\n" +
+	"\t_file_keyB\v\n" +
+	"\t_file_md5B\x0e\n" +
+	"\f_image_widthB\x0f\n" +
+	"\r_image_height\"\x9e\x02\n" +
+	"\x12UploadMomentsVideo\x1aG\n" +
+	"\aRequest\x12\x1d\n" +
 	"\n" +
 	"video_data\x18\x01 \x01(\fR\tvideoData\x12\x1d\n" +
 	"\n" +
-	"thumb_data\x18\x02 \x01(\fR\tthumbData\"\xfe\x02\n" +
-	"\x13UploadImageResponse\x12\x17\n" +
-	"\aaes_key\x18\x01 \x01(\tR\x06aesKey\x12\x17\n" +
-	"\afile_id\x18\x02 \x01(\tR\x06fileId\x12\x1c\n" +
+	"thumb_data\x18\x02 \x01(\fR\tthumbData\x1a\xbe\x01\n" +
+	"\bResponse\x12\x1e\n" +
+	"\bfile_url\x18\x01 \x01(\tH\x00R\afileUrl\x88\x01\x01\x12 \n" +
+	"\tthumb_url\x18\x02 \x01(\tH\x01R\bthumbUrl\x88\x01\x01\x12\x1c\n" +
+	"\afile_id\x18\x03 \x01(\tH\x02R\x06fileId\x88\x01\x01\x12\x1e\n" +
+	"\bfile_key\x18\x04 \x01(\tH\x03R\afileKey\x88\x01\x01B\v\n" +
+	"\t_file_urlB\f\n" +
 	"\n" +
-	"new_msg_id\x18\x03 \x01(\x04R\bnewMsgId\x12\x1f\n" +
-	"\vcreate_time\x18\x04 \x01(\rR\n" +
-	"createTime\x12\x1b\n" +
-	"\tfile_size\x18\x05 \x01(\rR\bfileSize\x12\x19\n" +
-	"\bfile_md5\x18\x06 \x01(\tR\afileMd5\x12\x1d\n" +
+	"_thumb_urlB\n" +
 	"\n" +
-	"file_width\x18\a \x01(\rR\tfileWidth\x12\x1f\n" +
-	"\vfile_height\x18\b \x01(\rR\n" +
-	"fileHeight\x12\x1d\n" +
-	"\n" +
-	"thumb_size\x18\t \x01(\rR\tthumbSize\x12\x1b\n" +
-	"\tthumb_md5\x18\n" +
-	" \x01(\tR\bthumbMd5\x12\x1f\n" +
-	"\vthumb_width\x18\v \x01(\rR\n" +
-	"thumbWidth\x12!\n" +
-	"\fthumb_height\x18\f \x01(\rR\vthumbHeight\"\xce\x01\n" +
-	"\x1aUploadMomentsImageResponse\x12\x19\n" +
-	"\bfile_url\x18\x01 \x01(\tR\afileUrl\x12\x1b\n" +
-	"\tthumb_url\x18\x02 \x01(\tR\bthumbUrl\x12\x19\n" +
-	"\bfile_key\x18\x03 \x01(\tR\afileKey\x12\x19\n" +
-	"\bfile_md5\x18\x04 \x01(\tR\afileMd5\x12\x1f\n" +
-	"\vimage_width\x18\x05 \x01(\rR\n" +
-	"imageWidth\x12!\n" +
-	"\fimage_height\x18\x06 \x01(\rR\vimageHeight\"\x9e\x01\n" +
-	"\x13UploadVideoResponse\x12\x17\n" +
-	"\aaes_key\x18\x01 \x01(\tR\x06aesKey\x12\x17\n" +
-	"\afile_id\x18\x02 \x01(\tR\x06fileId\x12\x1b\n" +
-	"\tfile_size\x18\x03 \x01(\rR\bfileSize\x12\x1d\n" +
-	"\n" +
-	"thumb_size\x18\x04 \x01(\rR\tthumbSize\x12\x19\n" +
-	"\bfile_md5\x18\x05 \x01(\tR\afileMd5\"\x88\x01\n" +
-	"\x1aUploadMomentsVideoResponse\x12\x19\n" +
-	"\bfile_url\x18\x01 \x01(\tR\afileUrl\x12\x1b\n" +
-	"\tthumb_url\x18\x02 \x01(\tR\bthumbUrl\x12\x17\n" +
-	"\afile_id\x18\x03 \x01(\tR\x06fileId\x12\x19\n" +
-	"\bfile_key\x18\x04 \x01(\tR\afileKey\"+\n" +
-	"\x15DownloadImageResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"0\n" +
-	"\x1aDownloadVideoCoverResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"+\n" +
-	"\x15DownloadVideoResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"2\n" +
-	"\x1cDownloadMomentsVideoResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"H\n" +
-	"\x14DownloadImageRequest\x12\x17\n" +
+	"\b_file_idB\v\n" +
+	"\t_file_key\"q\n" +
+	"\x12DownloadVideoCover\x1a;\n" +
+	"\aRequest\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x17\n" +
-	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\"M\n" +
-	"\x19DownloadVideoCoverRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x17\n" +
-	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\"H\n" +
-	"\x14DownloadVideoRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\tR\x06fileId\x12\x17\n" +
-	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\"O\n" +
-	"\x17DownloadSnsVideoRequest\x12\x1b\n" +
+	"\aaes_key\x18\x02 \x01(\tR\x06aesKey\x1a\x1e\n" +
+	"\bResponse\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"w\n" +
+	"\x14DownloadMomentsVideo\x1a?\n" +
+	"\aRequest\x12\x1b\n" +
 	"\tvideo_url\x18\x01 \x01(\tR\bvideoUrl\x12\x17\n" +
-	"\aenc_key\x18\x02 \x01(\x04R\x06encKey2\xf8\x04\n" +
+	"\aenc_key\x18\x02 \x01(\x04R\x06encKey\x1a\x1e\n" +
+	"\bResponse\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data2\x90\x05\n" +
 	"\n" +
-	"CDNService\x12@\n" +
-	"\vUploadImage\x12\x15.cdn.UploadImageChunk\x1a\x18.cdn.UploadImageResponse(\x01\x12@\n" +
-	"\vUploadVideo\x12\x15.cdn.UploadVideoChunk\x1a\x18.cdn.UploadVideoResponse(\x01\x12E\n" +
-	"\rDownloadImage\x12\x19.cdn.DownloadImageRequest\x1a\x17.cdn.DownloadImageChunk0\x01\x12E\n" +
-	"\rDownloadVideo\x12\x19.cdn.DownloadVideoRequest\x1a\x17.cdn.DownloadVideoChunk0\x01\x12U\n" +
-	"\x12UploadMomentsImage\x12\x1e.cdn.UploadMomentsImageRequest\x1a\x1f.cdn.UploadMomentsImageResponse\x12U\n" +
-	"\x12UploadMomentsVideo\x12\x1e.cdn.UploadMomentsVideoRequest\x1a\x1f.cdn.UploadMomentsVideoResponse\x12U\n" +
-	"\x12DownloadVideoCover\x12\x1e.cdn.DownloadVideoCoverRequest\x1a\x1f.cdn.DownloadVideoCoverResponse\x12S\n" +
-	"\x10DownloadSnsVideo\x12\x1c.cdn.DownloadSnsVideoRequest\x1a!.cdn.DownloadMomentsVideoResponseBb\n" +
+	"CDNService\x12B\n" +
+	"\vUploadImage\x12\x16.cdn.UploadImage.Chunk\x1a\x19.cdn.UploadImage.Response(\x01\x12B\n" +
+	"\vUploadVideo\x12\x16.cdn.UploadVideo.Chunk\x1a\x19.cdn.UploadVideo.Response(\x01\x12G\n" +
+	"\rDownloadImage\x12\x1a.cdn.DownloadImage.Request\x1a\x18.cdn.DownloadImage.Chunk0\x01\x12G\n" +
+	"\rDownloadVideo\x12\x1a.cdn.DownloadVideo.Request\x1a\x18.cdn.DownloadVideo.Chunk0\x01\x12W\n" +
+	"\x12UploadMomentsImage\x12\x1f.cdn.UploadMomentsImage.Request\x1a .cdn.UploadMomentsImage.Response\x12W\n" +
+	"\x12UploadMomentsVideo\x12\x1f.cdn.UploadMomentsVideo.Request\x1a .cdn.UploadMomentsVideo.Response\x12W\n" +
+	"\x12DownloadVideoCover\x12\x1f.cdn.DownloadVideoCover.Request\x1a .cdn.DownloadVideoCover.Response\x12]\n" +
+	"\x14DownloadMomentsVideo\x12!.cdn.DownloadMomentsVideo.Request\x1a\".cdn.DownloadMomentsVideo.ResponseBb\n" +
 	"\acom.cdnB\bCdnProtoP\x01Z!github.com/sbgayhub/golem/sdk/cdn\xa2\x02\x03CXX\xaa\x02\x03Cdn\xca\x02\x03Cdn\xe2\x02\x0fCdn\\GPBMetadata\xea\x02\x03Cdnb\x06proto3"
 
 var (
@@ -1195,44 +1419,50 @@ func file_cdn_cdn_proto_rawDescGZIP() []byte {
 	return file_cdn_cdn_proto_rawDescData
 }
 
-var file_cdn_cdn_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_cdn_cdn_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_cdn_cdn_proto_goTypes = []any{
-	(*UploadImageChunk)(nil),             // 0: cdn.UploadImageChunk
-	(*UploadVideoChunk)(nil),             // 1: cdn.UploadVideoChunk
-	(*DownloadImageChunk)(nil),           // 2: cdn.DownloadImageChunk
-	(*DownloadVideoChunk)(nil),           // 3: cdn.DownloadVideoChunk
-	(*UploadMomentsImageRequest)(nil),    // 4: cdn.UploadMomentsImageRequest
-	(*UploadMomentsVideoRequest)(nil),    // 5: cdn.UploadMomentsVideoRequest
-	(*UploadImageResponse)(nil),          // 6: cdn.UploadImageResponse
-	(*UploadMomentsImageResponse)(nil),   // 7: cdn.UploadMomentsImageResponse
-	(*UploadVideoResponse)(nil),          // 8: cdn.UploadVideoResponse
-	(*UploadMomentsVideoResponse)(nil),   // 9: cdn.UploadMomentsVideoResponse
-	(*DownloadImageResponse)(nil),        // 10: cdn.DownloadImageResponse
-	(*DownloadVideoCoverResponse)(nil),   // 11: cdn.DownloadVideoCoverResponse
-	(*DownloadVideoResponse)(nil),        // 12: cdn.DownloadVideoResponse
-	(*DownloadMomentsVideoResponse)(nil), // 13: cdn.DownloadMomentsVideoResponse
-	(*DownloadImageRequest)(nil),         // 14: cdn.DownloadImageRequest
-	(*DownloadVideoCoverRequest)(nil),    // 15: cdn.DownloadVideoCoverRequest
-	(*DownloadVideoRequest)(nil),         // 16: cdn.DownloadVideoRequest
-	(*DownloadSnsVideoRequest)(nil),      // 17: cdn.DownloadSnsVideoRequest
+	(*UploadImage)(nil),                   // 0: cdn.UploadImage
+	(*UploadVideo)(nil),                   // 1: cdn.UploadVideo
+	(*DownloadImage)(nil),                 // 2: cdn.DownloadImage
+	(*DownloadVideo)(nil),                 // 3: cdn.DownloadVideo
+	(*UploadMomentsImage)(nil),            // 4: cdn.UploadMomentsImage
+	(*UploadMomentsVideo)(nil),            // 5: cdn.UploadMomentsVideo
+	(*DownloadVideoCover)(nil),            // 6: cdn.DownloadVideoCover
+	(*DownloadMomentsVideo)(nil),          // 7: cdn.DownloadMomentsVideo
+	(*UploadImage_Chunk)(nil),             // 8: cdn.UploadImage.Chunk
+	(*UploadImage_Response)(nil),          // 9: cdn.UploadImage.Response
+	(*UploadVideo_Chunk)(nil),             // 10: cdn.UploadVideo.Chunk
+	(*UploadVideo_Response)(nil),          // 11: cdn.UploadVideo.Response
+	(*DownloadImage_Request)(nil),         // 12: cdn.DownloadImage.Request
+	(*DownloadImage_Chunk)(nil),           // 13: cdn.DownloadImage.Chunk
+	(*DownloadVideo_Request)(nil),         // 14: cdn.DownloadVideo.Request
+	(*DownloadVideo_Chunk)(nil),           // 15: cdn.DownloadVideo.Chunk
+	(*UploadMomentsImage_Request)(nil),    // 16: cdn.UploadMomentsImage.Request
+	(*UploadMomentsImage_Response)(nil),   // 17: cdn.UploadMomentsImage.Response
+	(*UploadMomentsVideo_Request)(nil),    // 18: cdn.UploadMomentsVideo.Request
+	(*UploadMomentsVideo_Response)(nil),   // 19: cdn.UploadMomentsVideo.Response
+	(*DownloadVideoCover_Request)(nil),    // 20: cdn.DownloadVideoCover.Request
+	(*DownloadVideoCover_Response)(nil),   // 21: cdn.DownloadVideoCover.Response
+	(*DownloadMomentsVideo_Request)(nil),  // 22: cdn.DownloadMomentsVideo.Request
+	(*DownloadMomentsVideo_Response)(nil), // 23: cdn.DownloadMomentsVideo.Response
 }
 var file_cdn_cdn_proto_depIdxs = []int32{
-	0,  // 0: cdn.CDNService.UploadImage:input_type -> cdn.UploadImageChunk
-	1,  // 1: cdn.CDNService.UploadVideo:input_type -> cdn.UploadVideoChunk
-	14, // 2: cdn.CDNService.DownloadImage:input_type -> cdn.DownloadImageRequest
-	16, // 3: cdn.CDNService.DownloadVideo:input_type -> cdn.DownloadVideoRequest
-	4,  // 4: cdn.CDNService.UploadMomentsImage:input_type -> cdn.UploadMomentsImageRequest
-	5,  // 5: cdn.CDNService.UploadMomentsVideo:input_type -> cdn.UploadMomentsVideoRequest
-	15, // 6: cdn.CDNService.DownloadVideoCover:input_type -> cdn.DownloadVideoCoverRequest
-	17, // 7: cdn.CDNService.DownloadSnsVideo:input_type -> cdn.DownloadSnsVideoRequest
-	6,  // 8: cdn.CDNService.UploadImage:output_type -> cdn.UploadImageResponse
-	8,  // 9: cdn.CDNService.UploadVideo:output_type -> cdn.UploadVideoResponse
-	2,  // 10: cdn.CDNService.DownloadImage:output_type -> cdn.DownloadImageChunk
-	3,  // 11: cdn.CDNService.DownloadVideo:output_type -> cdn.DownloadVideoChunk
-	7,  // 12: cdn.CDNService.UploadMomentsImage:output_type -> cdn.UploadMomentsImageResponse
-	9,  // 13: cdn.CDNService.UploadMomentsVideo:output_type -> cdn.UploadMomentsVideoResponse
-	11, // 14: cdn.CDNService.DownloadVideoCover:output_type -> cdn.DownloadVideoCoverResponse
-	13, // 15: cdn.CDNService.DownloadSnsVideo:output_type -> cdn.DownloadMomentsVideoResponse
+	8,  // 0: cdn.CDNService.UploadImage:input_type -> cdn.UploadImage.Chunk
+	10, // 1: cdn.CDNService.UploadVideo:input_type -> cdn.UploadVideo.Chunk
+	12, // 2: cdn.CDNService.DownloadImage:input_type -> cdn.DownloadImage.Request
+	14, // 3: cdn.CDNService.DownloadVideo:input_type -> cdn.DownloadVideo.Request
+	16, // 4: cdn.CDNService.UploadMomentsImage:input_type -> cdn.UploadMomentsImage.Request
+	18, // 5: cdn.CDNService.UploadMomentsVideo:input_type -> cdn.UploadMomentsVideo.Request
+	20, // 6: cdn.CDNService.DownloadVideoCover:input_type -> cdn.DownloadVideoCover.Request
+	22, // 7: cdn.CDNService.DownloadMomentsVideo:input_type -> cdn.DownloadMomentsVideo.Request
+	9,  // 8: cdn.CDNService.UploadImage:output_type -> cdn.UploadImage.Response
+	11, // 9: cdn.CDNService.UploadVideo:output_type -> cdn.UploadVideo.Response
+	13, // 10: cdn.CDNService.DownloadImage:output_type -> cdn.DownloadImage.Chunk
+	15, // 11: cdn.CDNService.DownloadVideo:output_type -> cdn.DownloadVideo.Chunk
+	17, // 12: cdn.CDNService.UploadMomentsImage:output_type -> cdn.UploadMomentsImage.Response
+	19, // 13: cdn.CDNService.UploadMomentsVideo:output_type -> cdn.UploadMomentsVideo.Response
+	21, // 14: cdn.CDNService.DownloadVideoCover:output_type -> cdn.DownloadVideoCover.Response
+	23, // 15: cdn.CDNService.DownloadMomentsVideo:output_type -> cdn.DownloadMomentsVideo.Response
 	8,  // [8:16] is the sub-list for method output_type
 	0,  // [0:8] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
@@ -1245,13 +1475,17 @@ func file_cdn_cdn_proto_init() {
 	if File_cdn_cdn_proto != nil {
 		return
 	}
+	file_cdn_cdn_proto_msgTypes[9].OneofWrappers = []any{}
+	file_cdn_cdn_proto_msgTypes[11].OneofWrappers = []any{}
+	file_cdn_cdn_proto_msgTypes[17].OneofWrappers = []any{}
+	file_cdn_cdn_proto_msgTypes[19].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_cdn_cdn_proto_rawDesc), len(file_cdn_cdn_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

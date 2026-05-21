@@ -34,17 +34,17 @@ const (
 // LoginService 登录服务
 type LoginServiceClient interface {
 	// Login 执行扫码登录
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*QRCodeResult, error)
+	Login(ctx context.Context, in *Login_Request, opts ...grpc.CallOption) (*Login_Response, error)
 	// Init 首次登录后初始化
-	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*InitResponse, error)
+	Init(ctx context.Context, in *Init_Request, opts ...grpc.CallOption) (*Init_Response, error)
 	// Refresh 刷新登录状态
-	Refresh(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	Refresh(ctx context.Context, in *Refresh_Request, opts ...grpc.CallOption) (*Refresh_Response, error)
 	// Wakeup 唤醒登录
-	Wakeup(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	Wakeup(ctx context.Context, in *Wakeup_Request, opts ...grpc.CallOption) (*Wakeup_Response, error)
 	// Logout 登出
-	Logout(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error)
+	Logout(ctx context.Context, in *Logout_Request, opts ...grpc.CallOption) (*Logout_Response, error)
 	// PasswordLogin 使用账号密码登录
-	PasswordLogin(ctx context.Context, in *PasswordLoginRequest, opts ...grpc.CallOption) (*PasswordLoginResult, error)
+	PasswordLogin(ctx context.Context, in *PasswordLogin_Request, opts ...grpc.CallOption) (*PasswordLogin_Response, error)
 }
 
 type loginServiceClient struct {
@@ -55,9 +55,9 @@ func NewLoginServiceClient(cc grpc.ClientConnInterface) LoginServiceClient {
 	return &loginServiceClient{cc}
 }
 
-func (c *loginServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*QRCodeResult, error) {
+func (c *loginServiceClient) Login(ctx context.Context, in *Login_Request, opts ...grpc.CallOption) (*Login_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(QRCodeResult)
+	out := new(Login_Response)
 	err := c.cc.Invoke(ctx, LoginService_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -65,9 +65,9 @@ func (c *loginServiceClient) Login(ctx context.Context, in *LoginRequest, opts .
 	return out, nil
 }
 
-func (c *loginServiceClient) Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*InitResponse, error) {
+func (c *loginServiceClient) Init(ctx context.Context, in *Init_Request, opts ...grpc.CallOption) (*Init_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InitResponse)
+	out := new(Init_Response)
 	err := c.cc.Invoke(ctx, LoginService_Init_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -75,9 +75,9 @@ func (c *loginServiceClient) Init(ctx context.Context, in *InitRequest, opts ...
 	return out, nil
 }
 
-func (c *loginServiceClient) Refresh(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *loginServiceClient) Refresh(ctx context.Context, in *Refresh_Request, opts ...grpc.CallOption) (*Refresh_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Refresh_Response)
 	err := c.cc.Invoke(ctx, LoginService_Refresh_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -85,9 +85,9 @@ func (c *loginServiceClient) Refresh(ctx context.Context, in *LoginRequest, opts
 	return out, nil
 }
 
-func (c *loginServiceClient) Wakeup(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *loginServiceClient) Wakeup(ctx context.Context, in *Wakeup_Request, opts ...grpc.CallOption) (*Wakeup_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Wakeup_Response)
 	err := c.cc.Invoke(ctx, LoginService_Wakeup_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -95,9 +95,9 @@ func (c *loginServiceClient) Wakeup(ctx context.Context, in *LoginRequest, opts 
 	return out, nil
 }
 
-func (c *loginServiceClient) Logout(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*OperateResponse, error) {
+func (c *loginServiceClient) Logout(ctx context.Context, in *Logout_Request, opts ...grpc.CallOption) (*Logout_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OperateResponse)
+	out := new(Logout_Response)
 	err := c.cc.Invoke(ctx, LoginService_Logout_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -105,9 +105,9 @@ func (c *loginServiceClient) Logout(ctx context.Context, in *LoginRequest, opts 
 	return out, nil
 }
 
-func (c *loginServiceClient) PasswordLogin(ctx context.Context, in *PasswordLoginRequest, opts ...grpc.CallOption) (*PasswordLoginResult, error) {
+func (c *loginServiceClient) PasswordLogin(ctx context.Context, in *PasswordLogin_Request, opts ...grpc.CallOption) (*PasswordLogin_Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PasswordLoginResult)
+	out := new(PasswordLogin_Response)
 	err := c.cc.Invoke(ctx, LoginService_PasswordLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -122,17 +122,17 @@ func (c *loginServiceClient) PasswordLogin(ctx context.Context, in *PasswordLogi
 // LoginService 登录服务
 type LoginServiceServer interface {
 	// Login 执行扫码登录
-	Login(context.Context, *LoginRequest) (*QRCodeResult, error)
+	Login(context.Context, *Login_Request) (*Login_Response, error)
 	// Init 首次登录后初始化
-	Init(context.Context, *InitRequest) (*InitResponse, error)
+	Init(context.Context, *Init_Request) (*Init_Response, error)
 	// Refresh 刷新登录状态
-	Refresh(context.Context, *LoginRequest) (*OperateResponse, error)
+	Refresh(context.Context, *Refresh_Request) (*Refresh_Response, error)
 	// Wakeup 唤醒登录
-	Wakeup(context.Context, *LoginRequest) (*OperateResponse, error)
+	Wakeup(context.Context, *Wakeup_Request) (*Wakeup_Response, error)
 	// Logout 登出
-	Logout(context.Context, *LoginRequest) (*OperateResponse, error)
+	Logout(context.Context, *Logout_Request) (*Logout_Response, error)
 	// PasswordLogin 使用账号密码登录
-	PasswordLogin(context.Context, *PasswordLoginRequest) (*PasswordLoginResult, error)
+	PasswordLogin(context.Context, *PasswordLogin_Request) (*PasswordLogin_Response, error)
 	mustEmbedUnimplementedLoginServiceServer()
 }
 
@@ -143,22 +143,22 @@ type LoginServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLoginServiceServer struct{}
 
-func (UnimplementedLoginServiceServer) Login(context.Context, *LoginRequest) (*QRCodeResult, error) {
+func (UnimplementedLoginServiceServer) Login(context.Context, *Login_Request) (*Login_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedLoginServiceServer) Init(context.Context, *InitRequest) (*InitResponse, error) {
+func (UnimplementedLoginServiceServer) Init(context.Context, *Init_Request) (*Init_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
 }
-func (UnimplementedLoginServiceServer) Refresh(context.Context, *LoginRequest) (*OperateResponse, error) {
+func (UnimplementedLoginServiceServer) Refresh(context.Context, *Refresh_Request) (*Refresh_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
 }
-func (UnimplementedLoginServiceServer) Wakeup(context.Context, *LoginRequest) (*OperateResponse, error) {
+func (UnimplementedLoginServiceServer) Wakeup(context.Context, *Wakeup_Request) (*Wakeup_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Wakeup not implemented")
 }
-func (UnimplementedLoginServiceServer) Logout(context.Context, *LoginRequest) (*OperateResponse, error) {
+func (UnimplementedLoginServiceServer) Logout(context.Context, *Logout_Request) (*Logout_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedLoginServiceServer) PasswordLogin(context.Context, *PasswordLoginRequest) (*PasswordLoginResult, error) {
+func (UnimplementedLoginServiceServer) PasswordLogin(context.Context, *PasswordLogin_Request) (*PasswordLogin_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PasswordLogin not implemented")
 }
 func (UnimplementedLoginServiceServer) mustEmbedUnimplementedLoginServiceServer() {}
@@ -183,7 +183,7 @@ func RegisterLoginServiceServer(s grpc.ServiceRegistrar, srv LoginServiceServer)
 }
 
 func _LoginService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+	in := new(Login_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -195,13 +195,13 @@ func _LoginService_Login_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: LoginService_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).Login(ctx, req.(*LoginRequest))
+		return srv.(LoginServiceServer).Login(ctx, req.(*Login_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoginService_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitRequest)
+	in := new(Init_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -213,13 +213,13 @@ func _LoginService_Init_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: LoginService_Init_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).Init(ctx, req.(*InitRequest))
+		return srv.(LoginServiceServer).Init(ctx, req.(*Init_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoginService_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+	in := new(Refresh_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -231,13 +231,13 @@ func _LoginService_Refresh_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: LoginService_Refresh_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).Refresh(ctx, req.(*LoginRequest))
+		return srv.(LoginServiceServer).Refresh(ctx, req.(*Refresh_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoginService_Wakeup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+	in := new(Wakeup_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -249,13 +249,13 @@ func _LoginService_Wakeup_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: LoginService_Wakeup_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).Wakeup(ctx, req.(*LoginRequest))
+		return srv.(LoginServiceServer).Wakeup(ctx, req.(*Wakeup_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoginService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+	in := new(Logout_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -267,13 +267,13 @@ func _LoginService_Logout_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: LoginService_Logout_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).Logout(ctx, req.(*LoginRequest))
+		return srv.(LoginServiceServer).Logout(ctx, req.(*Logout_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _LoginService_PasswordLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PasswordLoginRequest)
+	in := new(PasswordLogin_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -285,7 +285,7 @@ func _LoginService_PasswordLogin_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: LoginService_PasswordLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServiceServer).PasswordLogin(ctx, req.(*PasswordLoginRequest))
+		return srv.(LoginServiceServer).PasswordLogin(ctx, req.(*PasswordLogin_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }

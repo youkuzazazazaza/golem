@@ -22,7 +22,7 @@ const (
 )
 
 // FavorItem 收藏项信息（供插件使用）
-type FavorItem struct {
+type Item struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                   // 收藏 ID
 	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`                           // 状态
@@ -34,20 +34,20 @@ type FavorItem struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FavorItem) Reset() {
-	*x = FavorItem{}
+func (x *Item) Reset() {
+	*x = Item{}
 	mi := &file_favor_favor_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FavorItem) String() string {
+func (x *Item) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FavorItem) ProtoMessage() {}
+func (*Item) ProtoMessage() {}
 
-func (x *FavorItem) ProtoReflect() protoreflect.Message {
+func (x *Item) ProtoReflect() protoreflect.Message {
 	mi := &file_favor_favor_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -59,55 +59,234 @@ func (x *FavorItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FavorItem.ProtoReflect.Descriptor instead.
-func (*FavorItem) Descriptor() ([]byte, []int) {
+// Deprecated: Use Item.ProtoReflect.Descriptor instead.
+func (*Item) Descriptor() ([]byte, []int) {
 	return file_favor_favor_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *FavorItem) GetId() uint32 {
+func (x *Item) GetId() uint32 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *FavorItem) GetStatus() int32 {
+func (x *Item) GetStatus() int32 {
 	if x != nil {
 		return x.Status
 	}
 	return 0
 }
 
-func (x *FavorItem) GetObject() string {
+func (x *Item) GetObject() string {
 	if x != nil {
 		return x.Object
 	}
 	return ""
 }
 
-func (x *FavorItem) GetFlag() uint32 {
+func (x *Item) GetFlag() uint32 {
 	if x != nil {
 		return x.Flag
 	}
 	return 0
 }
 
-func (x *FavorItem) GetUpdateTime() uint32 {
+func (x *Item) GetUpdateTime() uint32 {
 	if x != nil {
 		return x.UpdateTime
 	}
 	return 0
 }
 
-func (x *FavorItem) GetUpdateSeq() uint32 {
+func (x *Item) GetUpdateSeq() uint32 {
 	if x != nil {
 		return x.UpdateSeq
 	}
 	return 0
 }
 
-// FavorInfo 收藏容量信息
-type FavorInfo struct {
+type GetInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInfo) Reset() {
+	*x = GetInfo{}
+	mi := &file_favor_favor_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInfo) ProtoMessage() {}
+
+func (x *GetInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInfo.ProtoReflect.Descriptor instead.
+func (*GetInfo) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{1}
+}
+
+type GetItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetItem) Reset() {
+	*x = GetItem{}
+	mi := &file_favor_favor_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetItem) ProtoMessage() {}
+
+func (x *GetItem) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetItem.ProtoReflect.Descriptor instead.
+func (*GetItem) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{2}
+}
+
+type Delete struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Delete) Reset() {
+	*x = Delete{}
+	mi := &file_favor_favor_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Delete) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Delete) ProtoMessage() {}
+
+func (x *Delete) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Delete.ProtoReflect.Descriptor instead.
+func (*Delete) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{3}
+}
+
+type Sync struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Sync) Reset() {
+	*x = Sync{}
+	mi := &file_favor_favor_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Sync) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Sync) ProtoMessage() {}
+
+func (x *Sync) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Sync.ProtoReflect.Descriptor instead.
+func (*Sync) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{4}
+}
+
+type GetInfo_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInfo_Request) Reset() {
+	*x = GetInfo_Request{}
+	mi := &file_favor_favor_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInfo_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInfo_Request) ProtoMessage() {}
+
+func (x *GetInfo_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInfo_Request.ProtoReflect.Descriptor instead.
+func (*GetInfo_Request) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{1, 0}
+}
+
+type GetInfo_Info struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UsedSize        uint64                 `protobuf:"varint,1,opt,name=used_size,json=usedSize,proto3" json:"used_size,omitempty"`                        // 已使用容量（字节）
 	TotalSize       uint64                 `protobuf:"varint,2,opt,name=total_size,json=totalSize,proto3" json:"total_size,omitempty"`                     // 总容量（字节）
@@ -118,21 +297,21 @@ type FavorInfo struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *FavorInfo) Reset() {
-	*x = FavorInfo{}
-	mi := &file_favor_favor_proto_msgTypes[1]
+func (x *GetInfo_Info) Reset() {
+	*x = GetInfo_Info{}
+	mi := &file_favor_favor_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FavorInfo) String() string {
+func (x *GetInfo_Info) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FavorInfo) ProtoMessage() {}
+func (*GetInfo_Info) ProtoMessage() {}
 
-func (x *FavorInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[1]
+func (x *GetInfo_Info) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,70 +322,68 @@ func (x *FavorInfo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FavorInfo.ProtoReflect.Descriptor instead.
-func (*FavorInfo) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use GetInfo_Info.ProtoReflect.Descriptor instead.
+func (*GetInfo_Info) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{1, 1}
 }
 
-func (x *FavorInfo) GetUsedSize() uint64 {
+func (x *GetInfo_Info) GetUsedSize() uint64 {
 	if x != nil {
 		return x.UsedSize
 	}
 	return 0
 }
 
-func (x *FavorInfo) GetTotalSize() uint64 {
+func (x *GetInfo_Info) GetTotalSize() uint64 {
 	if x != nil {
 		return x.TotalSize
 	}
 	return 0
 }
 
-func (x *FavorInfo) GetMaxFileSize() uint64 {
+func (x *GetInfo_Info) GetMaxFileSize() uint64 {
 	if x != nil {
 		return x.MaxFileSize
 	}
 	return 0
 }
 
-func (x *FavorInfo) GetMaxAutoUpload() int32 {
+func (x *GetInfo_Info) GetMaxAutoUpload() int32 {
 	if x != nil {
 		return x.MaxAutoUpload
 	}
 	return 0
 }
 
-func (x *FavorInfo) GetMaxAutoDownload() int32 {
+func (x *GetInfo_Info) GetMaxAutoDownload() int32 {
 	if x != nil {
 		return x.MaxAutoDownload
 	}
 	return 0
 }
 
-// OperateResponse 通用操作响应
-type OperateResponse struct {
+type GetInfo_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`      // 状态码（0=成功）
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // 提示信息
+	Info          *GetInfo_Info          `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"` // 收藏容量信息
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OperateResponse) Reset() {
-	*x = OperateResponse{}
-	mi := &file_favor_favor_proto_msgTypes[2]
+func (x *GetInfo_Response) Reset() {
+	*x = GetInfo_Response{}
+	mi := &file_favor_favor_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OperateResponse) String() string {
+func (x *GetInfo_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OperateResponse) ProtoMessage() {}
+func (*GetInfo_Response) ProtoMessage() {}
 
-func (x *OperateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[2]
+func (x *GetInfo_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -217,264 +394,39 @@ func (x *OperateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OperateResponse.ProtoReflect.Descriptor instead.
-func (*OperateResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use GetInfo_Response.ProtoReflect.Descriptor instead.
+func (*GetInfo_Response) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{1, 2}
 }
 
-func (x *OperateResponse) GetCode() int32 {
-	if x != nil {
-		return x.Code
-	}
-	return 0
-}
-
-func (x *OperateResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-// GetInfoRequest 获取收藏信息请求
-type GetInfoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetInfoRequest) Reset() {
-	*x = GetInfoRequest{}
-	mi := &file_favor_favor_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetInfoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetInfoRequest) ProtoMessage() {}
-
-func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetInfoRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{3}
-}
-
-// GetInfoResponse 获取收藏信息响应
-type GetInfoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Info          *FavorInfo             `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"` // 收藏容量信息
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetInfoResponse) Reset() {
-	*x = GetInfoResponse{}
-	mi := &file_favor_favor_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetInfoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetInfoResponse) ProtoMessage() {}
-
-func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetInfoResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *GetInfoResponse) GetInfo() *FavorInfo {
+func (x *GetInfo_Response) GetInfo() *GetInfo_Info {
 	if x != nil {
 		return x.Info
 	}
 	return nil
 }
 
-// GetFavItemRequest 获取收藏项详情请求
-type GetFavItemRequest struct {
+type GetItem_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FavId         int32                  `protobuf:"varint,1,opt,name=fav_id,json=favId,proto3" json:"fav_id,omitempty"` // 收藏项 ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetFavItemRequest) Reset() {
-	*x = GetFavItemRequest{}
-	mi := &file_favor_favor_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetFavItemRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetFavItemRequest) ProtoMessage() {}
-
-func (x *GetFavItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetFavItemRequest.ProtoReflect.Descriptor instead.
-func (*GetFavItemRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *GetFavItemRequest) GetFavId() int32 {
-	if x != nil {
-		return x.FavId
-	}
-	return 0
-}
-
-// GetFavItemResponse 获取收藏项详情响应
-type GetFavItemResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*FavorItem           `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` // 收藏项列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetFavItemResponse) Reset() {
-	*x = GetFavItemResponse{}
-	mi := &file_favor_favor_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetFavItemResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetFavItemResponse) ProtoMessage() {}
-
-func (x *GetFavItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetFavItemResponse.ProtoReflect.Descriptor instead.
-func (*GetFavItemResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *GetFavItemResponse) GetItems() []*FavorItem {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
-// BatchGetFavItemsRequest 批量获取收藏项请求
-type BatchGetFavItemsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FavIds        []int32                `protobuf:"varint,1,rep,packed,name=fav_ids,json=favIds,proto3" json:"fav_ids,omitempty"` // 收藏项 ID 列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchGetFavItemsRequest) Reset() {
-	*x = BatchGetFavItemsRequest{}
-	mi := &file_favor_favor_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchGetFavItemsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchGetFavItemsRequest) ProtoMessage() {}
-
-func (x *BatchGetFavItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchGetFavItemsRequest.ProtoReflect.Descriptor instead.
-func (*BatchGetFavItemsRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *BatchGetFavItemsRequest) GetFavIds() []int32 {
-	if x != nil {
-		return x.FavIds
-	}
-	return nil
-}
-
-// BatchGetFavItemsResponse 批量获取收藏项响应
-type BatchGetFavItemsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*FavorItem           `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` // 收藏项列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchGetFavItemsResponse) Reset() {
-	*x = BatchGetFavItemsResponse{}
+func (x *GetItem_Request) Reset() {
+	*x = GetItem_Request{}
 	mi := &file_favor_favor_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BatchGetFavItemsResponse) String() string {
+func (x *GetItem_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BatchGetFavItemsResponse) ProtoMessage() {}
+func (*GetItem_Request) ProtoMessage() {}
 
-func (x *BatchGetFavItemsResponse) ProtoReflect() protoreflect.Message {
+func (x *GetItem_Request) ProtoReflect() protoreflect.Message {
 	mi := &file_favor_favor_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -486,85 +438,83 @@ func (x *BatchGetFavItemsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BatchGetFavItemsResponse.ProtoReflect.Descriptor instead.
-func (*BatchGetFavItemsResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{8}
+// Deprecated: Use GetItem_Request.ProtoReflect.Descriptor instead.
+func (*GetItem_Request) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{2, 0}
 }
 
-func (x *BatchGetFavItemsResponse) GetItems() []*FavorItem {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
-// DeleteFavItemRequest 删除收藏项请求
-type DeleteFavItemRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FavId         int32                  `protobuf:"varint,1,opt,name=fav_id,json=favId,proto3" json:"fav_id,omitempty"` // 收藏项 ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteFavItemRequest) Reset() {
-	*x = DeleteFavItemRequest{}
-	mi := &file_favor_favor_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteFavItemRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteFavItemRequest) ProtoMessage() {}
-
-func (x *DeleteFavItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteFavItemRequest.ProtoReflect.Descriptor instead.
-func (*DeleteFavItemRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *DeleteFavItemRequest) GetFavId() int32 {
+func (x *GetItem_Request) GetFavId() int32 {
 	if x != nil {
 		return x.FavId
 	}
 	return 0
 }
 
-// DeleteFavItemResponse 删除收藏项响应
-type DeleteFavItemResponse struct {
+type GetItem_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Results       []*DeleteResult        `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"` // 删除结果列表
+	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` // 收藏项列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteFavItemResponse) Reset() {
-	*x = DeleteFavItemResponse{}
+func (x *GetItem_Response) Reset() {
+	*x = GetItem_Response{}
+	mi := &file_favor_favor_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetItem_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetItem_Response) ProtoMessage() {}
+
+func (x *GetItem_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetItem_Response.ProtoReflect.Descriptor instead.
+func (*GetItem_Response) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{2, 1}
+}
+
+func (x *GetItem_Response) GetItems() []*Item {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type Delete_Request struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FavId         int32                  `protobuf:"varint,1,opt,name=fav_id,json=favId,proto3" json:"fav_id,omitempty"` // 收藏项 ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Delete_Request) Reset() {
+	*x = Delete_Request{}
 	mi := &file_favor_favor_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteFavItemResponse) String() string {
+func (x *Delete_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteFavItemResponse) ProtoMessage() {}
+func (*Delete_Request) ProtoMessage() {}
 
-func (x *DeleteFavItemResponse) ProtoReflect() protoreflect.Message {
+func (x *Delete_Request) ProtoReflect() protoreflect.Message {
 	mi := &file_favor_favor_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -576,110 +526,19 @@ func (x *DeleteFavItemResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFavItemResponse.ProtoReflect.Descriptor instead.
-func (*DeleteFavItemResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{10}
+// Deprecated: Use Delete_Request.ProtoReflect.Descriptor instead.
+func (*Delete_Request) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{3, 0}
 }
 
-func (x *DeleteFavItemResponse) GetResults() []*DeleteResult {
+func (x *Delete_Request) GetFavId() int32 {
 	if x != nil {
-		return x.Results
+		return x.FavId
 	}
-	return nil
+	return 0
 }
 
-// BatchDeleteFavItemsRequest 批量删除收藏项请求
-type BatchDeleteFavItemsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FavIds        []int32                `protobuf:"varint,1,rep,packed,name=fav_ids,json=favIds,proto3" json:"fav_ids,omitempty"` // 收藏项 ID 列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchDeleteFavItemsRequest) Reset() {
-	*x = BatchDeleteFavItemsRequest{}
-	mi := &file_favor_favor_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchDeleteFavItemsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchDeleteFavItemsRequest) ProtoMessage() {}
-
-func (x *BatchDeleteFavItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchDeleteFavItemsRequest.ProtoReflect.Descriptor instead.
-func (*BatchDeleteFavItemsRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *BatchDeleteFavItemsRequest) GetFavIds() []int32 {
-	if x != nil {
-		return x.FavIds
-	}
-	return nil
-}
-
-// BatchDeleteFavItemsResponse 批量删除收藏项响应
-type BatchDeleteFavItemsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Results       []*DeleteResult        `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"` // 删除结果列表
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *BatchDeleteFavItemsResponse) Reset() {
-	*x = BatchDeleteFavItemsResponse{}
-	mi := &file_favor_favor_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BatchDeleteFavItemsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BatchDeleteFavItemsResponse) ProtoMessage() {}
-
-func (x *BatchDeleteFavItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BatchDeleteFavItemsResponse.ProtoReflect.Descriptor instead.
-func (*BatchDeleteFavItemsResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *BatchDeleteFavItemsResponse) GetResults() []*DeleteResult {
-	if x != nil {
-		return x.Results
-	}
-	return nil
-}
-
-// DeleteResult 删除结果
-type DeleteResult struct {
+type Delete_Result struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`                // 返回码
 	FavId         uint32                 `protobuf:"varint,2,opt,name=fav_id,json=favId,proto3" json:"fav_id,omitempty"` // 收藏 ID
@@ -687,21 +546,21 @@ type DeleteResult struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteResult) Reset() {
-	*x = DeleteResult{}
-	mi := &file_favor_favor_proto_msgTypes[13]
+func (x *Delete_Result) Reset() {
+	*x = Delete_Result{}
+	mi := &file_favor_favor_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteResult) String() string {
+func (x *Delete_Result) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteResult) ProtoMessage() {}
+func (*Delete_Result) ProtoMessage() {}
 
-func (x *DeleteResult) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[13]
+func (x *Delete_Result) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -712,48 +571,91 @@ func (x *DeleteResult) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteResult.ProtoReflect.Descriptor instead.
-func (*DeleteResult) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{13}
+// Deprecated: Use Delete_Result.ProtoReflect.Descriptor instead.
+func (*Delete_Result) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{3, 1}
 }
 
-func (x *DeleteResult) GetCode() int32 {
+func (x *Delete_Result) GetCode() int32 {
 	if x != nil {
 		return x.Code
 	}
 	return 0
 }
 
-func (x *DeleteResult) GetFavId() uint32 {
+func (x *Delete_Result) GetFavId() uint32 {
 	if x != nil {
 		return x.FavId
 	}
 	return 0
 }
 
-// SyncFavorRequest 同步收藏列表请求
-type SyncFavorRequest struct {
+type Delete_Response struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Results       []*Delete_Result       `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"` // 删除结果列表
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Delete_Response) Reset() {
+	*x = Delete_Response{}
+	mi := &file_favor_favor_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Delete_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Delete_Response) ProtoMessage() {}
+
+func (x *Delete_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Delete_Response.ProtoReflect.Descriptor instead.
+func (*Delete_Response) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{3, 2}
+}
+
+func (x *Delete_Response) GetResults() []*Delete_Result {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
+type Sync_Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Key           []byte                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"` // 同步 Key（为空时从头同步，否则增量同步）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SyncFavorRequest) Reset() {
-	*x = SyncFavorRequest{}
-	mi := &file_favor_favor_proto_msgTypes[14]
+func (x *Sync_Request) Reset() {
+	*x = Sync_Request{}
+	mi := &file_favor_favor_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SyncFavorRequest) String() string {
+func (x *Sync_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SyncFavorRequest) ProtoMessage() {}
+func (*Sync_Request) ProtoMessage() {}
 
-func (x *SyncFavorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[14]
+func (x *Sync_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -764,43 +666,42 @@ func (x *SyncFavorRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SyncFavorRequest.ProtoReflect.Descriptor instead.
-func (*SyncFavorRequest) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{14}
+// Deprecated: Use Sync_Request.ProtoReflect.Descriptor instead.
+func (*Sync_Request) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{4, 0}
 }
 
-func (x *SyncFavorRequest) GetKey() []byte {
+func (x *Sync_Request) GetKey() []byte {
 	if x != nil {
 		return x.Key
 	}
 	return nil
 }
 
-// SyncFavorResponse 同步收藏列表响应
-type SyncFavorResponse struct {
+type Sync_Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*FavorItem           `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`                     // 收藏项列表
+	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`                     // 收藏项列表
 	Key           []byte                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`                         // 下次同步 Key
 	HasMore       bool                   `protobuf:"varint,3,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"` // 是否还有更多数据
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SyncFavorResponse) Reset() {
-	*x = SyncFavorResponse{}
-	mi := &file_favor_favor_proto_msgTypes[15]
+func (x *Sync_Response) Reset() {
+	*x = Sync_Response{}
+	mi := &file_favor_favor_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SyncFavorResponse) String() string {
+func (x *Sync_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SyncFavorResponse) ProtoMessage() {}
+func (*Sync_Response) ProtoMessage() {}
 
-func (x *SyncFavorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_favor_favor_proto_msgTypes[15]
+func (x *Sync_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_favor_favor_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,26 +712,26 @@ func (x *SyncFavorResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SyncFavorResponse.ProtoReflect.Descriptor instead.
-func (*SyncFavorResponse) Descriptor() ([]byte, []int) {
-	return file_favor_favor_proto_rawDescGZIP(), []int{15}
+// Deprecated: Use Sync_Response.ProtoReflect.Descriptor instead.
+func (*Sync_Response) Descriptor() ([]byte, []int) {
+	return file_favor_favor_proto_rawDescGZIP(), []int{4, 1}
 }
 
-func (x *SyncFavorResponse) GetItems() []*FavorItem {
+func (x *Sync_Response) GetItems() []*Item {
 	if x != nil {
 		return x.Items
 	}
 	return nil
 }
 
-func (x *SyncFavorResponse) GetKey() []byte {
+func (x *Sync_Response) GetKey() []byte {
 	if x != nil {
 		return x.Key
 	}
 	return nil
 }
 
-func (x *SyncFavorResponse) GetHasMore() bool {
+func (x *Sync_Response) GetHasMore() bool {
 	if x != nil {
 		return x.HasMore
 	}
@@ -841,8 +742,8 @@ var File_favor_favor_proto protoreflect.FileDescriptor
 
 const file_favor_favor_proto_rawDesc = "" +
 	"\n" +
-	"\x11favor/favor.proto\x12\x05favor\"\x9f\x01\n" +
-	"\tFavorItem\x12\x0e\n" +
+	"\x11favor/favor.proto\x12\x05favor\"\x9a\x01\n" +
+	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\x05R\x06status\x12\x16\n" +
 	"\x06object\x18\x03 \x01(\tR\x06object\x12\x12\n" +
@@ -850,52 +751,43 @@ const file_favor_favor_proto_rawDesc = "" +
 	"\vupdate_time\x18\x05 \x01(\rR\n" +
 	"updateTime\x12\x1d\n" +
 	"\n" +
-	"update_seq\x18\x06 \x01(\rR\tupdateSeq\"\xbf\x01\n" +
-	"\tFavorInfo\x12\x1b\n" +
+	"update_seq\x18\x06 \x01(\rR\tupdateSeq\"\x86\x02\n" +
+	"\aGetInfo\x1a\t\n" +
+	"\aRequest\x1a\xba\x01\n" +
+	"\x04Info\x12\x1b\n" +
 	"\tused_size\x18\x01 \x01(\x04R\busedSize\x12\x1d\n" +
 	"\n" +
 	"total_size\x18\x02 \x01(\x04R\ttotalSize\x12\"\n" +
 	"\rmax_file_size\x18\x03 \x01(\x04R\vmaxFileSize\x12&\n" +
 	"\x0fmax_auto_upload\x18\x04 \x01(\x05R\rmaxAutoUpload\x12*\n" +
-	"\x11max_auto_download\x18\x05 \x01(\x05R\x0fmaxAutoDownload\"?\n" +
-	"\x0fOperateResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x10\n" +
-	"\x0eGetInfoRequest\"7\n" +
-	"\x0fGetInfoResponse\x12$\n" +
-	"\x04info\x18\x01 \x01(\v2\x10.favor.FavorInfoR\x04info\"*\n" +
-	"\x11GetFavItemRequest\x12\x15\n" +
-	"\x06fav_id\x18\x01 \x01(\x05R\x05favId\"<\n" +
-	"\x12GetFavItemResponse\x12&\n" +
-	"\x05items\x18\x01 \x03(\v2\x10.favor.FavorItemR\x05items\"2\n" +
-	"\x17BatchGetFavItemsRequest\x12\x17\n" +
-	"\afav_ids\x18\x01 \x03(\x05R\x06favIds\"B\n" +
-	"\x18BatchGetFavItemsResponse\x12&\n" +
-	"\x05items\x18\x01 \x03(\v2\x10.favor.FavorItemR\x05items\"-\n" +
-	"\x14DeleteFavItemRequest\x12\x15\n" +
-	"\x06fav_id\x18\x01 \x01(\x05R\x05favId\"F\n" +
-	"\x15DeleteFavItemResponse\x12-\n" +
-	"\aresults\x18\x01 \x03(\v2\x13.favor.DeleteResultR\aresults\"5\n" +
-	"\x1aBatchDeleteFavItemsRequest\x12\x17\n" +
-	"\afav_ids\x18\x01 \x03(\x05R\x06favIds\"L\n" +
-	"\x1bBatchDeleteFavItemsResponse\x12-\n" +
-	"\aresults\x18\x01 \x03(\v2\x13.favor.DeleteResultR\aresults\"9\n" +
-	"\fDeleteResult\x12\x12\n" +
+	"\x11max_auto_download\x18\x05 \x01(\x05R\x0fmaxAutoDownload\x1a3\n" +
+	"\bResponse\x12'\n" +
+	"\x04info\x18\x01 \x01(\v2\x13.favor.GetInfo.InfoR\x04info\"Z\n" +
+	"\aGetItem\x1a \n" +
+	"\aRequest\x12\x15\n" +
+	"\x06fav_id\x18\x01 \x01(\x05R\x05favId\x1a-\n" +
+	"\bResponse\x12!\n" +
+	"\x05items\x18\x01 \x03(\v2\v.favor.ItemR\x05items\"\x9b\x01\n" +
+	"\x06Delete\x1a \n" +
+	"\aRequest\x12\x15\n" +
+	"\x06fav_id\x18\x01 \x01(\x05R\x05favId\x1a3\n" +
+	"\x06Result\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x15\n" +
-	"\x06fav_id\x18\x02 \x01(\rR\x05favId\"$\n" +
-	"\x10SyncFavorRequest\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\fR\x03key\"h\n" +
-	"\x11SyncFavorResponse\x12&\n" +
-	"\x05items\x18\x01 \x03(\v2\x10.favor.FavorItemR\x05items\x12\x10\n" +
+	"\x06fav_id\x18\x02 \x01(\rR\x05favId\x1a:\n" +
+	"\bResponse\x12.\n" +
+	"\aresults\x18\x01 \x03(\v2\x14.favor.Delete.ResultR\aresults\"\x7f\n" +
+	"\x04Sync\x1a\x1b\n" +
+	"\aRequest\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\fR\x03key\x1aZ\n" +
+	"\bResponse\x12!\n" +
+	"\x05items\x18\x01 \x03(\v2\v.favor.ItemR\x05items\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\fR\x03key\x12\x19\n" +
-	"\bhas_more\x18\x03 \x01(\bR\ahasMore2\xb0\x03\n" +
-	"\fFavorService\x128\n" +
-	"\aGetInfo\x12\x15.favor.GetInfoRequest\x1a\x16.favor.GetInfoResponse\x12>\n" +
-	"\aGetItem\x12\x18.favor.GetFavItemRequest\x1a\x19.favor.GetFavItemResponse\x12P\n" +
-	"\rBatchGetItems\x12\x1e.favor.BatchGetFavItemsRequest\x1a\x1f.favor.BatchGetFavItemsResponse\x12C\n" +
-	"\x06Delete\x12\x1b.favor.DeleteFavItemRequest\x1a\x1c.favor.DeleteFavItemResponse\x12T\n" +
-	"\vBatchDelete\x12!.favor.BatchDeleteFavItemsRequest\x1a\".favor.BatchDeleteFavItemsResponse\x129\n" +
-	"\x04Sync\x12\x17.favor.SyncFavorRequest\x1a\x18.favor.SyncFavorResponseBp\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMore2\xf2\x01\n" +
+	"\fFavorService\x12:\n" +
+	"\aGetInfo\x12\x16.favor.GetInfo.Request\x1a\x17.favor.GetInfo.Response\x12:\n" +
+	"\aGetItem\x12\x16.favor.GetItem.Request\x1a\x17.favor.GetItem.Response\x127\n" +
+	"\x06Delete\x12\x15.favor.Delete.Request\x1a\x16.favor.Delete.Response\x121\n" +
+	"\x04Sync\x12\x13.favor.Sync.Request\x1a\x14.favor.Sync.ResponseBp\n" +
 	"\tcom.favorB\n" +
 	"FavorProtoP\x01Z#github.com/sbgayhub/golem/sdk/favor\xa2\x02\x03FXX\xaa\x02\x05Favor\xca\x02\x05Favor\xe2\x02\x11Favor\\GPBMetadata\xea\x02\x05Favorb\x06proto3"
 
@@ -911,49 +803,42 @@ func file_favor_favor_proto_rawDescGZIP() []byte {
 	return file_favor_favor_proto_rawDescData
 }
 
-var file_favor_favor_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_favor_favor_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_favor_favor_proto_goTypes = []any{
-	(*FavorItem)(nil),                   // 0: favor.FavorItem
-	(*FavorInfo)(nil),                   // 1: favor.FavorInfo
-	(*OperateResponse)(nil),             // 2: favor.OperateResponse
-	(*GetInfoRequest)(nil),              // 3: favor.GetInfoRequest
-	(*GetInfoResponse)(nil),             // 4: favor.GetInfoResponse
-	(*GetFavItemRequest)(nil),           // 5: favor.GetFavItemRequest
-	(*GetFavItemResponse)(nil),          // 6: favor.GetFavItemResponse
-	(*BatchGetFavItemsRequest)(nil),     // 7: favor.BatchGetFavItemsRequest
-	(*BatchGetFavItemsResponse)(nil),    // 8: favor.BatchGetFavItemsResponse
-	(*DeleteFavItemRequest)(nil),        // 9: favor.DeleteFavItemRequest
-	(*DeleteFavItemResponse)(nil),       // 10: favor.DeleteFavItemResponse
-	(*BatchDeleteFavItemsRequest)(nil),  // 11: favor.BatchDeleteFavItemsRequest
-	(*BatchDeleteFavItemsResponse)(nil), // 12: favor.BatchDeleteFavItemsResponse
-	(*DeleteResult)(nil),                // 13: favor.DeleteResult
-	(*SyncFavorRequest)(nil),            // 14: favor.SyncFavorRequest
-	(*SyncFavorResponse)(nil),           // 15: favor.SyncFavorResponse
+	(*Item)(nil),             // 0: favor.Item
+	(*GetInfo)(nil),          // 1: favor.GetInfo
+	(*GetItem)(nil),          // 2: favor.GetItem
+	(*Delete)(nil),           // 3: favor.Delete
+	(*Sync)(nil),             // 4: favor.Sync
+	(*GetInfo_Request)(nil),  // 5: favor.GetInfo.Request
+	(*GetInfo_Info)(nil),     // 6: favor.GetInfo.Info
+	(*GetInfo_Response)(nil), // 7: favor.GetInfo.Response
+	(*GetItem_Request)(nil),  // 8: favor.GetItem.Request
+	(*GetItem_Response)(nil), // 9: favor.GetItem.Response
+	(*Delete_Request)(nil),   // 10: favor.Delete.Request
+	(*Delete_Result)(nil),    // 11: favor.Delete.Result
+	(*Delete_Response)(nil),  // 12: favor.Delete.Response
+	(*Sync_Request)(nil),     // 13: favor.Sync.Request
+	(*Sync_Response)(nil),    // 14: favor.Sync.Response
 }
 var file_favor_favor_proto_depIdxs = []int32{
-	1,  // 0: favor.GetInfoResponse.info:type_name -> favor.FavorInfo
-	0,  // 1: favor.GetFavItemResponse.items:type_name -> favor.FavorItem
-	0,  // 2: favor.BatchGetFavItemsResponse.items:type_name -> favor.FavorItem
-	13, // 3: favor.DeleteFavItemResponse.results:type_name -> favor.DeleteResult
-	13, // 4: favor.BatchDeleteFavItemsResponse.results:type_name -> favor.DeleteResult
-	0,  // 5: favor.SyncFavorResponse.items:type_name -> favor.FavorItem
-	3,  // 6: favor.FavorService.GetInfo:input_type -> favor.GetInfoRequest
-	5,  // 7: favor.FavorService.GetItem:input_type -> favor.GetFavItemRequest
-	7,  // 8: favor.FavorService.BatchGetItems:input_type -> favor.BatchGetFavItemsRequest
-	9,  // 9: favor.FavorService.Delete:input_type -> favor.DeleteFavItemRequest
-	11, // 10: favor.FavorService.BatchDelete:input_type -> favor.BatchDeleteFavItemsRequest
-	14, // 11: favor.FavorService.Sync:input_type -> favor.SyncFavorRequest
-	4,  // 12: favor.FavorService.GetInfo:output_type -> favor.GetInfoResponse
-	6,  // 13: favor.FavorService.GetItem:output_type -> favor.GetFavItemResponse
-	8,  // 14: favor.FavorService.BatchGetItems:output_type -> favor.BatchGetFavItemsResponse
-	10, // 15: favor.FavorService.Delete:output_type -> favor.DeleteFavItemResponse
-	12, // 16: favor.FavorService.BatchDelete:output_type -> favor.BatchDeleteFavItemsResponse
-	15, // 17: favor.FavorService.Sync:output_type -> favor.SyncFavorResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	6,  // 0: favor.GetInfo.Response.info:type_name -> favor.GetInfo.Info
+	0,  // 1: favor.GetItem.Response.items:type_name -> favor.Item
+	11, // 2: favor.Delete.Response.results:type_name -> favor.Delete.Result
+	0,  // 3: favor.Sync.Response.items:type_name -> favor.Item
+	5,  // 4: favor.FavorService.GetInfo:input_type -> favor.GetInfo.Request
+	8,  // 5: favor.FavorService.GetItem:input_type -> favor.GetItem.Request
+	10, // 6: favor.FavorService.Delete:input_type -> favor.Delete.Request
+	13, // 7: favor.FavorService.Sync:input_type -> favor.Sync.Request
+	7,  // 8: favor.FavorService.GetInfo:output_type -> favor.GetInfo.Response
+	9,  // 9: favor.FavorService.GetItem:output_type -> favor.GetItem.Response
+	12, // 10: favor.FavorService.Delete:output_type -> favor.Delete.Response
+	14, // 11: favor.FavorService.Sync:output_type -> favor.Sync.Response
+	8,  // [8:12] is the sub-list for method output_type
+	4,  // [4:8] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_favor_favor_proto_init() }
@@ -967,7 +852,7 @@ func file_favor_favor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_favor_favor_proto_rawDesc), len(file_favor_favor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

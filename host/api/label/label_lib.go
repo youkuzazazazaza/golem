@@ -8,7 +8,7 @@ import (
 
 	"golem/pkg/label"
 
-	"github.com/sbgayhub/golem/host/api/util"
+	"github.com/sbgayhub/golem/host/api"
 )
 
 // lib 标签服务 lib 实现
@@ -26,7 +26,7 @@ func (l lib) List() (*ListLabelsResponse, error) {
 		return nil, err
 	}
 	var result ListLabelsResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -39,7 +39,7 @@ func (l lib) Add(name string) (*AddLabelResponse, error) {
 		return nil, err
 	}
 	var result AddLabelResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -52,7 +52,7 @@ func (l lib) Delete(labelIds string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -65,7 +65,7 @@ func (l lib) Update(labelId uint32, name string) (*OperateResponse, error) {
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -78,7 +78,7 @@ func (l lib) ModifyContactLabels(usernames []string, labelIds string) (*OperateR
 		return nil, err
 	}
 	var result OperateResponse
-	if err := util.TransformProto(resp, &result); err != nil {
+	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil

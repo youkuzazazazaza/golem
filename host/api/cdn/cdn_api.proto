@@ -1,15 +1,10 @@
 syntax = "proto3";
 
-package cdn.api;
+package api.cdn;
 
 option go_package = "github.com/sbgayhub/golem/host/api/cdn;cdnapi";
 
 // ==================== DNS 相关消息 ====================
-
-// DnsResponse CDN DNS 响应
-message DnsResponse {
-  bytes dns_data = 1; // DNS 响应数据
-}
 
 // ==================== 上传结果消息 ====================
 
