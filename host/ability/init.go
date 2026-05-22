@@ -1,13 +1,22 @@
 package ability
 
-import _ "github.com/sbgayhub/golem/host/ability/cdn"
-import _ "github.com/sbgayhub/golem/host/ability/contact"
-import _ "github.com/sbgayhub/golem/host/ability/favor"
-import _ "github.com/sbgayhub/golem/host/ability/chatroom"
-import _ "github.com/sbgayhub/golem/host/ability/label"
-import _ "github.com/sbgayhub/golem/host/ability/message"
+import (
+	_ "github.com/sbgayhub/golem/host/ability/cdn"
+	_ "github.com/sbgayhub/golem/host/ability/chatroom"
+	_ "github.com/sbgayhub/golem/host/ability/contact"
+	_ "github.com/sbgayhub/golem/host/ability/favor"
+	_ "github.com/sbgayhub/golem/host/ability/label"
+	_ "github.com/sbgayhub/golem/host/ability/message"
+)
 
-// Initial 初始化能力层
-func Initial() error {
-	return nil
+import contactability "github.com/sbgayhub/golem/host/ability/contact"
+import chatroomability "github.com/sbgayhub/golem/host/ability/chatroom"
+
+// Inject 注入能力层
+func Inject() {
+}
+
+func Destroy() {
+	contactability.Destroy()
+	chatroomability.Destroy()
 }
