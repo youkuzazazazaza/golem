@@ -12,6 +12,7 @@
 # go workspace
 go.work
 go.work.sum
+data
 
 # agent
 ./.claude
