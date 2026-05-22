@@ -13,6 +13,8 @@ import (
 
 	"github.com/phsym/console-slog"
 	"github.com/sbgayhub/golem/host/ability"
+	chatroomability "github.com/sbgayhub/golem/host/ability/chatroom"
+	contactability "github.com/sbgayhub/golem/host/ability/contact"
 	"github.com/sbgayhub/golem/host/ability/sync"
 	"github.com/sbgayhub/golem/host/plugin"
 )
@@ -35,12 +37,6 @@ func main() {
 		return
 	}
 
-	// 初始化能力层
-	if err := ability.Initial(); err != nil {
-		slog.Error("能力层注册失败", "err", err)
-		return
-	}
-
 	// 初始化插件管理器
 	if err := plugin.Initial(); err != nil {
 		slog.Error("插件管理器初始化失败", "err", err)
@@ -56,13 +52,18 @@ func main() {
 		//contactability.SetUser(contact.User(user))
 	}
 
+	// 初始化联系人能力，加载联系人缓存
+	contactability.Initial()
+	// 初始化群组能力，加载群组缓存
+	chatroomability.Initial()
+
 	// 等待中断信号优雅关闭
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
 	slog.Info("正在关闭...")
-	//ability.Destroy()
+	ability.Destroy()
 	plugin.Destroy()
 	golem.Stop()
 }
