@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+
+	"github.com/sbgayhub/golem/host/api"
 )
 
 // web 标签服务 web 实现
@@ -29,7 +31,7 @@ func (w web) List() (*ListLabelsResponse, error) {
 // Add 添加标签
 func (w web) Add(name string) (*AddLabelResponse, error) {
 	var resp AddLabelResponse
-	if err := api.GetHttp().Post("/api/labels").Body(map[string]any{"name": name}).DoProto(&resp); err != nil {
+	if err := api.GetHttp().Post("/api/labels").Body(map[string]any{"label_name": name}).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -48,8 +50,7 @@ func (w web) Delete(labelIds string) (*OperateResponse, error) {
 func (w web) Update(labelId uint32, name string) (*OperateResponse, error) {
 	var resp OperateResponse
 	if err := api.GetHttp().Put(fmt.Sprintf("/api/labels/%d", labelId)).Body(map[string]any{
-		"label_id": labelId,
-		"name":     name,
+		"label_name": name,
 	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
