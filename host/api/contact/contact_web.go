@@ -6,6 +6,8 @@ package contactapi
 import (
 	"fmt"
 	"sync"
+
+	"github.com/sbgayhub/golem/host/api"
 )
 
 // web 联系人服务 web 实现（通过 HTTP 调用远程服务）
@@ -22,16 +24,13 @@ func (w web) List() ([]string, error) {
 	if err := api.GetHttp().Get("/api/contacts").DoJson(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return resp, nil
 }
 
 // Detail 获取联系人详细信息
-func (w web) Detail(usernames, chatrooms []string) (*GetContactDetailResponse, error) {
+func (w web) Detail(usernames []string) (*GetContactDetailResponse, error) {
 	var resp GetContactDetailResponse
-	if err := api.GetHttp().Post("/api/contacts/detail").Body(map[string]any{
-		"usernames": usernames,
-		"chatrooms": chatrooms,
-	}).DoProto(&resp); err != nil {
+	if err := api.GetHttp().Post("/api/contacts/detail").Body(usernames).DoProto(&resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -52,9 +51,9 @@ func (w web) SetRemark(username, remark string) (*OperateResponse, error) {
 func (w web) Search(keyword string, fromScene, searchScene uint32) (*SearchContactResponse, error) {
 	var resp SearchContactResponse
 	if err := api.GetHttp().Post("/api/contacts/search").Body(map[string]any{
-		"keyword":     keyword,
-		"fromScene":   fromScene,
-		"searchScene": searchScene,
+		"keyword":      keyword,
+		"from_scene":   fromScene,
+		"search_scene": searchScene,
 	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
@@ -133,9 +132,9 @@ func (w web) LbsFind(latitude, longitude float32, operate uint32) (*LbsResponse,
 func (w web) UploadContact(phones []string, currentPhone string, operate int32) (*UploadContactResponse, error) {
 	var resp UploadContactResponse
 	if err := api.GetHttp().Post("/api/contacts/upload").Body(map[string]any{
-		"phones":       phones,
-		"currentPhone": currentPhone,
-		"operate":      operate,
+		"phones":        phones,
+		"current_phone": currentPhone,
+		"operate":       operate,
 	}).DoProto(&resp); err != nil {
 		return nil, err
 	}
