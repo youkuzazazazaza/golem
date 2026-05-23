@@ -41,7 +41,7 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		if data.GetMedia() == nil {
 			break
 		}
-		_, err := a.api.SendImage(receiver, bytes.NewReader(nil))
+		_, err := a.api.SendImage(receiver, bytes.NewReader(data.GetMedia().Data))
 		if err != nil {
 			return nil, err
 		}

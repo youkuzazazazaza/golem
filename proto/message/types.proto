@@ -21,6 +21,7 @@ message Media {
   string key = 2;   // AES 解密密钥
   string url = 3;   // CDN URL
   uint32 size = 4;  // 文件大小（字节）
+  bytes data = 5; // 媒体数据字节数组
 }
 
 // ==================== 消息体 ====================

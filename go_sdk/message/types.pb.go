@@ -90,6 +90,7 @@ type Media struct {
 	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`    // AES 解密密钥
 	Url           string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`    // CDN URL
 	Size          uint32                 `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"` // 文件大小（字节）
+	Data          []byte                 `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`  // 媒体数据字节数组
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -150,6 +151,13 @@ func (x *Media) GetSize() uint32 {
 		return x.Size
 	}
 	return 0
+}
+
+func (x *Media) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
 }
 
 // Message 统一消息结构（跨 host↔plugin 边界）
@@ -830,12 +838,13 @@ const file_message_types_proto_rawDesc = "" +
 	"\x04Type\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x12\n" +
 	"\x04desc\x18\x02 \x01(\tR\x04desc\x12\x14\n" +
-	"\x05topic\x18\x03 \x01(\tR\x05topic\"Q\n" +
+	"\x05topic\x18\x03 \x01(\tR\x05topic\"e\n" +
 	"\x05Media\x12\x10\n" +
 	"\x03md5\x18\x01 \x01(\tR\x03md5\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\x12\x12\n" +
-	"\x04size\x18\x04 \x01(\rR\x04size\"\xc4\x04\n" +
+	"\x04size\x18\x04 \x01(\rR\x04size\x12\x12\n" +
+	"\x04data\x18\x05 \x01(\fR\x04data\"\xc4\x04\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\x04type\x18\x02 \x01(\v2\r.message.TypeR\x04type\x12(\n" +
