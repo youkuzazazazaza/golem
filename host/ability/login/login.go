@@ -4,16 +4,17 @@ package loginability
 import (
 	sdk "github.com/sbgayhub/golem/sdk/login"
 
-	api "github.com/sbgayhub/golem/host/api/login"
+	"github.com/sbgayhub/golem/host/api"
+	loginapi "github.com/sbgayhub/golem/host/api/login"
 )
 
 // ability 登录能力实现（直连型）
 type ability struct {
-	api api.LoginService
+	api loginapi.LoginService
 }
 
 func init() {
-	sdk.Instance = &ability{api: api.Get()}
+	sdk.Instance = &ability{api: loginapi.Get()}
 }
 
 // Login 执行扫码登录
@@ -83,7 +84,7 @@ func (a ability) Logout() (*sdk.Logout_Response, error) {
 
 // PasswordLogin 使用账号密码登录
 func (a ability) PasswordLogin(req *sdk.PasswordLogin_Request) (*sdk.PasswordLogin_Response, error) {
-	var apiReq api.PasswordLoginRequest
+	var apiReq loginapi.PasswordLoginRequest
 	if err := api.TransformProto(req, &apiReq); err != nil {
 		return nil, err
 	}

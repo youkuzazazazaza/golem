@@ -5,6 +5,9 @@ package loginapi
 
 import (
 	"sync"
+
+	"github.com/sbgayhub/golem/host/api"
+	baseapi "github.com/sbgayhub/golem/host/api/base"
 )
 
 // web 登录服务 web 实现
@@ -17,47 +20,54 @@ var Get = sync.OnceValue(func() LoginService {
 
 // Login 执行扫码登录
 func (w web) Login() (*QRCodeResult, error) {
-	var resp QRCodeResult
-	if err := api.GetHttp().Get("/api/login/login").DoProto(&resp); err != nil {
+	var resp struct {
+		UUID        string `json:"uuid"`
+		Data        string `json:"data"`
+		CheckTime   uint32 `json:"check_time"`
+		ExpiredTime uint32 `json:"expired_time"`
+	}
+	if err := api.GetHttp().Get("/api/login/login").DoJson(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &QRCodeResult{
+		Qrcode:      &baseapi.Buffer{Data: []byte(resp.Data)},
+		Uuid:        &resp.UUID,
+		CheckTime:   &resp.CheckTime,
+		ExpiredTime: &resp.ExpiredTime,
+	}, nil
 }
 
 // Init 首次登录后初始化
 func (w web) Init() (*InitResponse, error) {
-	var resp InitResponse
-	if err := api.GetHttp().Get("/api/login/init").DoProto(&resp); err != nil {
+	if _, err := api.GetHttp().Get("/api/login/init").Do(); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &InitResponse{Code: 0, Message: "ok"}, nil
 }
 
 // Refresh 刷新登录状态
 func (w web) Refresh() (*OperateResponse, error) {
-	var resp OperateResponse
-	if err := api.GetHttp().Get("/api/login/status").DoProto(&resp); err != nil {
+	var status string
+	if err := api.GetHttp().Get("/api/login/status").DoJson(&status); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &OperateResponse{Code: 0, Message: status}, nil
 }
 
 // Wakeup 唤醒登录
 func (w web) Wakeup() (*OperateResponse, error) {
-	var resp OperateResponse
-	if err := api.GetHttp().Get("/api/login/awaken").DoProto(&resp); err != nil {
+	if _, err := api.GetHttp().Get("/api/login/awaken").Do(); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &OperateResponse{Code: 0, Message: "ok"}, nil
 }
 
 // Logout 登出
 func (w web) Logout() (*OperateResponse, error) {
-	var resp OperateResponse
-	if err := api.GetHttp().Get("/api/login/logout").DoProto(&resp); err != nil {
+	if _, err := api.GetHttp().Get("/api/login/logout").Do(); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &OperateResponse{Code: 0, Message: "ok"}, nil
 }
 
 // PasswordLogin 使用账号密码登录
