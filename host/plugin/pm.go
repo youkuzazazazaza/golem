@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pelletier/go-toml/v2"
+	"github.com/sbgayhub/golem/sdk/contact"
 	sdk "github.com/sbgayhub/golem/sdk/plugin"
 )
 
@@ -27,6 +28,18 @@ type pmUnloadCommand struct {
 type pmReloadCommand struct {
 	_    struct{} `cmd:"pm reload" help:"重载插件" usage:"/pm reload <name>" example:"/pm reload example"`
 	Name string   `arg:"name" help:"插件名称" required:"true"`
+}
+
+type pmEnableCommand struct {
+	_       struct{} `cmd:"pm enable" help:"启用插件" usage:"/pm enable <name>" example:"/pm enable example"`
+	Name    string   `arg:"name" help:"插件名称" required:"true"`
+	Command *sdk.Command
+}
+
+type pmDisableCommand struct {
+	_       struct{} `cmd:"pm disable" help:"禁用插件" usage:"/pm disable <name>" example:"/pm disable example"`
+	Name    string   `arg:"name" help:"插件名称" required:"true"`
+	Command *sdk.Command
 }
 
 type pmListCommand struct {
@@ -89,6 +102,12 @@ func newPMCommandPlugin() (*pmCommandPlugin, error) {
 	if err := sdk.RegisterCommandTo(pm.registry, pm.reload); err != nil {
 		return nil, err
 	}
+	if err := sdk.RegisterCommandTo(pm.registry, pm.enable); err != nil {
+		return nil, err
+	}
+	if err := sdk.RegisterCommandTo(pm.registry, pm.disable); err != nil {
+		return nil, err
+	}
 	if err := sdk.RegisterCommandTo(pm.registry, pm.list); err != nil {
 		return nil, err
 	}
@@ -132,6 +151,14 @@ func (p *pmCommandPlugin) reload(cmd pmReloadCommand) (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("插件已重载：%s", cmd.Name), nil
+}
+
+func (p *pmCommandPlugin) enable(cmd pmEnableCommand) (string, error) {
+	return p.setEnabled(cmd.Name, cmd.Command, true)
+}
+
+func (p *pmCommandPlugin) disable(cmd pmDisableCommand) (string, error) {
+	return p.setEnabled(cmd.Name, cmd.Command, false)
 }
 
 func (p *pmCommandPlugin) list(_ pmListCommand) (string, error) {
@@ -265,6 +292,91 @@ func (p *pmCommandPlugin) set(cmd pmSetCommand) (string, error) {
 		return "没有配置被修改", nil
 	}
 	return fmt.Sprintf("插件配置已修改：%s (%s)", cmd.Name, strings.Join(changed, ", ")), nil
+}
+
+func (p *pmCommandPlugin) setEnabled(name string, cmd *sdk.Command, enabled bool) (string, error) {
+	mu.Lock()
+	w := findPlugin(name)
+	if w == nil {
+		mu.Unlock()
+		return "", fmt.Errorf("插件不存在：%s", name)
+	}
+	if slices.Contains(w.types, "builtin") {
+		mu.Unlock()
+		return "", fmt.Errorf("内置插件禁止修改：%s", name)
+	}
+	if w.Config == nil {
+		mu.Unlock()
+		return "", fmt.Errorf("插件缺少配置：%s", name)
+	}
+	isChatroom := cmd != nil && cmd.GetSender().GetType() == contact.ContactType_CONTACT_TYPE_CHATROOM
+	if isChatroom {
+		sender := cmd.GetSender().GetUsername()
+		if sender == "" {
+			mu.Unlock()
+			return "", fmt.Errorf("命令来源群聊为空")
+		}
+		if err := setChatroomEnabled(w.Config, sender, enabled); err != nil {
+			mu.Unlock()
+			return "", err
+		}
+		err := saveConfig()
+		mu.Unlock()
+		if err != nil {
+			return "", err
+		}
+		state := "已启用"
+		if !enabled {
+			state = "已禁用"
+		}
+		return fmt.Sprintf("插件在当前群聊中%s：%s", state, name), nil
+	}
+	w.Config.Enable = enabled
+	rebuildCommandIndex()
+	rebuildCapabilityIndex()
+	err := saveConfig()
+	mu.Unlock()
+	if err != nil {
+		return "", err
+	}
+	if enabled {
+		return fmt.Sprintf("插件已启用：%s", name), nil
+	}
+	return fmt.Sprintf("插件已禁用：%s", name), nil
+}
+
+func setChatroomEnabled(cfg *Config, chatroom string, enabled bool) error {
+	if cfg == nil {
+		return fmt.Errorf("插件缺少配置")
+	}
+	switch cfg.Mode {
+	case "whitelist":
+		setLimit(cfg, chatroom, enabled)
+	case "", "blacklist":
+		cfg.Mode = "blacklist"
+		setLimit(cfg, chatroom, !enabled)
+	default:
+		return fmt.Errorf("插件限制模式不支持：%s", cfg.Mode)
+	}
+	return nil
+}
+
+func setLimit(cfg *Config, value string, present bool) bool {
+	exist := slices.Contains(cfg.Limits, value)
+	if present {
+		if exist {
+			return false
+		}
+		cfg.Limits = append(cfg.Limits, value)
+		return true
+	}
+	if !exist {
+		return false
+	}
+	cfg.Limits = slices.DeleteFunc(cfg.Limits, func(item string) bool {
+		return item == value
+	})
+	return true
 }
 
 func parsePMConfig(raw string) (map[string]any, error) {
