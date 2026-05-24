@@ -294,6 +294,10 @@ func bindValue(v reflect.Value, cmd *Command) error {
 		if !field.IsExported() {
 			continue
 		}
+		if fieldValue.CanSet() && field.Type == reflect.TypeFor[*Command]() {
+			fieldValue.Set(reflect.ValueOf(cmd))
+			continue
+		}
 		if optTag := field.Tag.Get("flag"); optTag != "" {
 			option := buildOptionSchema(field, optTag)
 			raw := cmd.Args[option.Name]

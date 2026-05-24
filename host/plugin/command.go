@@ -27,16 +27,18 @@ func HandleCommand(raw string, sender *contact.Contact) (*message.Message, bool)
 		return nil, ok
 	}
 	if err != nil {
-		if bytes := text2image(err.Error()); bytes != nil {
-			return &message.Message{
-				Type:     message.TypeImage,
-				Receiver: sender,
-				Content:  "命令错误",
-				Data:     &message.Message_Image{Image: &message.ImageData{Media: &message.Media{Data: bytes}}},
-			}, true
+		if len(strings.Split(err.Error(), "\n")) > 3 {
+			if bytes := text2image(err.Error()); bytes != nil {
+				return &message.Message{
+					Type:     message.TypeImage,
+					Receiver: sender,
+					Content:  "命令错误",
+					Data:     &message.Message_Image{Image: &message.ImageData{Media: &message.Media{Data: bytes}}},
+				}, true
+			}
 		}
 		return &message.Message{
-			Type:     message.TypeImage,
+			Type:     message.TypeText,
 			Receiver: sender,
 			Content:  err.Error(),
 		}, true
@@ -51,7 +53,7 @@ func HandleCommand(raw string, sender *contact.Contact) (*message.Message, bool)
 			}, true
 		}
 		return &message.Message{
-			Type:     message.TypeImage,
+			Type:     message.TypeText,
 			Receiver: sender,
 			Content:  parsed.help,
 		}, true
@@ -59,13 +61,13 @@ func HandleCommand(raw string, sender *contact.Contact) (*message.Message, bool)
 	result, err := (*parsed.wrapper.commandPlugin).OnCommand(parsed.cmd)
 	if err != nil {
 		return &message.Message{
-			Type:     message.TypeImage,
+			Type:     message.TypeText,
 			Receiver: sender,
 			Content:  err.Error(),
 		}, true
 	}
 	return &message.Message{
-		Type:     message.TypeImage,
+		Type:     message.TypeText,
 		Receiver: sender,
 		Content:  result,
 	}, true
@@ -73,7 +75,7 @@ func HandleCommand(raw string, sender *contact.Contact) (*message.Message, bool)
 
 func text2image(text string) []byte {
 	if w, ex := capabilityIndex["text.to.image"]; ex {
-		if called, err := (*w.calledPlugin).OnCall("text.to.image", map[string]string{"text": text}); err != nil {
+		if called, err := (*w.calledPlugin).OnCall("text.to.image", map[string]string{"context": text, "bg_color": "#F7F7F7"}); err != nil {
 			slog.Warn("[text.to.image] 能力调用失败", "plugin", w.Name, "err", err)
 			return nil
 		} else {
@@ -144,7 +146,7 @@ func parseCommand(raw string, sender *contact.Contact) (*parsedCommand, bool, er
 	}
 
 	if err := parseCommandArgs(cmd, schema, remaining); err != nil {
-		return nil, true, fmt.Errorf("%w\n\n%s", err, renderCommandHelp(schema))
+		return nil, true, fmt.Errorf("🚨 %w\n\n%s", err, renderCommandHelp(schema))
 	}
 	return &parsedCommand{cmd: cmd, wrapper: target, schema: schema}, true, nil
 }
@@ -320,7 +322,7 @@ func applyArguments(cmd *sdk.Command, schema *sdk.CommandSchema, values []string
 }
 
 func renderMainHelp(main string, schemas []*sdk.CommandSchema) string {
-	lines := []string{"命令：/" + main}
+	lines := []string{"📟 命令：/" + main}
 	var subcommands []*sdk.CommandSchema
 	for _, schema := range schemas {
 		if schema.GetMain() != main {
@@ -328,19 +330,19 @@ func renderMainHelp(main string, schemas []*sdk.CommandSchema) string {
 		}
 		if schema.GetSub() == "" {
 			if schema.GetDescription() != "" {
-				lines = append(lines, "", "说明："+schema.GetDescription())
+				lines = append(lines, "", "ℹ️ 说明："+schema.GetDescription())
 			}
 			continue
 		}
 		subcommands = append(subcommands, schema)
 	}
 	if len(subcommands) > 0 {
-		lines = append(lines, "", "子命令：")
+		lines = append(lines, "", "🎯 子命令：")
 		subNameWidth := subcommandNameWidth(subcommands)
 		for _, schema := range subcommands {
 			lines = append(lines, formatSubcommandHelp(schema, subNameWidth))
 		}
-		lines = append(lines, "", "使用 /"+main+" <子命令> -h 查看详细帮助")
+		lines = append(lines, "", "📢 使用 /"+main+" <子命令> -h 查看详细帮助")
 	}
 	return strings.Join(lines, "\n")
 }
@@ -350,15 +352,15 @@ func renderCommandHelp(schema *sdk.CommandSchema) string {
 	if schema.GetSub() != "" {
 		name += " " + schema.GetSub()
 	}
-	lines := []string{"命令：" + name}
+	lines := []string{"📟 命令：" + name}
 	if schema.GetDescription() != "" {
-		lines = append(lines, "", "说明："+schema.GetDescription())
+		lines = append(lines, "", "📋 说明："+schema.GetDescription())
 	}
 	if schema.GetUsage() != "" {
-		lines = append(lines, "", "用法：", schema.GetUsage())
+		lines = append(lines, "", "✨ 用法：", schema.GetUsage())
 	}
 	if len(schema.GetArguments()) > 0 {
-		lines = append(lines, "", "位置参数：")
+		lines = append(lines, "", "📌 位置参数：")
 		nameWidth := argumentNameWidth(schema.GetArguments())
 		for _, arg := range schema.GetArguments() {
 			lines = append(lines, formatArgumentHelp(arg, nameWidth))
@@ -366,13 +368,13 @@ func renderCommandHelp(schema *sdk.CommandSchema) string {
 	}
 	optNameWidth := optionNameWidth(schema.GetOptions())
 	if len(schema.GetOptions()) > 0 {
-		lines = append(lines, "", "参数：")
+		lines = append(lines, "", "📌 参数：")
 		for _, opt := range schema.GetOptions() {
 			lines = append(lines, formatOptionHelp(opt, optNameWidth))
 		}
 	}
 	if len(schema.GetExamples()) > 0 {
-		lines = append(lines, "", "示例：")
+		lines = append(lines, "", "💡 示例：")
 		lines = append(lines, schema.GetExamples()...)
 	}
 	lines = append(lines, "", formatHelpOption(optNameWidth))
