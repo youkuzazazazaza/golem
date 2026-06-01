@@ -30,11 +30,11 @@ type ChatroomService interface {
 	// SetContactList 保存到通讯录
 	SetContactList(chatroomID string, save bool) (*OperateResponse, error)
 	// SetAdmin 设置群管理员
-	SetAdmin(chatroomID string, members []string) (*OperateResponse, error)
+	SetAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error)
 	// RemoveAdmin 移除群管理员
-	RemoveAdmin(chatroomID string, members []string) (*OperateResponse, error)
+	RemoveAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error)
 	// TransferOwner 转让群主
-	TransferOwner(chatroomID, newOwner string) (*OperateResponse, error)
+	TransferOwner(chatroomID, newOwner string) (*ChatroomAdminResponse, error)
 	// Quit 退出群聊
 	Quit(chatroomID string) (*OperateResponse, error)
 	// ScanJoin 扫码进群

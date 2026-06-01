@@ -187,12 +187,12 @@ func (l lib) SetContactList(chatroomID string, save bool) (*OperateResponse, err
 }
 
 // SetAdmin 设置群管理员
-func (l lib) SetAdmin(chatroomID string, members []string) (*OperateResponse, error) {
+func (l lib) SetAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error) {
 	resp, err := chatroom.SetAdmin(chatroomID, members)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result OperateResponse
+	var result ChatroomAdminResponse
 	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
@@ -200,12 +200,12 @@ func (l lib) SetAdmin(chatroomID string, members []string) (*OperateResponse, er
 }
 
 // RemoveAdmin 移除群管理员
-func (l lib) RemoveAdmin(chatroomID string, members []string) (*OperateResponse, error) {
+func (l lib) RemoveAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error) {
 	resp, err := chatroom.RemoveAdmin(chatroomID, members)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result OperateResponse
+	var result ChatroomAdminResponse
 	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}
@@ -213,12 +213,12 @@ func (l lib) RemoveAdmin(chatroomID string, members []string) (*OperateResponse,
 }
 
 // TransferOwner 转让群主
-func (l lib) TransferOwner(chatroomID, newOwner string) (*OperateResponse, error) {
+func (l lib) TransferOwner(chatroomID, newOwner string) (*ChatroomAdminResponse, error) {
 	resp, err := chatroom.TransferOwner(chatroomID, newOwner)
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	var result OperateResponse
+	var result ChatroomAdminResponse
 	if err := api.TransformProto(resp, &result); err != nil {
 		return nil, err
 	}

@@ -7,14 +7,15 @@
 package chatroomapi
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	base "github.com/sbgayhub/golem/host/api/base"
 	contact "github.com/sbgayhub/golem/host/api/contact"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (
@@ -26,9 +27,9 @@ const (
 
 // OperateResponse 通用操作响应
 type OperateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Code          *int32                  `protobuf:"varint,1,opt,name=code,proto3,oneof" json:"code,omitempty"`    // 返回码
+	Result        *OperateResponse_Result `protobuf:"bytes,2,opt,name=result,proto3,oneof" json:"result,omitempty"` // 操作返回结果
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -64,17 +65,17 @@ func (*OperateResponse) Descriptor() ([]byte, []int) {
 }
 
 func (x *OperateResponse) GetCode() int32 {
-	if x != nil {
-		return x.Code
+	if x != nil && x.Code != nil {
+		return *x.Code
 	}
 	return 0
 }
 
-func (x *OperateResponse) GetMessage() string {
+func (x *OperateResponse) GetResult() *OperateResponse_Result {
 	if x != nil {
-		return x.Message
+		return x.Result
 	}
-	return ""
+	return nil
 }
 
 // Member 群成员（镜像 golem contact.Member，字段编号完全一致）
@@ -331,6 +332,7 @@ func (x *FacingMember) GetFlag() uint32 {
 // CreateChatroomResponse 创建群聊响应（镜像 golem CreateChatroomResponse，字段号从 2 开始）
 type CreateChatroomResponse struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
+	BaseResponse   *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`          // 基础响应
 	Topic          *string                `protobuf:"bytes,2,opt,name=topic,proto3,oneof" json:"topic,omitempty"`                                            // 对应 golem field 2
 	TopicJianpin   *string                `protobuf:"bytes,3,opt,name=topic_jianpin,json=topicJianpin,proto3,oneof" json:"topic_jianpin,omitempty"`          // 对应 golem field 3
 	TopicQuanpin   *string                `protobuf:"bytes,4,opt,name=topic_quanpin,json=topicQuanpin,proto3,oneof" json:"topic_quanpin,omitempty"`          // 对应 golem field 4
@@ -372,6 +374,13 @@ func (x *CreateChatroomResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateChatroomResponse.ProtoReflect.Descriptor instead.
 func (*CreateChatroomResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateChatroomResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *CreateChatroomResponse) GetTopic() string {
@@ -440,10 +449,11 @@ func (x *CreateChatroomResponse) GetSmallAvatarUrl() string {
 // FacingCreateChatroomResponse 面对面建群响应（镜像 golem，字段号从 2 开始）
 type FacingCreateChatroomResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ticket        *string                `protobuf:"bytes,2,opt,name=ticket,proto3,oneof" json:"ticket,omitempty"`                               // 对应 golem field 2
-	MemberCount   *uint32                `protobuf:"varint,3,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"` // 对应 golem field 3
-	MemberList    []*FacingMember        `protobuf:"bytes,4,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`           // 对应 golem field 4
-	Chatroom      *string                `protobuf:"bytes,5,opt,name=chatroom,proto3,oneof" json:"chatroom,omitempty"`                           // 对应 golem field 5
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	Ticket        *string                `protobuf:"bytes,2,opt,name=ticket,proto3,oneof" json:"ticket,omitempty"`                                 // 对应 golem field 2
+	MemberCount   *uint32                `protobuf:"varint,3,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"`   // 对应 golem field 3
+	MemberList    []*FacingMember        `protobuf:"bytes,4,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`             // 对应 golem field 4
+	Chatroom      *string                `protobuf:"bytes,5,opt,name=chatroom,proto3,oneof" json:"chatroom,omitempty"`                             // 对应 golem field 5
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -478,6 +488,13 @@ func (*FacingCreateChatroomResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{4}
 }
 
+func (x *FacingCreateChatroomResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *FacingCreateChatroomResponse) GetTicket() string {
 	if x != nil && x.Ticket != nil {
 		return *x.Ticket
@@ -509,6 +526,7 @@ func (x *FacingCreateChatroomResponse) GetChatroom() string {
 // GetChatroomInfoDetailResponse 获取群详细信息响应（镜像 golem，字段号从 2 开始）
 type GetChatroomInfoDetailResponse struct {
 	state                   protoimpl.MessageState               `protogen:"open.v1"`
+	BaseResponse            *base.BaseResponse                   `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`                                     // 基础响应
 	Announcement            *string                              `protobuf:"bytes,2,opt,name=announcement,proto3,oneof" json:"announcement,omitempty"`                                                         // 对应 golem field 2
 	InfoVersion             *int32                               `protobuf:"varint,3,opt,name=info_version,json=infoVersion,proto3,oneof" json:"info_version,omitempty"`                                       // 对应 golem field 3
 	AnnouncementEditor      *string                              `protobuf:"bytes,4,opt,name=announcement_editor,json=announcementEditor,proto3,oneof" json:"announcement_editor,omitempty"`                   // 对应 golem field 4
@@ -548,6 +566,13 @@ func (x *GetChatroomInfoDetailResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetChatroomInfoDetailResponse.ProtoReflect.Descriptor instead.
 func (*GetChatroomInfoDetailResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetChatroomInfoDetailResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *GetChatroomInfoDetailResponse) GetAnnouncement() string {
@@ -600,10 +625,15 @@ func (x *GetChatroomInfoDetailResponse) GetTools() *GetChatroomInfoDetailRespons
 }
 
 type GetChatroomMembersResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	ContactList   []*contact.ModifyContact `protobuf:"bytes,3,rep,name=contact_list,json=contactList,proto3" json:"contact_list,omitempty"` // 对应 golem field 3
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                 protoimpl.MessageState                              `protogen:"open.v1"`
+	BaseResponse          *base.BaseResponse                                  `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`                          // 基础响应
+	ContactCount          *int32                                              `protobuf:"varint,2,opt,name=contact_count,json=contactCount,proto3,oneof" json:"contact_count,omitempty"`                         // 联系人数量
+	ContactList           []*contact.ModifyContact                            `protobuf:"bytes,3,rep,name=contact_list,json=contactList,proto3" json:"contact_list,omitempty"`                                   // 对应 golem field 3
+	Code                  []int32                                             `protobuf:"varint,4,rep,packed,name=code,proto3" json:"code,omitempty"`                                                            // 返回码列表
+	Ticket                []*GetChatroomMembersResponse_VerifyUserValidTicket `protobuf:"bytes,5,rep,name=ticket,proto3" json:"ticket,omitempty"`                                                                // 验证用户票据
+	SendMessageTicketList [][]byte                                            `protobuf:"bytes,6,rep,name=send_message_ticket_list,json=sendMessageTicketList,proto3" json:"send_message_ticket_list,omitempty"` // 发消息票据列表
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *GetChatroomMembersResponse) Reset() {
@@ -636,6 +666,20 @@ func (*GetChatroomMembersResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *GetChatroomMembersResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
+func (x *GetChatroomMembersResponse) GetContactCount() int32 {
+	if x != nil && x.ContactCount != nil {
+		return *x.ContactCount
+	}
+	return 0
+}
+
 func (x *GetChatroomMembersResponse) GetContactList() []*contact.ModifyContact {
 	if x != nil {
 		return x.ContactList
@@ -643,9 +687,31 @@ func (x *GetChatroomMembersResponse) GetContactList() []*contact.ModifyContact {
 	return nil
 }
 
+func (x *GetChatroomMembersResponse) GetCode() []int32 {
+	if x != nil {
+		return x.Code
+	}
+	return nil
+}
+
+func (x *GetChatroomMembersResponse) GetTicket() []*GetChatroomMembersResponse_VerifyUserValidTicket {
+	if x != nil {
+		return x.Ticket
+	}
+	return nil
+}
+
+func (x *GetChatroomMembersResponse) GetSendMessageTicketList() [][]byte {
+	if x != nil {
+		return x.SendMessageTicketList
+	}
+	return nil
+}
+
 // ListMembersResponse 获取群成员列表（镜像 golem，嵌套 Result 结构）
 type ListMembersResponse struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
+	BaseResponse  *base.BaseResponse          `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`     // 基础响应
 	Chatroom      *string                     `protobuf:"bytes,2,opt,name=chatroom,proto3,oneof" json:"chatroom,omitempty"`                                 // 对应 golem field 2
 	ServerVersion *int32                      `protobuf:"varint,3,opt,name=server_version,json=serverVersion,proto3,oneof" json:"server_version,omitempty"` // 对应 golem field 3
 	Result        *ListMembersResponse_Result `protobuf:"bytes,4,opt,name=result,proto3,oneof" json:"result,omitempty"`                                     // 对应 golem field 4
@@ -683,6 +749,13 @@ func (*ListMembersResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{7}
 }
 
+func (x *ListMembersResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *ListMembersResponse) GetChatroom() string {
 	if x != nil && x.Chatroom != nil {
 		return *x.Chatroom
@@ -707,6 +780,7 @@ func (x *ListMembersResponse) GetResult() *ListMembersResponse_Result {
 // GetChatroomQRCodeResponse 获取群二维码响应（镜像 golem，字段号从 2 开始）
 type GetChatroomQRCodeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`    // 基础响应
 	QrcodeBuffer  *base.Buffer           `protobuf:"bytes,2,opt,name=qrcode_buffer,json=qrcodeBuffer,proto3,oneof" json:"qrcode_buffer,omitempty"`    // 对应 golem field 2
 	FooterWording *string                `protobuf:"bytes,3,opt,name=footer_wording,json=footerWording,proto3,oneof" json:"footer_wording,omitempty"` // 对应 golem field 3
 	RevokeQrcode  *uint32                `protobuf:"varint,4,opt,name=revoke_qrcode,json=revokeQrcode,proto3,oneof" json:"revoke_qrcode,omitempty"`   // 对应 golem field 4
@@ -744,6 +818,13 @@ func (x *GetChatroomQRCodeResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetChatroomQRCodeResponse.ProtoReflect.Descriptor instead.
 func (*GetChatroomQRCodeResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetChatroomQRCodeResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *GetChatroomQRCodeResponse) GetQrcodeBuffer() *base.Buffer {
@@ -784,8 +865,9 @@ func (x *GetChatroomQRCodeResponse) GetQrcodeUrl() string {
 // AddChatroomMemberResponse 添加群成员响应（镜像 golem，字段号从 2 开始）
 type AddChatroomMemberResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberCount   *uint32                `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"` // 对应 golem field 2
-	MemberList    []*Member              `protobuf:"bytes,3,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`           // 对应 golem field 3
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	MemberCount   *uint32                `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"`   // 对应 golem field 2
+	MemberList    []*Member              `protobuf:"bytes,3,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`             // 对应 golem field 3
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -820,6 +902,13 @@ func (*AddChatroomMemberResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{9}
 }
 
+func (x *AddChatroomMemberResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *AddChatroomMemberResponse) GetMemberCount() uint32 {
 	if x != nil && x.MemberCount != nil {
 		return *x.MemberCount
@@ -834,11 +923,12 @@ func (x *AddChatroomMemberResponse) GetMemberList() []*Member {
 	return nil
 }
 
-// InviteChatroomMemberResponse 邀请群成员响应（API 层简化版）
+// InviteChatroomMemberResponse 邀请群成员响应（镜像 golem AddChatroomMemberResponse）
 type InviteChatroomMemberResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberCount   uint32                 `protobuf:"varint,1,opt,name=member_count,json=memberCount,proto3" json:"member_count,omitempty"`
-	MemberList    []*Member              `protobuf:"bytes,2,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	MemberCount   *uint32                `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"`   // 对应 golem field 2
+	MemberList    []*Member              `protobuf:"bytes,3,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`             // 对应 golem field 3
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -873,9 +963,16 @@ func (*InviteChatroomMemberResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *InviteChatroomMemberResponse) GetMemberCount() uint32 {
+func (x *InviteChatroomMemberResponse) GetBaseResponse() *base.BaseResponse {
 	if x != nil {
-		return x.MemberCount
+		return x.BaseResponse
+	}
+	return nil
+}
+
+func (x *InviteChatroomMemberResponse) GetMemberCount() uint32 {
+	if x != nil && x.MemberCount != nil {
+		return *x.MemberCount
 	}
 	return 0
 }
@@ -890,8 +987,9 @@ func (x *InviteChatroomMemberResponse) GetMemberList() []*Member {
 // RemoveChatroomMemberResponse 移除群成员响应（镜像 golem DeleteChatroomMemberResponse，字段号从 2 开始）
 type RemoveChatroomMemberResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MemberCount   *uint32                `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"` // 对应 golem field 2
-	MemberList    []*Member              `protobuf:"bytes,3,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`           // 对应 golem field 3
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	MemberCount   *uint32                `protobuf:"varint,2,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"`   // 对应 golem field 2
+	MemberList    []*Member              `protobuf:"bytes,3,rep,name=member_list,json=memberList,proto3" json:"member_list,omitempty"`             // 对应 golem field 3
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -926,6 +1024,13 @@ func (*RemoveChatroomMemberResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{11}
 }
 
+func (x *RemoveChatroomMemberResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *RemoveChatroomMemberResponse) GetMemberCount() uint32 {
 	if x != nil && x.MemberCount != nil {
 		return *x.MemberCount
@@ -943,8 +1048,7 @@ func (x *RemoveChatroomMemberResponse) GetMemberList() []*Member {
 // SetAnnouncementResponse 设置群公告响应
 type SetAnnouncementResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -979,18 +1083,55 @@ func (*SetAnnouncementResponse) Descriptor() ([]byte, []int) {
 	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *SetAnnouncementResponse) GetCode() int32 {
+func (x *SetAnnouncementResponse) GetBaseResponse() *base.BaseResponse {
 	if x != nil {
-		return x.Code
+		return x.BaseResponse
 	}
-	return 0
+	return nil
 }
 
-func (x *SetAnnouncementResponse) GetMessage() string {
+type ChatroomAdminResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatroomAdminResponse) Reset() {
+	*x = ChatroomAdminResponse{}
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatroomAdminResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatroomAdminResponse) ProtoMessage() {}
+
+func (x *ChatroomAdminResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[13]
 	if x != nil {
-		return x.Message
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return ""
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatroomAdminResponse.ProtoReflect.Descriptor instead.
+func (*ChatroomAdminResponse) Descriptor() ([]byte, []int) {
+	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ChatroomAdminResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 // JoinResult 进群结果
@@ -1004,7 +1145,7 @@ type JoinResult struct {
 
 func (x *JoinResult) Reset() {
 	*x = JoinResult{}
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[13]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1016,7 +1157,7 @@ func (x *JoinResult) String() string {
 func (*JoinResult) ProtoMessage() {}
 
 func (x *JoinResult) ProtoReflect() protoreflect.Message {
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[13]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1029,7 +1170,7 @@ func (x *JoinResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JoinResult.ProtoReflect.Descriptor instead.
 func (*JoinResult) Descriptor() ([]byte, []int) {
-	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{13}
+	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *JoinResult) GetChatroomId() string {
@@ -1046,6 +1187,66 @@ func (x *JoinResult) GetMessage() string {
 	return ""
 }
 
+type OperateResponse_Result struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         *uint32                `protobuf:"varint,1,opt,name=count,proto3,oneof" json:"count,omitempty"`
+	Code          *int32                 `protobuf:"varint,2,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	Message       []byte                 `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperateResponse_Result) Reset() {
+	*x = OperateResponse_Result{}
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperateResponse_Result) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperateResponse_Result) ProtoMessage() {}
+
+func (x *OperateResponse_Result) ProtoReflect() protoreflect.Message {
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperateResponse_Result.ProtoReflect.Descriptor instead.
+func (*OperateResponse_Result) Descriptor() ([]byte, []int) {
+	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{0, 0}
+}
+
+func (x *OperateResponse_Result) GetCount() uint32 {
+	if x != nil && x.Count != nil {
+		return *x.Count
+	}
+	return 0
+}
+
+func (x *OperateResponse_Result) GetCode() int32 {
+	if x != nil && x.Code != nil {
+		return *x.Code
+	}
+	return 0
+}
+
+func (x *OperateResponse_Result) GetMessage() []byte {
+	if x != nil {
+		return x.Message
+	}
+	return nil
+}
+
 // Tools 群工具
 type GetChatroomInfoDetailResponse_Tools struct {
 	state         protoimpl.MessageState                      `protogen:"open.v1"`
@@ -1057,7 +1258,7 @@ type GetChatroomInfoDetailResponse_Tools struct {
 
 func (x *GetChatroomInfoDetailResponse_Tools) Reset() {
 	*x = GetChatroomInfoDetailResponse_Tools{}
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[14]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1069,7 +1270,7 @@ func (x *GetChatroomInfoDetailResponse_Tools) String() string {
 func (*GetChatroomInfoDetailResponse_Tools) ProtoMessage() {}
 
 func (x *GetChatroomInfoDetailResponse_Tools) ProtoReflect() protoreflect.Message {
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[14]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1116,7 +1317,7 @@ type GetChatroomInfoDetailResponse_Tools_Todo struct {
 
 func (x *GetChatroomInfoDetailResponse_Tools_Todo) Reset() {
 	*x = GetChatroomInfoDetailResponse_Tools_Todo{}
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[15]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1128,7 +1329,7 @@ func (x *GetChatroomInfoDetailResponse_Tools_Todo) String() string {
 func (*GetChatroomInfoDetailResponse_Tools_Todo) ProtoMessage() {}
 
 func (x *GetChatroomInfoDetailResponse_Tools_Todo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[15]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1207,6 +1408,58 @@ func (x *GetChatroomInfoDetailResponse_Tools_Todo) GetManager() string {
 	return ""
 }
 
+type GetChatroomMembersResponse_VerifyUserValidTicket struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      *string                `protobuf:"bytes,1,opt,name=username,proto3,oneof" json:"username,omitempty"`
+	Ticket        *string                `protobuf:"bytes,2,opt,name=ticket,proto3,oneof" json:"ticket,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetChatroomMembersResponse_VerifyUserValidTicket) Reset() {
+	*x = GetChatroomMembersResponse_VerifyUserValidTicket{}
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetChatroomMembersResponse_VerifyUserValidTicket) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetChatroomMembersResponse_VerifyUserValidTicket) ProtoMessage() {}
+
+func (x *GetChatroomMembersResponse_VerifyUserValidTicket) ProtoReflect() protoreflect.Message {
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetChatroomMembersResponse_VerifyUserValidTicket.ProtoReflect.Descriptor instead.
+func (*GetChatroomMembersResponse_VerifyUserValidTicket) Descriptor() ([]byte, []int) {
+	return file_api_chatroom_chatroom_api_proto_rawDescGZIP(), []int{6, 0}
+}
+
+func (x *GetChatroomMembersResponse_VerifyUserValidTicket) GetUsername() string {
+	if x != nil && x.Username != nil {
+		return *x.Username
+	}
+	return ""
+}
+
+func (x *GetChatroomMembersResponse_VerifyUserValidTicket) GetTicket() string {
+	if x != nil && x.Ticket != nil {
+		return *x.Ticket
+	}
+	return ""
+}
+
 // Result 成员查询结果
 type ListMembersResponse_Result struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
@@ -1219,7 +1472,7 @@ type ListMembersResponse_Result struct {
 
 func (x *ListMembersResponse_Result) Reset() {
 	*x = ListMembersResponse_Result{}
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[16]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1231,7 +1484,7 @@ func (x *ListMembersResponse_Result) String() string {
 func (*ListMembersResponse_Result) ProtoMessage() {}
 
 func (x *ListMembersResponse_Result) ProtoReflect() protoreflect.Message {
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[16]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1284,7 +1537,7 @@ type ListMembersResponse_Result_MemberInfo struct {
 
 func (x *ListMembersResponse_Result_MemberInfo) Reset() {
 	*x = ListMembersResponse_Result_MemberInfo{}
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[17]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1296,7 +1549,7 @@ func (x *ListMembersResponse_Result_MemberInfo) String() string {
 func (*ListMembersResponse_Result_MemberInfo) ProtoMessage() {}
 
 func (x *ListMembersResponse_Result_MemberInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[17]
+	mi := &file_api_chatroom_chatroom_api_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1365,10 +1618,20 @@ var File_api_chatroom_chatroom_api_proto protoreflect.FileDescriptor
 
 const file_api_chatroom_chatroom_api_proto_rawDesc = "" +
 	"\n" +
-	"\x1fapi/chatroom/chatroom_api.proto\x12\fapi.chatroom\x1a\x13api/base/base.proto\x1a\x1dapi/contact/contact_api.proto\x1a\x1egoogle/protobuf/wrappers.proto\"?\n" +
-	"\x0fOperateResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xd5\b\n" +
+	"\x1fapi/chatroom/chatroom_api.proto\x12\fapi.chatroom\x1a\x13api/base/base.proto\x1a\x1dapi/contact/contact_api.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xfd\x01\n" +
+	"\x0fOperateResponse\x12\x17\n" +
+	"\x04code\x18\x01 \x01(\x05H\x00R\x04code\x88\x01\x01\x12A\n" +
+	"\x06result\x18\x02 \x01(\v2$.api.chatroom.OperateResponse.ResultH\x01R\x06result\x88\x01\x01\x1az\n" +
+	"\x06Result\x12\x19\n" +
+	"\x05count\x18\x01 \x01(\rH\x00R\x05count\x88\x01\x01\x12\x17\n" +
+	"\x04code\x18\x02 \x01(\x05H\x01R\x04code\x88\x01\x01\x12\x1d\n" +
+	"\amessage\x18\x03 \x01(\fH\x02R\amessage\x88\x01\x01B\b\n" +
+	"\x06_countB\a\n" +
+	"\x05_codeB\n" +
+	"\n" +
+	"\b_messageB\a\n" +
+	"\x05_codeB\t\n" +
+	"\a_result\"\xd5\b\n" +
 	"\x06Member\x12=\n" +
 	"\busername\x18\x01 \x01(\v2\x1c.google.protobuf.StringValueH\x00R\busername\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\rH\x01R\x06status\x88\x01\x01\x12=\n" +
@@ -1421,19 +1684,21 @@ const file_api_chatroom_chatroom_api_proto_rawDesc = "" +
 	"\t_nicknameB\x0f\n" +
 	"\r_display_nameB\r\n" +
 	"\v_avatar_urlB\a\n" +
-	"\x05_flag\"\x91\x04\n" +
-	"\x16CreateChatroomResponse\x12\x19\n" +
-	"\x05topic\x18\x02 \x01(\tH\x00R\x05topic\x88\x01\x01\x12(\n" +
-	"\rtopic_jianpin\x18\x03 \x01(\tH\x01R\ftopicJianpin\x88\x01\x01\x12(\n" +
-	"\rtopic_quanpin\x18\x04 \x01(\tH\x02R\ftopicQuanpin\x88\x01\x01\x12&\n" +
-	"\fmember_count\x18\x05 \x01(\rH\x03R\vmemberCount\x88\x01\x01\x125\n" +
+	"\x05_flag\"\xe5\x04\n" +
+	"\x16CreateChatroomResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x19\n" +
+	"\x05topic\x18\x02 \x01(\tH\x01R\x05topic\x88\x01\x01\x12(\n" +
+	"\rtopic_jianpin\x18\x03 \x01(\tH\x02R\ftopicJianpin\x88\x01\x01\x12(\n" +
+	"\rtopic_quanpin\x18\x04 \x01(\tH\x03R\ftopicQuanpin\x88\x01\x01\x12&\n" +
+	"\fmember_count\x18\x05 \x01(\rH\x04R\vmemberCount\x88\x01\x01\x125\n" +
 	"\vmember_list\x18\x06 \x03(\v2\x14.api.chatroom.MemberR\n" +
 	"memberList\x12\x1f\n" +
-	"\bchatroom\x18\a \x01(\tH\x04R\bchatroom\x88\x01\x01\x12(\n" +
-	"\ravatar_buffer\x18\b \x01(\fH\x05R\favatarBuffer\x88\x01\x01\x12)\n" +
-	"\x0ebig_avatar_url\x18\t \x01(\tH\x06R\fbigAvatarUrl\x88\x01\x01\x12-\n" +
+	"\bchatroom\x18\a \x01(\tH\x05R\bchatroom\x88\x01\x01\x12(\n" +
+	"\ravatar_buffer\x18\b \x01(\fH\x06R\favatarBuffer\x88\x01\x01\x12)\n" +
+	"\x0ebig_avatar_url\x18\t \x01(\tH\aR\fbigAvatarUrl\x88\x01\x01\x12-\n" +
 	"\x10small_avatar_url\x18\n" +
-	" \x01(\tH\aR\x0esmallAvatarUrl\x88\x01\x01B\b\n" +
+	" \x01(\tH\bR\x0esmallAvatarUrl\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\b\n" +
 	"\x06_topicB\x10\n" +
 	"\x0e_topic_jianpinB\x10\n" +
 	"\x0e_topic_quanpinB\x0f\n" +
@@ -1441,24 +1706,27 @@ const file_api_chatroom_chatroom_api_proto_rawDesc = "" +
 	"\t_chatroomB\x10\n" +
 	"\x0e_avatar_bufferB\x11\n" +
 	"\x0f_big_avatar_urlB\x13\n" +
-	"\x11_small_avatar_url\"\xea\x01\n" +
-	"\x1cFacingCreateChatroomResponse\x12\x1b\n" +
-	"\x06ticket\x18\x02 \x01(\tH\x00R\x06ticket\x88\x01\x01\x12&\n" +
-	"\fmember_count\x18\x03 \x01(\rH\x01R\vmemberCount\x88\x01\x01\x12;\n" +
+	"\x11_small_avatar_url\"\xbe\x02\n" +
+	"\x1cFacingCreateChatroomResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x1b\n" +
+	"\x06ticket\x18\x02 \x01(\tH\x01R\x06ticket\x88\x01\x01\x12&\n" +
+	"\fmember_count\x18\x03 \x01(\rH\x02R\vmemberCount\x88\x01\x01\x12;\n" +
 	"\vmember_list\x18\x04 \x03(\v2\x1a.api.chatroom.FacingMemberR\n" +
 	"memberList\x12\x1f\n" +
-	"\bchatroom\x18\x05 \x01(\tH\x02R\bchatroom\x88\x01\x01B\t\n" +
+	"\bchatroom\x18\x05 \x01(\tH\x03R\bchatroom\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\t\n" +
 	"\a_ticketB\x0f\n" +
 	"\r_member_countB\v\n" +
-	"\t_chatroom\"\x8e\b\n" +
-	"\x1dGetChatroomInfoDetailResponse\x12'\n" +
-	"\fannouncement\x18\x02 \x01(\tH\x00R\fannouncement\x88\x01\x01\x12&\n" +
-	"\finfo_version\x18\x03 \x01(\x05H\x01R\vinfoVersion\x88\x01\x01\x124\n" +
-	"\x13announcement_editor\x18\x04 \x01(\tH\x02R\x12announcementEditor\x88\x01\x01\x12?\n" +
-	"\x19announcement_publish_time\x18\x05 \x01(\x05H\x03R\x17announcementPublishTime\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x06 \x01(\x05H\x04R\x06status\x88\x01\x01\x12(\n" +
-	"\rbusiness_type\x18\a \x01(\x05H\x05R\fbusinessType\x88\x01\x01\x12L\n" +
-	"\x05tools\x18\b \x01(\v21.api.chatroom.GetChatroomInfoDetailResponse.ToolsH\x06R\x05tools\x88\x01\x01\x1a\x90\x04\n" +
+	"\t_chatroom\"\xe2\b\n" +
+	"\x1dGetChatroomInfoDetailResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12'\n" +
+	"\fannouncement\x18\x02 \x01(\tH\x01R\fannouncement\x88\x01\x01\x12&\n" +
+	"\finfo_version\x18\x03 \x01(\x05H\x02R\vinfoVersion\x88\x01\x01\x124\n" +
+	"\x13announcement_editor\x18\x04 \x01(\tH\x03R\x12announcementEditor\x88\x01\x01\x12?\n" +
+	"\x19announcement_publish_time\x18\x05 \x01(\x05H\x04R\x17announcementPublishTime\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\x06 \x01(\x05H\x05R\x06status\x88\x01\x01\x12(\n" +
+	"\rbusiness_type\x18\a \x01(\x05H\x06R\fbusinessType\x88\x01\x01\x12L\n" +
+	"\x05tools\x18\b \x01(\v21.api.chatroom.GetChatroomInfoDetailResponse.ToolsH\aR\x05tools\x88\x01\x01\x1a\x90\x04\n" +
 	"\x05Tools\x12 \n" +
 	"\tapp_count\x18\x01 \x01(\x05H\x00R\bappCount\x88\x01\x01\x12Q\n" +
 	"\bapp_list\x18\x02 \x03(\v26.api.chatroom.GetChatroomInfoDetailResponse.Tools.TodoR\aappList\x1a\x83\x03\n" +
@@ -1485,20 +1753,34 @@ const file_api_chatroom_chatroom_api_proto_rawDesc = "" +
 	"\n" +
 	"\b_managerB\f\n" +
 	"\n" +
-	"_app_countB\x0f\n" +
+	"_app_countB\x10\n" +
+	"\x0e_base_responseB\x0f\n" +
 	"\r_announcementB\x0f\n" +
 	"\r_info_versionB\x16\n" +
 	"\x14_announcement_editorB\x1c\n" +
 	"\x1a_announcement_publish_timeB\t\n" +
 	"\a_statusB\x10\n" +
 	"\x0e_business_typeB\b\n" +
-	"\x06_tools\"[\n" +
-	"\x1aGetChatroomMembersResponse\x12=\n" +
-	"\fcontact_list\x18\x03 \x03(\v2\x1a.api.contact.ModifyContactR\vcontactList\"\x8a\x06\n" +
-	"\x13ListMembersResponse\x12\x1f\n" +
-	"\bchatroom\x18\x02 \x01(\tH\x00R\bchatroom\x88\x01\x01\x12*\n" +
-	"\x0eserver_version\x18\x03 \x01(\x05H\x01R\rserverVersion\x88\x01\x01\x12E\n" +
-	"\x06result\x18\x04 \x01(\v2(.api.chatroom.ListMembersResponse.ResultH\x02R\x06result\x88\x01\x01\x1a\xb3\x04\n" +
+	"\x06_tools\"\xff\x03\n" +
+	"\x1aGetChatroomMembersResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12(\n" +
+	"\rcontact_count\x18\x02 \x01(\x05H\x01R\fcontactCount\x88\x01\x01\x12=\n" +
+	"\fcontact_list\x18\x03 \x03(\v2\x1a.api.contact.ModifyContactR\vcontactList\x12\x12\n" +
+	"\x04code\x18\x04 \x03(\x05R\x04code\x12V\n" +
+	"\x06ticket\x18\x05 \x03(\v2>.api.chatroom.GetChatroomMembersResponse.VerifyUserValidTicketR\x06ticket\x127\n" +
+	"\x18send_message_ticket_list\x18\x06 \x03(\fR\x15sendMessageTicketList\x1am\n" +
+	"\x15VerifyUserValidTicket\x12\x1f\n" +
+	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1b\n" +
+	"\x06ticket\x18\x02 \x01(\tH\x01R\x06ticket\x88\x01\x01B\v\n" +
+	"\t_usernameB\t\n" +
+	"\a_ticketB\x10\n" +
+	"\x0e_base_responseB\x10\n" +
+	"\x0e_contact_count\"\xde\x06\n" +
+	"\x13ListMembersResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x1f\n" +
+	"\bchatroom\x18\x02 \x01(\tH\x01R\bchatroom\x88\x01\x01\x12*\n" +
+	"\x0eserver_version\x18\x03 \x01(\x05H\x02R\rserverVersion\x88\x01\x01\x12E\n" +
+	"\x06result\x18\x04 \x01(\v2(.api.chatroom.ListMembersResponse.ResultH\x03R\x06result\x88\x01\x01\x1a\xb3\x04\n" +
 	"\x06Result\x12\x19\n" +
 	"\x05count\x18\x01 \x01(\rH\x00R\x05count\x88\x01\x01\x12G\n" +
 	"\x04list\x18\x02 \x03(\v23.api.chatroom.ListMembersResponse.Result.MemberInfoR\x04list\x12 \n" +
@@ -1521,39 +1803,52 @@ const file_api_chatroom_chatroom_api_proto_rawDesc = "" +
 	"\x11_inviter_usernameB\b\n" +
 	"\x06_countB\f\n" +
 	"\n" +
-	"_info_maskB\v\n" +
+	"_info_maskB\x10\n" +
+	"\x0e_base_responseB\v\n" +
 	"\t_chatroomB\x11\n" +
 	"\x0f_server_versionB\t\n" +
-	"\a_result\"\xd6\x02\n" +
-	"\x19GetChatroomQRCodeResponse\x12:\n" +
-	"\rqrcode_buffer\x18\x02 \x01(\v2\x10.api.base.BufferH\x00R\fqrcodeBuffer\x88\x01\x01\x12*\n" +
-	"\x0efooter_wording\x18\x03 \x01(\tH\x01R\rfooterWording\x88\x01\x01\x12(\n" +
-	"\rrevoke_qrcode\x18\x04 \x01(\rH\x02R\frevokeQrcode\x88\x01\x01\x12*\n" +
-	"\x0enotify_wording\x18\x05 \x01(\tH\x03R\rnotifyWording\x88\x01\x01\x12\"\n" +
+	"\a_result\"\xaa\x03\n" +
+	"\x19GetChatroomQRCodeResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12:\n" +
+	"\rqrcode_buffer\x18\x02 \x01(\v2\x10.api.base.BufferH\x01R\fqrcodeBuffer\x88\x01\x01\x12*\n" +
+	"\x0efooter_wording\x18\x03 \x01(\tH\x02R\rfooterWording\x88\x01\x01\x12(\n" +
+	"\rrevoke_qrcode\x18\x04 \x01(\rH\x03R\frevokeQrcode\x88\x01\x01\x12*\n" +
+	"\x0enotify_wording\x18\x05 \x01(\tH\x04R\rnotifyWording\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"qrcode_url\x18\x06 \x01(\tH\x04R\tqrcodeUrl\x88\x01\x01B\x10\n" +
+	"qrcode_url\x18\x06 \x01(\tH\x05R\tqrcodeUrl\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\x10\n" +
 	"\x0e_qrcode_bufferB\x11\n" +
 	"\x0f_footer_wordingB\x10\n" +
 	"\x0e_revoke_qrcodeB\x11\n" +
 	"\x0f_notify_wordingB\r\n" +
-	"\v_qrcode_url\"\x8b\x01\n" +
-	"\x19AddChatroomMemberResponse\x12&\n" +
-	"\fmember_count\x18\x02 \x01(\rH\x00R\vmemberCount\x88\x01\x01\x125\n" +
+	"\v_qrcode_url\"\xdf\x01\n" +
+	"\x19AddChatroomMemberResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12&\n" +
+	"\fmember_count\x18\x02 \x01(\rH\x01R\vmemberCount\x88\x01\x01\x125\n" +
 	"\vmember_list\x18\x03 \x03(\v2\x14.api.chatroom.MemberR\n" +
-	"memberListB\x0f\n" +
-	"\r_member_count\"x\n" +
-	"\x1cInviteChatroomMemberResponse\x12!\n" +
-	"\fmember_count\x18\x01 \x01(\rR\vmemberCount\x125\n" +
-	"\vmember_list\x18\x02 \x03(\v2\x14.api.chatroom.MemberR\n" +
-	"memberList\"\x8e\x01\n" +
-	"\x1cRemoveChatroomMemberResponse\x12&\n" +
-	"\fmember_count\x18\x02 \x01(\rH\x00R\vmemberCount\x88\x01\x01\x125\n" +
+	"memberListB\x10\n" +
+	"\x0e_base_responseB\x0f\n" +
+	"\r_member_count\"\xe2\x01\n" +
+	"\x1cInviteChatroomMemberResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12&\n" +
+	"\fmember_count\x18\x02 \x01(\rH\x01R\vmemberCount\x88\x01\x01\x125\n" +
 	"\vmember_list\x18\x03 \x03(\v2\x14.api.chatroom.MemberR\n" +
-	"memberListB\x0f\n" +
-	"\r_member_count\"G\n" +
-	"\x17SetAnnouncementResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"G\n" +
+	"memberListB\x10\n" +
+	"\x0e_base_responseB\x0f\n" +
+	"\r_member_count\"\xe2\x01\n" +
+	"\x1cRemoveChatroomMemberResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12&\n" +
+	"\fmember_count\x18\x02 \x01(\rH\x01R\vmemberCount\x88\x01\x01\x125\n" +
+	"\vmember_list\x18\x03 \x03(\v2\x14.api.chatroom.MemberR\n" +
+	"memberListB\x10\n" +
+	"\x0e_base_responseB\x0f\n" +
+	"\r_member_count\"m\n" +
+	"\x17SetAnnouncementResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01B\x10\n" +
+	"\x0e_base_response\"k\n" +
+	"\x15ChatroomAdminResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01B\x10\n" +
+	"\x0e_base_response\"G\n" +
 	"\n" +
 	"JoinResult\x12\x1f\n" +
 	"\vchatroom_id\x18\x01 \x01(\tR\n" +
@@ -1572,56 +1867,73 @@ func file_api_chatroom_chatroom_api_proto_rawDescGZIP() []byte {
 	return file_api_chatroom_chatroom_api_proto_rawDescData
 }
 
-var file_api_chatroom_chatroom_api_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_api_chatroom_chatroom_api_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_api_chatroom_chatroom_api_proto_goTypes = []any{
-	(*OperateResponse)(nil),                          // 0: api.chatroom.OperateResponse
-	(*Member)(nil),                                   // 1: api.chatroom.Member
-	(*FacingMember)(nil),                             // 2: api.chatroom.FacingMember
-	(*CreateChatroomResponse)(nil),                   // 3: api.chatroom.CreateChatroomResponse
-	(*FacingCreateChatroomResponse)(nil),             // 4: api.chatroom.FacingCreateChatroomResponse
-	(*GetChatroomInfoDetailResponse)(nil),            // 5: api.chatroom.GetChatroomInfoDetailResponse
-	(*GetChatroomMembersResponse)(nil),               // 6: api.chatroom.GetChatroomMembersResponse
-	(*ListMembersResponse)(nil),                      // 7: api.chatroom.ListMembersResponse
-	(*GetChatroomQRCodeResponse)(nil),                // 8: api.chatroom.GetChatroomQRCodeResponse
-	(*AddChatroomMemberResponse)(nil),                // 9: api.chatroom.AddChatroomMemberResponse
-	(*InviteChatroomMemberResponse)(nil),             // 10: api.chatroom.InviteChatroomMemberResponse
-	(*RemoveChatroomMemberResponse)(nil),             // 11: api.chatroom.RemoveChatroomMemberResponse
-	(*SetAnnouncementResponse)(nil),                  // 12: api.chatroom.SetAnnouncementResponse
-	(*JoinResult)(nil),                               // 13: api.chatroom.JoinResult
-	(*GetChatroomInfoDetailResponse_Tools)(nil),      // 14: api.chatroom.GetChatroomInfoDetailResponse.Tools
-	(*GetChatroomInfoDetailResponse_Tools_Todo)(nil), // 15: api.chatroom.GetChatroomInfoDetailResponse.Tools.Todo
-	(*ListMembersResponse_Result)(nil),               // 16: api.chatroom.ListMembersResponse.Result
-	(*ListMembersResponse_Result_MemberInfo)(nil),    // 17: api.chatroom.ListMembersResponse.Result.MemberInfo
-	(*wrapperspb.StringValue)(nil),                   // 18: google.protobuf.StringValue
-	(base.Gender)(0),                                 // 19: api.base.Gender
-	(*contact.ModifyContact)(nil),                    // 20: api.contact.ModifyContact
-	(*base.Buffer)(nil),                              // 21: api.base.Buffer
+	(*OperateResponse)(nil),                                  // 0: api.chatroom.OperateResponse
+	(*Member)(nil),                                           // 1: api.chatroom.Member
+	(*FacingMember)(nil),                                     // 2: api.chatroom.FacingMember
+	(*CreateChatroomResponse)(nil),                           // 3: api.chatroom.CreateChatroomResponse
+	(*FacingCreateChatroomResponse)(nil),                     // 4: api.chatroom.FacingCreateChatroomResponse
+	(*GetChatroomInfoDetailResponse)(nil),                    // 5: api.chatroom.GetChatroomInfoDetailResponse
+	(*GetChatroomMembersResponse)(nil),                       // 6: api.chatroom.GetChatroomMembersResponse
+	(*ListMembersResponse)(nil),                              // 7: api.chatroom.ListMembersResponse
+	(*GetChatroomQRCodeResponse)(nil),                        // 8: api.chatroom.GetChatroomQRCodeResponse
+	(*AddChatroomMemberResponse)(nil),                        // 9: api.chatroom.AddChatroomMemberResponse
+	(*InviteChatroomMemberResponse)(nil),                     // 10: api.chatroom.InviteChatroomMemberResponse
+	(*RemoveChatroomMemberResponse)(nil),                     // 11: api.chatroom.RemoveChatroomMemberResponse
+	(*SetAnnouncementResponse)(nil),                          // 12: api.chatroom.SetAnnouncementResponse
+	(*ChatroomAdminResponse)(nil),                            // 13: api.chatroom.ChatroomAdminResponse
+	(*JoinResult)(nil),                                       // 14: api.chatroom.JoinResult
+	(*OperateResponse_Result)(nil),                           // 15: api.chatroom.OperateResponse.Result
+	(*GetChatroomInfoDetailResponse_Tools)(nil),              // 16: api.chatroom.GetChatroomInfoDetailResponse.Tools
+	(*GetChatroomInfoDetailResponse_Tools_Todo)(nil),         // 17: api.chatroom.GetChatroomInfoDetailResponse.Tools.Todo
+	(*GetChatroomMembersResponse_VerifyUserValidTicket)(nil), // 18: api.chatroom.GetChatroomMembersResponse.VerifyUserValidTicket
+	(*ListMembersResponse_Result)(nil),                       // 19: api.chatroom.ListMembersResponse.Result
+	(*ListMembersResponse_Result_MemberInfo)(nil),            // 20: api.chatroom.ListMembersResponse.Result.MemberInfo
+	(*wrapperspb.StringValue)(nil),                           // 21: google.protobuf.StringValue
+	(base.Gender)(0),                                         // 22: api.base.Gender
+	(*base.BaseResponse)(nil),                                // 23: api.base.BaseResponse
+	(*contact.ModifyContact)(nil),                            // 24: api.contact.ModifyContact
+	(*base.Buffer)(nil),                                      // 25: api.base.Buffer
 }
 var file_api_chatroom_chatroom_api_proto_depIdxs = []int32{
-	18, // 0: api.chatroom.Member.username:type_name -> google.protobuf.StringValue
-	18, // 1: api.chatroom.Member.nickname:type_name -> google.protobuf.StringValue
-	18, // 2: api.chatroom.Member.nickname_jianpin:type_name -> google.protobuf.StringValue
-	18, // 3: api.chatroom.Member.nickname_quanpin:type_name -> google.protobuf.StringValue
-	19, // 4: api.chatroom.Member.gender:type_name -> api.base.Gender
-	18, // 5: api.chatroom.Member.remark:type_name -> google.protobuf.StringValue
-	18, // 6: api.chatroom.Member.remark_jianpin:type_name -> google.protobuf.StringValue
-	18, // 7: api.chatroom.Member.remark_quanpin:type_name -> google.protobuf.StringValue
-	1,  // 8: api.chatroom.CreateChatroomResponse.member_list:type_name -> api.chatroom.Member
-	2,  // 9: api.chatroom.FacingCreateChatroomResponse.member_list:type_name -> api.chatroom.FacingMember
-	14, // 10: api.chatroom.GetChatroomInfoDetailResponse.tools:type_name -> api.chatroom.GetChatroomInfoDetailResponse.Tools
-	20, // 11: api.chatroom.GetChatroomMembersResponse.contact_list:type_name -> api.contact.ModifyContact
-	16, // 12: api.chatroom.ListMembersResponse.result:type_name -> api.chatroom.ListMembersResponse.Result
-	21, // 13: api.chatroom.GetChatroomQRCodeResponse.qrcode_buffer:type_name -> api.base.Buffer
-	1,  // 14: api.chatroom.AddChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
-	1,  // 15: api.chatroom.InviteChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
-	1,  // 16: api.chatroom.RemoveChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
-	15, // 17: api.chatroom.GetChatroomInfoDetailResponse.Tools.app_list:type_name -> api.chatroom.GetChatroomInfoDetailResponse.Tools.Todo
-	17, // 18: api.chatroom.ListMembersResponse.Result.list:type_name -> api.chatroom.ListMembersResponse.Result.MemberInfo
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	15, // 0: api.chatroom.OperateResponse.result:type_name -> api.chatroom.OperateResponse.Result
+	21, // 1: api.chatroom.Member.username:type_name -> google.protobuf.StringValue
+	21, // 2: api.chatroom.Member.nickname:type_name -> google.protobuf.StringValue
+	21, // 3: api.chatroom.Member.nickname_jianpin:type_name -> google.protobuf.StringValue
+	21, // 4: api.chatroom.Member.nickname_quanpin:type_name -> google.protobuf.StringValue
+	22, // 5: api.chatroom.Member.gender:type_name -> api.base.Gender
+	21, // 6: api.chatroom.Member.remark:type_name -> google.protobuf.StringValue
+	21, // 7: api.chatroom.Member.remark_jianpin:type_name -> google.protobuf.StringValue
+	21, // 8: api.chatroom.Member.remark_quanpin:type_name -> google.protobuf.StringValue
+	23, // 9: api.chatroom.CreateChatroomResponse.base_response:type_name -> api.base.BaseResponse
+	1,  // 10: api.chatroom.CreateChatroomResponse.member_list:type_name -> api.chatroom.Member
+	23, // 11: api.chatroom.FacingCreateChatroomResponse.base_response:type_name -> api.base.BaseResponse
+	2,  // 12: api.chatroom.FacingCreateChatroomResponse.member_list:type_name -> api.chatroom.FacingMember
+	23, // 13: api.chatroom.GetChatroomInfoDetailResponse.base_response:type_name -> api.base.BaseResponse
+	16, // 14: api.chatroom.GetChatroomInfoDetailResponse.tools:type_name -> api.chatroom.GetChatroomInfoDetailResponse.Tools
+	23, // 15: api.chatroom.GetChatroomMembersResponse.base_response:type_name -> api.base.BaseResponse
+	24, // 16: api.chatroom.GetChatroomMembersResponse.contact_list:type_name -> api.contact.ModifyContact
+	18, // 17: api.chatroom.GetChatroomMembersResponse.ticket:type_name -> api.chatroom.GetChatroomMembersResponse.VerifyUserValidTicket
+	23, // 18: api.chatroom.ListMembersResponse.base_response:type_name -> api.base.BaseResponse
+	19, // 19: api.chatroom.ListMembersResponse.result:type_name -> api.chatroom.ListMembersResponse.Result
+	23, // 20: api.chatroom.GetChatroomQRCodeResponse.base_response:type_name -> api.base.BaseResponse
+	25, // 21: api.chatroom.GetChatroomQRCodeResponse.qrcode_buffer:type_name -> api.base.Buffer
+	23, // 22: api.chatroom.AddChatroomMemberResponse.base_response:type_name -> api.base.BaseResponse
+	1,  // 23: api.chatroom.AddChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
+	23, // 24: api.chatroom.InviteChatroomMemberResponse.base_response:type_name -> api.base.BaseResponse
+	1,  // 25: api.chatroom.InviteChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
+	23, // 26: api.chatroom.RemoveChatroomMemberResponse.base_response:type_name -> api.base.BaseResponse
+	1,  // 27: api.chatroom.RemoveChatroomMemberResponse.member_list:type_name -> api.chatroom.Member
+	23, // 28: api.chatroom.SetAnnouncementResponse.base_response:type_name -> api.base.BaseResponse
+	23, // 29: api.chatroom.ChatroomAdminResponse.base_response:type_name -> api.base.BaseResponse
+	17, // 30: api.chatroom.GetChatroomInfoDetailResponse.Tools.app_list:type_name -> api.chatroom.GetChatroomInfoDetailResponse.Tools.Todo
+	20, // 31: api.chatroom.ListMembersResponse.Result.list:type_name -> api.chatroom.ListMembersResponse.Result.MemberInfo
+	32, // [32:32] is the sub-list for method output_type
+	32, // [32:32] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_api_chatroom_chatroom_api_proto_init() }
@@ -1629,26 +1941,33 @@ func file_api_chatroom_chatroom_api_proto_init() {
 	if File_api_chatroom_chatroom_api_proto != nil {
 		return
 	}
+	file_api_chatroom_chatroom_api_proto_msgTypes[0].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[1].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[2].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[3].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[4].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[5].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[6].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[7].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[8].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[9].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[10].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[11].OneofWrappers = []any{}
-	file_api_chatroom_chatroom_api_proto_msgTypes[14].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[12].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[13].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[15].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[16].OneofWrappers = []any{}
 	file_api_chatroom_chatroom_api_proto_msgTypes[17].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[18].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[19].OneofWrappers = []any{}
+	file_api_chatroom_chatroom_api_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_chatroom_chatroom_api_proto_rawDesc), len(file_api_chatroom_chatroom_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -140,8 +140,8 @@ func (w web) SetContactList(chatroomID string, save bool) (*OperateResponse, err
 }
 
 // SetAdmin 设置群管理员 POST /api/chatroom/admins/{chatroom}
-func (w web) SetAdmin(chatroomID string, members []string) (*OperateResponse, error) {
-	var resp OperateResponse
+func (w web) SetAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error) {
+	var resp ChatroomAdminResponse
 	if err := api.GetHttp().Post(fmt.Sprintf("/api/chatroom/admins/%s", chatroomID)).Body(map[string]any{"members": members}).DoProto(&resp); err != nil {
 		return nil, err
 	}
@@ -149,8 +149,8 @@ func (w web) SetAdmin(chatroomID string, members []string) (*OperateResponse, er
 }
 
 // RemoveAdmin 移除群管理员 DELETE /api/chatroom/admins/{chatroom} (with body)
-func (w web) RemoveAdmin(chatroomID string, members []string) (*OperateResponse, error) {
-	var resp OperateResponse
+func (w web) RemoveAdmin(chatroomID string, members []string) (*ChatroomAdminResponse, error) {
+	var resp ChatroomAdminResponse
 	if err := api.GetHttp().Delete(fmt.Sprintf("/api/chatroom/admins/%s", chatroomID)).Body(map[string]any{"members": members}).DoProto(&resp); err != nil {
 		return nil, err
 	}
@@ -158,8 +158,8 @@ func (w web) RemoveAdmin(chatroomID string, members []string) (*OperateResponse,
 }
 
 // TransferOwner 转让群主 POST /api/chatroom/transfer/{chatroom}?new_owner=xxx
-func (w web) TransferOwner(chatroomID, newOwner string) (*OperateResponse, error) {
-	var resp OperateResponse
+func (w web) TransferOwner(chatroomID, newOwner string) (*ChatroomAdminResponse, error) {
+	var resp ChatroomAdminResponse
 	if err := api.GetHttp().Post(fmt.Sprintf("/api/chatroom/transfer/%s", chatroomID)).Query("new_owner", newOwner).DoProto(&resp); err != nil {
 		return nil, err
 	}
@@ -177,11 +177,17 @@ func (w web) Quit(chatroomID string) (*OperateResponse, error) {
 
 // ScanJoin 扫码进群 POST /api/chatroom/join/scan
 func (w web) ScanJoin(qrcodeURL string) (*JoinResult, error) {
-	var resp JoinResult
-	if err := api.GetHttp().Post("/api/chatroom/join/scan").Body(map[string]any{"url": qrcodeURL}).DoProto(&resp); err != nil {
+	var resp struct {
+		ChatroomID string `json:"chatroomID"`
+		Message    string `json:"message"`
+	}
+	if err := api.GetHttp().Post("/api/chatroom/join/scan").Body(map[string]any{"url": qrcodeURL}).DoJson(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &JoinResult{
+		ChatroomId: resp.ChatroomID,
+		Message:    resp.Message,
+	}, nil
 }
 
 // ScanJoinEnterprise 企业微信扫码进群
@@ -191,9 +197,15 @@ func (w web) ScanJoinEnterprise(qrcodeURL string) (*JoinResult, error) {
 
 // ConsentJoin 同意入群邀请 POST /api/chatroom/join/consent
 func (w web) ConsentJoin(inviteURL string) (*JoinResult, error) {
-	var resp JoinResult
-	if err := api.GetHttp().Post("/api/chatroom/join/consent").Body(map[string]any{"url": inviteURL}).DoProto(&resp); err != nil {
+	var resp struct {
+		ChatroomID string `json:"chatroomID"`
+		Message    string `json:"message"`
+	}
+	if err := api.GetHttp().Post("/api/chatroom/join/consent").Body(map[string]any{"url": inviteURL}).DoJson(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &JoinResult{
+		ChatroomId: resp.ChatroomID,
+		Message:    resp.Message,
+	}, nil
 }

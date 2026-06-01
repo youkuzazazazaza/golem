@@ -103,6 +103,48 @@ func Refresh(name string) error {
 	return nil
 }
 
+func RefreshMember(chatroom string, member string) (*sdk.Member, error) {
+	if chatroom == "" {
+		return nil, fmt.Errorf("群聊不能为空")
+	}
+	if member == "" {
+		return nil, fmt.Errorf("群成员不能为空")
+	}
+
+	detail, err := instance.api.GetMemberDetail(chatroom, []string{member})
+	if err != nil {
+		return nil, fmt.Errorf("[chatroom ability] 获取群成员 [%s] 信息失败: %w", member, err)
+	}
+	list := detail.GetContactList()
+	if len(list) == 0 {
+		return nil, fmt.Errorf("群成员不存在：%s", member)
+	}
+
+	res := buildMemberFromContact(list[0])
+	cache := maputil.GetOrSet(instance.cache, chatroom, map[string]*sdk.Member{})
+	cache[res.Username] = res
+	Destroy()
+	return res, nil
+}
+
+func buildMemberFromContact(c *contactapi.ModifyContact) *sdk.Member {
+	return &sdk.Member{
+		Username:        c.Username.Value,
+		Nickname:        c.Nickname.Value,
+		Remark:          c.Remark.Value,
+		Alias:           c.GetAlias(),
+		DisplayName:     "",
+		Avatar:          c.GetSmallAvatarUrl(),
+		Flag:            0,
+		InviterUsername: "",
+		Gender:          contactability.GetGender(c.GetGender()),
+		Country:         c.GetCountry(),
+		Province:        c.GetProvince(),
+		City:            c.GetCity(),
+		Signature:       c.GetSignature(),
+	}
+}
+
 func (a *ability) loadCache() error {
 	return nil
 }
@@ -316,27 +358,17 @@ func (a *ability) GetMember(chatroom string, name string) *sdk.Member {
 		slog.Warn("[chatroom ability] 获取群成员列表失败", "err", err)
 		return nil
 	}
-	c := detail.GetContactList()[0]
-	res := sdk.Member{
-		Username:        c.Username.Value,
-		Nickname:        c.Nickname.Value,
-		Remark:          c.Remark.Value,
-		Alias:           c.GetAlias(),
-		DisplayName:     "",
-		Avatar:          c.GetSmallAvatarUrl(),
-		Flag:            0,
-		InviterUsername: "",
-		Gender:          contactability.GetGender(c.GetGender()),
-		Country:         c.GetCountry(),
-		Province:        c.GetCity(),
-		City:            c.GetCity(),
-		Signature:       c.GetSignature(),
+	list := detail.GetContactList()
+	if len(list) == 0 {
+		cache[name] = &a.none
+		return nil
 	}
+	res := buildMemberFromContact(list[0])
 	// 添加缓存
-	cache[name] = &res
+	cache[res.Username] = res
 	_ = a.saveCache()
 
-	return &res
+	return res
 }
 
 func (a *ability) GetMembersDetail(chatroom string, members []string) []*sdk.Member {
