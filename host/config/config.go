@@ -4,8 +4,8 @@ package config
 
 import "sync"
 
-var Get = sync.OnceValue(func() Config {
-	return Config{
+var Get = sync.OnceValue(func() HostConfig {
+	return HostConfig{
 		URL:   "http://localhost:8085/api",
 		Token: "",
 	}
