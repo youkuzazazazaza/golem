@@ -12,8 +12,14 @@ import "google/protobuf/wrappers.proto";
 
 // OperateResponse 通用操作响应
 message OperateResponse {
-  int32 code = 1;
-  string message = 2;
+  optional int32 code = 1; // 返回码
+  optional Result result = 2; // 操作返回结果
+
+  message Result {
+    optional uint32 count = 1;
+    optional int32 code = 2;
+    optional bytes message = 3;
+  }
 }
 
 // ==================== 联系人信息 ====================
@@ -164,13 +170,24 @@ message ListAllContactsResponse {
 
 // GetContactDetailResponse 获取联系人详情响应
 message GetContactDetailResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
+  optional int32 contact_count = 2; // 联系人数量
   repeated ModifyContact contact_list = 3; // 对应 golem field 3
+  repeated int32 code = 4; // 返回码列表
+  repeated VerifyUserValidTicket ticket = 5; // 验证用户票据
+  repeated bytes send_message_ticket_list = 6; // 发消息票据列表
+
+  message VerifyUserValidTicket {
+    optional string username = 1;
+    optional string ticket = 2;
+  }
 }
 
 // ==================== 搜索联系人 ====================
 
 // SearchContactResponse 搜索联系人响应
 message SearchContactResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
   optional google.protobuf.StringValue username = 2;
   optional google.protobuf.StringValue nickname = 3;
   optional google.protobuf.StringValue nickname_jianpin = 4;
@@ -251,7 +268,7 @@ message SearchContactResponse {
   }
 
   message OpenIMContact {
-    optional string tp_username = 1;
+    optional string username = 1;
     optional string nickname = 2;
     optional uint32 type = 3;
     optional string remark = 4;
@@ -279,6 +296,7 @@ message SearchContactResponse {
 
 // VerifyUserResponse 好友验证响应
 message VerifyUserResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
   optional string username = 2;
 }
 
@@ -286,6 +304,7 @@ message VerifyUserResponse {
 
 // LbsResponse 附近的人响应
 message LbsResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
   optional uint32 count = 2;
   repeated LbsResponse.LbsInfo list = 3;
   optional uint32 state = 4;
@@ -339,6 +358,5 @@ message LbsResponse {
 
 // UploadContactResponse 上传通讯录响应
 message UploadContactResponse {
-  int32 code = 1;
-  string message = 2;
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
 }

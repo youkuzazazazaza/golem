@@ -7,13 +7,14 @@
 package contactapi
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	base "github.com/sbgayhub/golem/host/api/base"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (
@@ -25,9 +26,9 @@ const (
 
 // OperateResponse 通用操作响应
 type OperateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Code          *int32                  `protobuf:"varint,1,opt,name=code,proto3,oneof" json:"code,omitempty"`    // 返回码
+	Result        *OperateResponse_Result `protobuf:"bytes,2,opt,name=result,proto3,oneof" json:"result,omitempty"` // 操作返回结果
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -63,17 +64,17 @@ func (*OperateResponse) Descriptor() ([]byte, []int) {
 }
 
 func (x *OperateResponse) GetCode() int32 {
-	if x != nil {
-		return x.Code
+	if x != nil && x.Code != nil {
+		return *x.Code
 	}
 	return 0
 }
 
-func (x *OperateResponse) GetMessage() string {
+func (x *OperateResponse) GetResult() *OperateResponse_Result {
 	if x != nil {
-		return x.Message
+		return x.Result
 	}
-	return ""
+	return nil
 }
 
 // ModifyContact 联系人详情（镜像 golem message.ModifyContact，字段编号完全一致）
@@ -826,10 +827,15 @@ func (x *ListAllContactsResponse) GetContacts() []*ContactInfo {
 
 // GetContactDetailResponse 获取联系人详情响应
 type GetContactDetailResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContactList   []*ModifyContact       `protobuf:"bytes,3,rep,name=contact_list,json=contactList,proto3" json:"contact_list,omitempty"` // 对应 golem field 3
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                 protoimpl.MessageState                            `protogen:"open.v1"`
+	BaseResponse          *base.BaseResponse                                `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`                          // 基础响应
+	ContactCount          *int32                                            `protobuf:"varint,2,opt,name=contact_count,json=contactCount,proto3,oneof" json:"contact_count,omitempty"`                         // 联系人数量
+	ContactList           []*ModifyContact                                  `protobuf:"bytes,3,rep,name=contact_list,json=contactList,proto3" json:"contact_list,omitempty"`                                   // 对应 golem field 3
+	Code                  []int32                                           `protobuf:"varint,4,rep,packed,name=code,proto3" json:"code,omitempty"`                                                            // 返回码列表
+	Ticket                []*GetContactDetailResponse_VerifyUserValidTicket `protobuf:"bytes,5,rep,name=ticket,proto3" json:"ticket,omitempty"`                                                                // 验证用户票据
+	SendMessageTicketList [][]byte                                          `protobuf:"bytes,6,rep,name=send_message_ticket_list,json=sendMessageTicketList,proto3" json:"send_message_ticket_list,omitempty"` // 发消息票据列表
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *GetContactDetailResponse) Reset() {
@@ -862,6 +868,20 @@ func (*GetContactDetailResponse) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{5}
 }
 
+func (x *GetContactDetailResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
+func (x *GetContactDetailResponse) GetContactCount() int32 {
+	if x != nil && x.ContactCount != nil {
+		return *x.ContactCount
+	}
+	return 0
+}
+
 func (x *GetContactDetailResponse) GetContactList() []*ModifyContact {
 	if x != nil {
 		return x.ContactList
@@ -869,9 +889,31 @@ func (x *GetContactDetailResponse) GetContactList() []*ModifyContact {
 	return nil
 }
 
+func (x *GetContactDetailResponse) GetCode() []int32 {
+	if x != nil {
+		return x.Code
+	}
+	return nil
+}
+
+func (x *GetContactDetailResponse) GetTicket() []*GetContactDetailResponse_VerifyUserValidTicket {
+	if x != nil {
+		return x.Ticket
+	}
+	return nil
+}
+
+func (x *GetContactDetailResponse) GetSendMessageTicketList() [][]byte {
+	if x != nil {
+		return x.SendMessageTicketList
+	}
+	return nil
+}
+
 // SearchContactResponse 搜索联系人响应
 type SearchContactResponse struct {
 	state              protoimpl.MessageState                     `protogen:"open.v1"`
+	BaseResponse       *base.BaseResponse                         `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	Username           *wrapperspb.StringValue                    `protobuf:"bytes,2,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	Nickname           *wrapperspb.StringValue                    `protobuf:"bytes,3,opt,name=nickname,proto3,oneof" json:"nickname,omitempty"`
 	NicknameJianpin    *wrapperspb.StringValue                    `protobuf:"bytes,4,opt,name=nickname_jianpin,json=nicknameJianpin,proto3,oneof" json:"nickname_jianpin,omitempty"`
@@ -938,6 +980,13 @@ func (x *SearchContactResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SearchContactResponse.ProtoReflect.Descriptor instead.
 func (*SearchContactResponse) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SearchContactResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *SearchContactResponse) GetUsername() *wrapperspb.StringValue {
@@ -1181,6 +1230,7 @@ func (x *SearchContactResponse) GetOpenImContactList() []*SearchContactResponse_
 // VerifyUserResponse 好友验证响应
 type VerifyUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	Username      *string                `protobuf:"bytes,2,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1216,6 +1266,13 @@ func (*VerifyUserResponse) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{7}
 }
 
+func (x *VerifyUserResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *VerifyUserResponse) GetUsername() string {
 	if x != nil && x.Username != nil {
 		return *x.Username
@@ -1226,6 +1283,7 @@ func (x *VerifyUserResponse) GetUsername() string {
 // LbsResponse 附近的人响应
 type LbsResponse struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
+	BaseResponse        *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	Count               *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"`
 	List                []*LbsResponse_LbsInfo `protobuf:"bytes,3,rep,name=list,proto3" json:"list,omitempty"`
 	State               *uint32                `protobuf:"varint,4,opt,name=state,proto3,oneof" json:"state,omitempty"`
@@ -1264,6 +1322,13 @@ func (x *LbsResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LbsResponse.ProtoReflect.Descriptor instead.
 func (*LbsResponse) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *LbsResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *LbsResponse) GetCount() uint32 {
@@ -1311,8 +1376,7 @@ func (x *LbsResponse) GetChatroomMemberCount() uint32 {
 // UploadContactResponse 上传通讯录响应
 type UploadContactResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1347,18 +1411,71 @@ func (*UploadContactResponse) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *UploadContactResponse) GetCode() int32 {
+func (x *UploadContactResponse) GetBaseResponse() *base.BaseResponse {
 	if x != nil {
-		return x.Code
+		return x.BaseResponse
+	}
+	return nil
+}
+
+type OperateResponse_Result struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         *uint32                `protobuf:"varint,1,opt,name=count,proto3,oneof" json:"count,omitempty"`
+	Code          *int32                 `protobuf:"varint,2,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	Message       []byte                 `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperateResponse_Result) Reset() {
+	*x = OperateResponse_Result{}
+	mi := &file_api_contact_contact_api_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperateResponse_Result) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperateResponse_Result) ProtoMessage() {}
+
+func (x *OperateResponse_Result) ProtoReflect() protoreflect.Message {
+	mi := &file_api_contact_contact_api_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperateResponse_Result.ProtoReflect.Descriptor instead.
+func (*OperateResponse_Result) Descriptor() ([]byte, []int) {
+	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{0, 0}
+}
+
+func (x *OperateResponse_Result) GetCount() uint32 {
+	if x != nil && x.Count != nil {
+		return *x.Count
 	}
 	return 0
 }
 
-func (x *UploadContactResponse) GetMessage() string {
+func (x *OperateResponse_Result) GetCode() int32 {
+	if x != nil && x.Code != nil {
+		return *x.Code
+	}
+	return 0
+}
+
+func (x *OperateResponse_Result) GetMessage() []byte {
 	if x != nil {
 		return x.Message
 	}
-	return ""
+	return nil
 }
 
 type ModifyContact_ChatroomInfo struct {
@@ -1371,7 +1488,7 @@ type ModifyContact_ChatroomInfo struct {
 
 func (x *ModifyContact_ChatroomInfo) Reset() {
 	*x = ModifyContact_ChatroomInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[10]
+	mi := &file_api_contact_contact_api_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1383,7 +1500,7 @@ func (x *ModifyContact_ChatroomInfo) String() string {
 func (*ModifyContact_ChatroomInfo) ProtoMessage() {}
 
 func (x *ModifyContact_ChatroomInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[10]
+	mi := &file_api_contact_contact_api_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1425,7 +1542,7 @@ type ModifyContact_SnsUserInfo struct {
 
 func (x *ModifyContact_SnsUserInfo) Reset() {
 	*x = ModifyContact_SnsUserInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[11]
+	mi := &file_api_contact_contact_api_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1437,7 +1554,7 @@ func (x *ModifyContact_SnsUserInfo) String() string {
 func (*ModifyContact_SnsUserInfo) ProtoMessage() {}
 
 func (x *ModifyContact_SnsUserInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[11]
+	mi := &file_api_contact_contact_api_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1493,7 +1610,7 @@ type ModifyContact_CustomizedInfo struct {
 
 func (x *ModifyContact_CustomizedInfo) Reset() {
 	*x = ModifyContact_CustomizedInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[12]
+	mi := &file_api_contact_contact_api_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1505,7 +1622,7 @@ func (x *ModifyContact_CustomizedInfo) String() string {
 func (*ModifyContact_CustomizedInfo) ProtoMessage() {}
 
 func (x *ModifyContact_CustomizedInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[12]
+	mi := &file_api_contact_contact_api_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1558,7 +1675,7 @@ type ModifyContact_AdditionalContactList struct {
 
 func (x *ModifyContact_AdditionalContactList) Reset() {
 	*x = ModifyContact_AdditionalContactList{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[13]
+	mi := &file_api_contact_contact_api_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1570,7 +1687,7 @@ func (x *ModifyContact_AdditionalContactList) String() string {
 func (*ModifyContact_AdditionalContactList) ProtoMessage() {}
 
 func (x *ModifyContact_AdditionalContactList) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[13]
+	mi := &file_api_contact_contact_api_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1603,7 +1720,7 @@ type ModifyContact_MobileInfo struct {
 
 func (x *ModifyContact_MobileInfo) Reset() {
 	*x = ModifyContact_MobileInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[14]
+	mi := &file_api_contact_contact_api_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1615,7 +1732,7 @@ func (x *ModifyContact_MobileInfo) String() string {
 func (*ModifyContact_MobileInfo) ProtoMessage() {}
 
 func (x *ModifyContact_MobileInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[14]
+	mi := &file_api_contact_contact_api_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1656,7 +1773,7 @@ type ModifyContact_ChatroomMemberData struct {
 
 func (x *ModifyContact_ChatroomMemberData) Reset() {
 	*x = ModifyContact_ChatroomMemberData{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[15]
+	mi := &file_api_contact_contact_api_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1668,7 +1785,7 @@ func (x *ModifyContact_ChatroomMemberData) String() string {
 func (*ModifyContact_ChatroomMemberData) ProtoMessage() {}
 
 func (x *ModifyContact_ChatroomMemberData) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[15]
+	mi := &file_api_contact_contact_api_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1716,7 +1833,7 @@ type ModifyContact_AdditionalContactList_LinkedinItem struct {
 
 func (x *ModifyContact_AdditionalContactList_LinkedinItem) Reset() {
 	*x = ModifyContact_AdditionalContactList_LinkedinItem{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[16]
+	mi := &file_api_contact_contact_api_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1728,7 +1845,7 @@ func (x *ModifyContact_AdditionalContactList_LinkedinItem) String() string {
 func (*ModifyContact_AdditionalContactList_LinkedinItem) ProtoMessage() {}
 
 func (x *ModifyContact_AdditionalContactList_LinkedinItem) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[16]
+	mi := &file_api_contact_contact_api_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1781,7 +1898,7 @@ type ModifyContact_ChatroomMemberData_MemberInfo struct {
 
 func (x *ModifyContact_ChatroomMemberData_MemberInfo) Reset() {
 	*x = ModifyContact_ChatroomMemberData_MemberInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[17]
+	mi := &file_api_contact_contact_api_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1793,7 +1910,7 @@ func (x *ModifyContact_ChatroomMemberData_MemberInfo) String() string {
 func (*ModifyContact_ChatroomMemberData_MemberInfo) ProtoMessage() {}
 
 func (x *ModifyContact_ChatroomMemberData_MemberInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[17]
+	mi := &file_api_contact_contact_api_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1865,6 +1982,58 @@ func (x *ModifyContact_ChatroomMemberData_MemberInfo) GetExtendXml() string {
 	return ""
 }
 
+type GetContactDetailResponse_VerifyUserValidTicket struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      *string                `protobuf:"bytes,1,opt,name=username,proto3,oneof" json:"username,omitempty"`
+	Ticket        *string                `protobuf:"bytes,2,opt,name=ticket,proto3,oneof" json:"ticket,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContactDetailResponse_VerifyUserValidTicket) Reset() {
+	*x = GetContactDetailResponse_VerifyUserValidTicket{}
+	mi := &file_api_contact_contact_api_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContactDetailResponse_VerifyUserValidTicket) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContactDetailResponse_VerifyUserValidTicket) ProtoMessage() {}
+
+func (x *GetContactDetailResponse_VerifyUserValidTicket) ProtoReflect() protoreflect.Message {
+	mi := &file_api_contact_contact_api_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContactDetailResponse_VerifyUserValidTicket.ProtoReflect.Descriptor instead.
+func (*GetContactDetailResponse_VerifyUserValidTicket) Descriptor() ([]byte, []int) {
+	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{5, 0}
+}
+
+func (x *GetContactDetailResponse_VerifyUserValidTicket) GetUsername() string {
+	if x != nil && x.Username != nil {
+		return *x.Username
+	}
+	return ""
+}
+
+func (x *GetContactDetailResponse_VerifyUserValidTicket) GetTicket() string {
+	if x != nil && x.Ticket != nil {
+		return *x.Ticket
+	}
+	return ""
+}
+
 type SearchContactResponse_SnsUserInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Flag          *uint32                `protobuf:"varint,1,opt,name=flag,proto3,oneof" json:"flag,omitempty"`
@@ -1877,7 +2046,7 @@ type SearchContactResponse_SnsUserInfo struct {
 
 func (x *SearchContactResponse_SnsUserInfo) Reset() {
 	*x = SearchContactResponse_SnsUserInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[18]
+	mi := &file_api_contact_contact_api_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1889,7 +2058,7 @@ func (x *SearchContactResponse_SnsUserInfo) String() string {
 func (*SearchContactResponse_SnsUserInfo) ProtoMessage() {}
 
 func (x *SearchContactResponse_SnsUserInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[18]
+	mi := &file_api_contact_contact_api_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1945,7 +2114,7 @@ type SearchContactResponse_CustomizedInfo struct {
 
 func (x *SearchContactResponse_CustomizedInfo) Reset() {
 	*x = SearchContactResponse_CustomizedInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[19]
+	mi := &file_api_contact_contact_api_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1957,7 +2126,7 @@ func (x *SearchContactResponse_CustomizedInfo) String() string {
 func (*SearchContactResponse_CustomizedInfo) ProtoMessage() {}
 
 func (x *SearchContactResponse_CustomizedInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[19]
+	mi := &file_api_contact_contact_api_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2036,7 +2205,7 @@ type SearchContactResponse_SearchContactItem struct {
 
 func (x *SearchContactResponse_SearchContactItem) Reset() {
 	*x = SearchContactResponse_SearchContactItem{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[20]
+	mi := &file_api_contact_contact_api_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2048,7 +2217,7 @@ func (x *SearchContactResponse_SearchContactItem) String() string {
 func (*SearchContactResponse_SearchContactItem) ProtoMessage() {}
 
 func (x *SearchContactResponse_SearchContactItem) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[20]
+	mi := &file_api_contact_contact_api_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2255,7 +2424,7 @@ func (x *SearchContactResponse_SearchContactItem) GetMatchType() uint32 {
 
 type SearchContactResponse_OpenIMContact struct {
 	state           protoimpl.MessageState                          `protogen:"open.v1"`
-	TpUsername      *string                                         `protobuf:"bytes,1,opt,name=tp_username,json=tpUsername,proto3,oneof" json:"tp_username,omitempty"`
+	Username        *string                                         `protobuf:"bytes,1,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	Nickname        *string                                         `protobuf:"bytes,2,opt,name=nickname,proto3,oneof" json:"nickname,omitempty"`
 	Type            *uint32                                         `protobuf:"varint,3,opt,name=type,proto3,oneof" json:"type,omitempty"`
 	Remark          *string                                         `protobuf:"bytes,4,opt,name=remark,proto3,oneof" json:"remark,omitempty"`
@@ -2277,7 +2446,7 @@ type SearchContactResponse_OpenIMContact struct {
 
 func (x *SearchContactResponse_OpenIMContact) Reset() {
 	*x = SearchContactResponse_OpenIMContact{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[21]
+	mi := &file_api_contact_contact_api_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2289,7 +2458,7 @@ func (x *SearchContactResponse_OpenIMContact) String() string {
 func (*SearchContactResponse_OpenIMContact) ProtoMessage() {}
 
 func (x *SearchContactResponse_OpenIMContact) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[21]
+	mi := &file_api_contact_contact_api_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2305,9 +2474,9 @@ func (*SearchContactResponse_OpenIMContact) Descriptor() ([]byte, []int) {
 	return file_api_contact_contact_api_proto_rawDescGZIP(), []int{6, 3}
 }
 
-func (x *SearchContactResponse_OpenIMContact) GetTpUsername() string {
-	if x != nil && x.TpUsername != nil {
-		return *x.TpUsername
+func (x *SearchContactResponse_OpenIMContact) GetUsername() string {
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
@@ -2427,7 +2596,7 @@ type SearchContactResponse_OpenIMContact_CustomInfo struct {
 
 func (x *SearchContactResponse_OpenIMContact_CustomInfo) Reset() {
 	*x = SearchContactResponse_OpenIMContact_CustomInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[22]
+	mi := &file_api_contact_contact_api_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2439,7 +2608,7 @@ func (x *SearchContactResponse_OpenIMContact_CustomInfo) String() string {
 func (*SearchContactResponse_OpenIMContact_CustomInfo) ProtoMessage() {}
 
 func (x *SearchContactResponse_OpenIMContact_CustomInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[22]
+	mi := &file_api_contact_contact_api_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2501,7 +2670,7 @@ type LbsResponse_LbsInfo struct {
 
 func (x *LbsResponse_LbsInfo) Reset() {
 	*x = LbsResponse_LbsInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[23]
+	mi := &file_api_contact_contact_api_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2513,7 +2682,7 @@ func (x *LbsResponse_LbsInfo) String() string {
 func (*LbsResponse_LbsInfo) ProtoMessage() {}
 
 func (x *LbsResponse_LbsInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[23]
+	mi := &file_api_contact_contact_api_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2702,7 +2871,7 @@ type LbsResponse_LbsInfo_SnsUserInfo struct {
 
 func (x *LbsResponse_LbsInfo_SnsUserInfo) Reset() {
 	*x = LbsResponse_LbsInfo_SnsUserInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[24]
+	mi := &file_api_contact_contact_api_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2714,7 +2883,7 @@ func (x *LbsResponse_LbsInfo_SnsUserInfo) String() string {
 func (*LbsResponse_LbsInfo_SnsUserInfo) ProtoMessage() {}
 
 func (x *LbsResponse_LbsInfo_SnsUserInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[24]
+	mi := &file_api_contact_contact_api_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2770,7 +2939,7 @@ type LbsResponse_LbsInfo_CustomizedInfo struct {
 
 func (x *LbsResponse_LbsInfo_CustomizedInfo) Reset() {
 	*x = LbsResponse_LbsInfo_CustomizedInfo{}
-	mi := &file_api_contact_contact_api_proto_msgTypes[25]
+	mi := &file_api_contact_contact_api_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2782,7 +2951,7 @@ func (x *LbsResponse_LbsInfo_CustomizedInfo) String() string {
 func (*LbsResponse_LbsInfo_CustomizedInfo) ProtoMessage() {}
 
 func (x *LbsResponse_LbsInfo_CustomizedInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_contact_contact_api_proto_msgTypes[25]
+	mi := &file_api_contact_contact_api_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2830,10 +2999,20 @@ var File_api_contact_contact_api_proto protoreflect.FileDescriptor
 
 const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\n" +
-	"\x1dapi/contact/contact_api.proto\x12\vapi.contact\x1a\x13api/base/base.proto\x1a\x1egoogle/protobuf/wrappers.proto\"?\n" +
-	"\x0fOperateResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xae/\n" +
+	"\x1dapi/contact/contact_api.proto\x12\vapi.contact\x1a\x13api/base/base.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xfc\x01\n" +
+	"\x0fOperateResponse\x12\x17\n" +
+	"\x04code\x18\x01 \x01(\x05H\x00R\x04code\x88\x01\x01\x12@\n" +
+	"\x06result\x18\x02 \x01(\v2#.api.contact.OperateResponse.ResultH\x01R\x06result\x88\x01\x01\x1az\n" +
+	"\x06Result\x12\x19\n" +
+	"\x05count\x18\x01 \x01(\rH\x00R\x05count\x88\x01\x01\x12\x17\n" +
+	"\x04code\x18\x02 \x01(\x05H\x01R\x04code\x88\x01\x01\x12\x1d\n" +
+	"\amessage\x18\x03 \x01(\fH\x02R\amessage\x88\x01\x01B\b\n" +
+	"\x06_countB\a\n" +
+	"\x05_codeB\n" +
+	"\n" +
+	"\b_messageB\a\n" +
+	"\x05_codeB\t\n" +
+	"\a_result\"\xae/\n" +
 	"\rModifyContact\x12=\n" +
 	"\busername\x18\x01 \x01(\v2\x1c.google.protobuf.StringValueH\x00R\busername\x88\x01\x01\x12=\n" +
 	"\bnickname\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueH\x01R\bnickname\x88\x01\x01\x12L\n" +
@@ -3075,53 +3254,66 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\x12_chatroom_sequenceB\x10\n" +
 	"\x0e_continue_flag\"O\n" +
 	"\x17ListAllContactsResponse\x124\n" +
-	"\bcontacts\x18\x01 \x03(\v2\x18.api.contact.ContactInfoR\bcontacts\"Y\n" +
-	"\x18GetContactDetailResponse\x12=\n" +
-	"\fcontact_list\x18\x03 \x03(\v2\x1a.api.contact.ModifyContactR\vcontactList\"\x89+\n" +
-	"\x15SearchContactResponse\x12=\n" +
-	"\busername\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueH\x00R\busername\x88\x01\x01\x12=\n" +
-	"\bnickname\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueH\x01R\bnickname\x88\x01\x01\x12L\n" +
-	"\x10nickname_jianpin\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueH\x02R\x0fnicknameJianpin\x88\x01\x01\x12L\n" +
-	"\x10nickname_quanpin\x18\x05 \x01(\v2\x1c.google.protobuf.StringValueH\x03R\x0fnicknameQuanpin\x88\x01\x01\x12-\n" +
-	"\x06gender\x18\x06 \x01(\x0e2\x10.api.base.GenderH\x04R\x06gender\x88\x01\x01\x12:\n" +
-	"\ravatar_buffer\x18\a \x01(\v2\x10.api.base.BufferH\x05R\favatarBuffer\x88\x01\x01\x12\x1f\n" +
-	"\bprovince\x18\b \x01(\tH\x06R\bprovince\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\t \x01(\tH\aR\x04city\x88\x01\x01\x12!\n" +
+	"\bcontacts\x18\x01 \x03(\v2\x18.api.contact.ContactInfoR\bcontacts\"\xfa\x03\n" +
+	"\x18GetContactDetailResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12(\n" +
+	"\rcontact_count\x18\x02 \x01(\x05H\x01R\fcontactCount\x88\x01\x01\x12=\n" +
+	"\fcontact_list\x18\x03 \x03(\v2\x1a.api.contact.ModifyContactR\vcontactList\x12\x12\n" +
+	"\x04code\x18\x04 \x03(\x05R\x04code\x12S\n" +
+	"\x06ticket\x18\x05 \x03(\v2;.api.contact.GetContactDetailResponse.VerifyUserValidTicketR\x06ticket\x127\n" +
+	"\x18send_message_ticket_list\x18\x06 \x03(\fR\x15sendMessageTicketList\x1am\n" +
+	"\x15VerifyUserValidTicket\x12\x1f\n" +
+	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1b\n" +
+	"\x06ticket\x18\x02 \x01(\tH\x01R\x06ticket\x88\x01\x01B\v\n" +
+	"\t_usernameB\t\n" +
+	"\a_ticketB\x10\n" +
+	"\x0e_base_responseB\x10\n" +
+	"\x0e_contact_count\"\xd5+\n" +
+	"\x15SearchContactResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12=\n" +
+	"\busername\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueH\x01R\busername\x88\x01\x01\x12=\n" +
+	"\bnickname\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueH\x02R\bnickname\x88\x01\x01\x12L\n" +
+	"\x10nickname_jianpin\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueH\x03R\x0fnicknameJianpin\x88\x01\x01\x12L\n" +
+	"\x10nickname_quanpin\x18\x05 \x01(\v2\x1c.google.protobuf.StringValueH\x04R\x0fnicknameQuanpin\x88\x01\x01\x12-\n" +
+	"\x06gender\x18\x06 \x01(\x0e2\x10.api.base.GenderH\x05R\x06gender\x88\x01\x01\x12:\n" +
+	"\ravatar_buffer\x18\a \x01(\v2\x10.api.base.BufferH\x06R\favatarBuffer\x88\x01\x01\x12\x1f\n" +
+	"\bprovince\x18\b \x01(\tH\aR\bprovince\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\t \x01(\tH\bR\x04city\x88\x01\x01\x12!\n" +
 	"\tsignature\x18\n" +
-	" \x01(\tH\bR\tsignature\x88\x01\x01\x12(\n" +
-	"\rpersonal_card\x18\v \x01(\rH\tR\fpersonalCard\x88\x01\x01\x12$\n" +
-	"\vverify_flag\x18\f \x01(\x05H\n" +
-	"R\n" +
+	" \x01(\tH\tR\tsignature\x88\x01\x01\x12(\n" +
+	"\rpersonal_card\x18\v \x01(\rH\n" +
+	"R\fpersonalCard\x88\x01\x01\x12$\n" +
+	"\vverify_flag\x18\f \x01(\x05H\vR\n" +
 	"verifyFlag\x88\x01\x01\x12$\n" +
-	"\vverify_info\x18\r \x01(\tH\vR\n" +
+	"\vverify_info\x18\r \x01(\tH\fR\n" +
 	"verifyInfo\x88\x01\x01\x12\x19\n" +
-	"\x05weibo\x18\x0e \x01(\tH\fR\x05weibo\x88\x01\x01\x12\x19\n" +
-	"\x05alias\x18\x0f \x01(\tH\rR\x05alias\x88\x01\x01\x12*\n" +
-	"\x0eweibo_nickname\x18\x10 \x01(\tH\x0eR\rweiboNickname\x88\x01\x01\x12\"\n" +
+	"\x05weibo\x18\x0e \x01(\tH\rR\x05weibo\x88\x01\x01\x12\x19\n" +
+	"\x05alias\x18\x0f \x01(\tH\x0eR\x05alias\x88\x01\x01\x12*\n" +
+	"\x0eweibo_nickname\x18\x10 \x01(\tH\x0fR\rweiboNickname\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"weibo_flag\x18\x11 \x01(\x05H\x0fR\tweiboFlag\x88\x01\x01\x12$\n" +
-	"\valbum_style\x18\x12 \x01(\x05H\x10R\n" +
+	"weibo_flag\x18\x11 \x01(\x05H\x10R\tweiboFlag\x88\x01\x01\x12$\n" +
+	"\valbum_style\x18\x12 \x01(\x05H\x11R\n" +
 	"albumStyle\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"album_flag\x18\x13 \x01(\x05H\x11R\talbumFlag\x88\x01\x01\x12.\n" +
-	"\x11album_bg_image_id\x18\x14 \x01(\tH\x12R\x0ealbumBgImageId\x88\x01\x01\x12W\n" +
-	"\rsns_user_info\x18\x15 \x01(\v2..api.contact.SearchContactResponse.SnsUserInfoH\x13R\vsnsUserInfo\x88\x01\x01\x12\x1d\n" +
-	"\acountry\x18\x16 \x01(\tH\x14R\acountry\x88\x01\x01\x12\"\n" +
+	"album_flag\x18\x13 \x01(\x05H\x12R\talbumFlag\x88\x01\x01\x12.\n" +
+	"\x11album_bg_image_id\x18\x14 \x01(\tH\x13R\x0ealbumBgImageId\x88\x01\x01\x12W\n" +
+	"\rsns_user_info\x18\x15 \x01(\v2..api.contact.SearchContactResponse.SnsUserInfoH\x14R\vsnsUserInfo\x88\x01\x01\x12\x1d\n" +
+	"\acountry\x18\x16 \x01(\tH\x15R\acountry\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"brand_list\x18\x17 \x01(\tH\x15R\tbrandList\x88\x01\x01\x12_\n" +
-	"\x0fcustomized_info\x18\x18 \x01(\v21.api.contact.SearchContactResponse.CustomizedInfoH\x16R\x0ecustomizedInfo\x88\x01\x01\x12(\n" +
-	"\rcontact_count\x18\x19 \x01(\rH\x17R\fcontactCount\x88\x01\x01\x12W\n" +
+	"brand_list\x18\x17 \x01(\tH\x16R\tbrandList\x88\x01\x01\x12_\n" +
+	"\x0fcustomized_info\x18\x18 \x01(\v21.api.contact.SearchContactResponse.CustomizedInfoH\x17R\x0ecustomizedInfo\x88\x01\x01\x12(\n" +
+	"\rcontact_count\x18\x19 \x01(\rH\x18R\fcontactCount\x88\x01\x01\x12W\n" +
 	"\fcontact_list\x18\x1a \x03(\v24.api.contact.SearchContactResponse.SearchContactItemR\vcontactList\x12)\n" +
-	"\x0ebig_avatar_url\x18\x1b \x01(\tH\x18R\fbigAvatarUrl\x88\x01\x01\x12-\n" +
-	"\x10small_avatar_url\x18\x1c \x01(\tH\x19R\x0esmallAvatarUrl\x88\x01\x01\x12>\n" +
-	"\x0fresponse_buffer\x18\x1d \x01(\v2\x10.api.base.BufferH\x1aR\x0eresponseBuffer\x88\x01\x01\x12,\n" +
-	"\x0fantispam_ticket\x18\x1e \x01(\tH\x1bR\x0eantispamTicket\x88\x01\x01\x12%\n" +
-	"\fkf_worker_id\x18\x1f \x01(\tH\x1cR\n" +
+	"\x0ebig_avatar_url\x18\x1b \x01(\tH\x19R\fbigAvatarUrl\x88\x01\x01\x12-\n" +
+	"\x10small_avatar_url\x18\x1c \x01(\tH\x1aR\x0esmallAvatarUrl\x88\x01\x01\x12>\n" +
+	"\x0fresponse_buffer\x18\x1d \x01(\v2\x10.api.base.BufferH\x1bR\x0eresponseBuffer\x88\x01\x01\x12,\n" +
+	"\x0fantispam_ticket\x18\x1e \x01(\tH\x1cR\x0eantispamTicket\x88\x01\x01\x12%\n" +
+	"\fkf_worker_id\x18\x1f \x01(\tH\x1dR\n" +
 	"kfWorkerId\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"match_type\x18  \x01(\rH\x1dR\tmatchType\x88\x01\x01\x12)\n" +
-	"\x0epopup_info_msg\x18! \x01(\tH\x1eR\fpopupInfoMsg\x88\x01\x01\x126\n" +
-	"\x15open_im_contact_count\x18\" \x01(\rH\x1fR\x12openImContactCount\x88\x01\x01\x12a\n" +
+	"match_type\x18  \x01(\rH\x1eR\tmatchType\x88\x01\x01\x12)\n" +
+	"\x0epopup_info_msg\x18! \x01(\tH\x1fR\fpopupInfoMsg\x88\x01\x01\x126\n" +
+	"\x15open_im_contact_count\x18\" \x01(\rH R\x12openImContactCount\x88\x01\x01\x12a\n" +
 	"\x14open_im_contact_list\x18# \x03(\v20.api.contact.SearchContactResponse.OpenIMContactR\x11openImContactList\x1a\xd2\x01\n" +
 	"\vSnsUserInfo\x12\x17\n" +
 	"\x04flag\x18\x01 \x01(\rH\x00R\x04flag\x88\x01\x01\x12#\n" +
@@ -3211,10 +3403,9 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\x0f_big_avatar_urlB\x13\n" +
 	"\x11_small_avatar_urlB\x12\n" +
 	"\x10_antispam_ticketB\r\n" +
-	"\v_match_type\x1a\xa5\b\n" +
-	"\rOpenIMContact\x12$\n" +
-	"\vtp_username\x18\x01 \x01(\tH\x00R\n" +
-	"tpUsername\x88\x01\x01\x12\x1f\n" +
+	"\v_match_type\x1a\x9d\b\n" +
+	"\rOpenIMContact\x12\x1f\n" +
+	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1f\n" +
 	"\bnickname\x18\x02 \x01(\tH\x01R\bnickname\x88\x01\x01\x12\x17\n" +
 	"\x04type\x18\x03 \x01(\rH\x02R\x04type\x88\x01\x01\x12\x1b\n" +
 	"\x06remark\x18\x04 \x01(\tH\x03R\x06remark\x88\x01\x01\x12\"\n" +
@@ -3239,8 +3430,8 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\x0edetail_visible\x18\x01 \x01(\rH\x00R\rdetailVisible\x88\x01\x01\x12\x1b\n" +
 	"\x06detail\x18\x02 \x01(\tH\x01R\x06detail\x88\x01\x01B\x11\n" +
 	"\x0f_detail_visibleB\t\n" +
-	"\a_detailB\x0e\n" +
-	"\f_tp_usernameB\v\n" +
+	"\a_detailB\v\n" +
+	"\t_usernameB\v\n" +
 	"\t_nicknameB\a\n" +
 	"\x05_typeB\t\n" +
 	"\a_remarkB\r\n" +
@@ -3255,7 +3446,8 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\x10_antispam_ticketB\t\n" +
 	"\a_app_idB\t\n" +
 	"\a_genderB\x12\n" +
-	"\x10_desc_wording_idB\v\n" +
+	"\x10_desc_wording_idB\x10\n" +
+	"\x0e_base_responseB\v\n" +
 	"\t_usernameB\v\n" +
 	"\t_nicknameB\x13\n" +
 	"\x11_nickname_jianpinB\x13\n" +
@@ -3289,18 +3481,21 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\r_kf_worker_idB\r\n" +
 	"\v_match_typeB\x11\n" +
 	"\x0f_popup_info_msgB\x18\n" +
-	"\x16_open_im_contact_count\"B\n" +
-	"\x12VerifyUserResponse\x12\x1f\n" +
-	"\busername\x18\x02 \x01(\tH\x00R\busername\x88\x01\x01B\v\n" +
-	"\t_username\"\xc9\x10\n" +
-	"\vLbsResponse\x12\x19\n" +
-	"\x05count\x18\x02 \x01(\rH\x00R\x05count\x88\x01\x01\x124\n" +
+	"\x16_open_im_contact_count\"\x96\x01\n" +
+	"\x12VerifyUserResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x1f\n" +
+	"\busername\x18\x02 \x01(\tH\x01R\busername\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\v\n" +
+	"\t_username\"\x9d\x11\n" +
+	"\vLbsResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x19\n" +
+	"\x05count\x18\x02 \x01(\rH\x01R\x05count\x88\x01\x01\x124\n" +
 	"\x04list\x18\x03 \x03(\v2 .api.contact.LbsResponse.LbsInfoR\x04list\x12\x19\n" +
-	"\x05state\x18\x04 \x01(\rH\x01R\x05state\x88\x01\x01\x12\"\n" +
+	"\x05state\x18\x04 \x01(\rH\x02R\x05state\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"flush_time\x18\x05 \x01(\rH\x02R\tflushTime\x88\x01\x01\x12-\n" +
-	"\x10is_show_chatroom\x18\x06 \x01(\rH\x03R\x0eisShowChatroom\x88\x01\x01\x127\n" +
-	"\x15chatroom_member_count\x18\a \x01(\rH\x04R\x13chatroomMemberCount\x88\x01\x01\x1a\xef\r\n" +
+	"flush_time\x18\x05 \x01(\rH\x03R\tflushTime\x88\x01\x01\x12-\n" +
+	"\x10is_show_chatroom\x18\x06 \x01(\rH\x04R\x0eisShowChatroom\x88\x01\x01\x127\n" +
+	"\x15chatroom_member_count\x18\a \x01(\rH\x05R\x13chatroomMemberCount\x88\x01\x01\x1a\xef\r\n" +
 	"\aLbsInfo\x12\x1f\n" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1f\n" +
 	"\bnickname\x18\x02 \x01(\tH\x01R\bnickname\x88\x01\x01\x12\x1f\n" +
@@ -3378,15 +3573,16 @@ const file_api_contact_contact_api_proto_rawDesc = "" +
 	"\x11_small_avatar_urlB\r\n" +
 	"\v_brand_listB\x12\n" +
 	"\x10_customized_infoB\x13\n" +
-	"\x11_anti_spam_ticketB\b\n" +
+	"\x11_anti_spam_ticketB\x10\n" +
+	"\x0e_base_responseB\b\n" +
 	"\x06_countB\b\n" +
 	"\x06_stateB\r\n" +
 	"\v_flush_timeB\x13\n" +
 	"\x11_is_show_chatroomB\x18\n" +
-	"\x16_chatroom_member_count\"E\n" +
-	"\x15UploadContactResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessageB7Z5github.com/sbgayhub/golem/host/api/contact;contactapib\x06proto3"
+	"\x16_chatroom_member_count\"k\n" +
+	"\x15UploadContactResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB7Z5github.com/sbgayhub/golem/host/api/contact;contactapib\x06proto3"
 
 var (
 	file_api_contact_contact_api_proto_rawDescOnce sync.Once
@@ -3400,7 +3596,7 @@ func file_api_contact_contact_api_proto_rawDescGZIP() []byte {
 	return file_api_contact_contact_api_proto_rawDescData
 }
 
-var file_api_contact_contact_api_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_api_contact_contact_api_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_api_contact_contact_api_proto_goTypes = []any{
 	(*OperateResponse)(nil),                                  // 0: api.contact.OperateResponse
 	(*ModifyContact)(nil),                                    // 1: api.contact.ModifyContact
@@ -3412,79 +3608,89 @@ var file_api_contact_contact_api_proto_goTypes = []any{
 	(*VerifyUserResponse)(nil),                               // 7: api.contact.VerifyUserResponse
 	(*LbsResponse)(nil),                                      // 8: api.contact.LbsResponse
 	(*UploadContactResponse)(nil),                            // 9: api.contact.UploadContactResponse
-	(*ModifyContact_ChatroomInfo)(nil),                       // 10: api.contact.ModifyContact.ChatroomInfo
-	(*ModifyContact_SnsUserInfo)(nil),                        // 11: api.contact.ModifyContact.SnsUserInfo
-	(*ModifyContact_CustomizedInfo)(nil),                     // 12: api.contact.ModifyContact.CustomizedInfo
-	(*ModifyContact_AdditionalContactList)(nil),              // 13: api.contact.ModifyContact.AdditionalContactList
-	(*ModifyContact_MobileInfo)(nil),                         // 14: api.contact.ModifyContact.MobileInfo
-	(*ModifyContact_ChatroomMemberData)(nil),                 // 15: api.contact.ModifyContact.ChatroomMemberData
-	(*ModifyContact_AdditionalContactList_LinkedinItem)(nil), // 16: api.contact.ModifyContact.AdditionalContactList.LinkedinItem
-	(*ModifyContact_ChatroomMemberData_MemberInfo)(nil),      // 17: api.contact.ModifyContact.ChatroomMemberData.MemberInfo
-	(*SearchContactResponse_SnsUserInfo)(nil),                // 18: api.contact.SearchContactResponse.SnsUserInfo
-	(*SearchContactResponse_CustomizedInfo)(nil),             // 19: api.contact.SearchContactResponse.CustomizedInfo
-	(*SearchContactResponse_SearchContactItem)(nil),          // 20: api.contact.SearchContactResponse.SearchContactItem
-	(*SearchContactResponse_OpenIMContact)(nil),              // 21: api.contact.SearchContactResponse.OpenIMContact
-	(*SearchContactResponse_OpenIMContact_CustomInfo)(nil),   // 22: api.contact.SearchContactResponse.OpenIMContact.CustomInfo
-	(*LbsResponse_LbsInfo)(nil),                              // 23: api.contact.LbsResponse.LbsInfo
-	(*LbsResponse_LbsInfo_SnsUserInfo)(nil),                  // 24: api.contact.LbsResponse.LbsInfo.SnsUserInfo
-	(*LbsResponse_LbsInfo_CustomizedInfo)(nil),               // 25: api.contact.LbsResponse.LbsInfo.CustomizedInfo
-	(*wrapperspb.StringValue)(nil),                           // 26: google.protobuf.StringValue
-	(base.Gender)(0),                                         // 27: api.base.Gender
-	(*base.Buffer)(nil),                                      // 28: api.base.Buffer
+	(*OperateResponse_Result)(nil),                           // 10: api.contact.OperateResponse.Result
+	(*ModifyContact_ChatroomInfo)(nil),                       // 11: api.contact.ModifyContact.ChatroomInfo
+	(*ModifyContact_SnsUserInfo)(nil),                        // 12: api.contact.ModifyContact.SnsUserInfo
+	(*ModifyContact_CustomizedInfo)(nil),                     // 13: api.contact.ModifyContact.CustomizedInfo
+	(*ModifyContact_AdditionalContactList)(nil),              // 14: api.contact.ModifyContact.AdditionalContactList
+	(*ModifyContact_MobileInfo)(nil),                         // 15: api.contact.ModifyContact.MobileInfo
+	(*ModifyContact_ChatroomMemberData)(nil),                 // 16: api.contact.ModifyContact.ChatroomMemberData
+	(*ModifyContact_AdditionalContactList_LinkedinItem)(nil), // 17: api.contact.ModifyContact.AdditionalContactList.LinkedinItem
+	(*ModifyContact_ChatroomMemberData_MemberInfo)(nil),      // 18: api.contact.ModifyContact.ChatroomMemberData.MemberInfo
+	(*GetContactDetailResponse_VerifyUserValidTicket)(nil),   // 19: api.contact.GetContactDetailResponse.VerifyUserValidTicket
+	(*SearchContactResponse_SnsUserInfo)(nil),                // 20: api.contact.SearchContactResponse.SnsUserInfo
+	(*SearchContactResponse_CustomizedInfo)(nil),             // 21: api.contact.SearchContactResponse.CustomizedInfo
+	(*SearchContactResponse_SearchContactItem)(nil),          // 22: api.contact.SearchContactResponse.SearchContactItem
+	(*SearchContactResponse_OpenIMContact)(nil),              // 23: api.contact.SearchContactResponse.OpenIMContact
+	(*SearchContactResponse_OpenIMContact_CustomInfo)(nil),   // 24: api.contact.SearchContactResponse.OpenIMContact.CustomInfo
+	(*LbsResponse_LbsInfo)(nil),                              // 25: api.contact.LbsResponse.LbsInfo
+	(*LbsResponse_LbsInfo_SnsUserInfo)(nil),                  // 26: api.contact.LbsResponse.LbsInfo.SnsUserInfo
+	(*LbsResponse_LbsInfo_CustomizedInfo)(nil),               // 27: api.contact.LbsResponse.LbsInfo.CustomizedInfo
+	(*wrapperspb.StringValue)(nil),                           // 28: google.protobuf.StringValue
+	(base.Gender)(0),                                         // 29: api.base.Gender
+	(*base.Buffer)(nil),                                      // 30: api.base.Buffer
+	(*base.BaseResponse)(nil),                                // 31: api.base.BaseResponse
 }
 var file_api_contact_contact_api_proto_depIdxs = []int32{
-	26, // 0: api.contact.ModifyContact.username:type_name -> google.protobuf.StringValue
-	26, // 1: api.contact.ModifyContact.nickname:type_name -> google.protobuf.StringValue
-	26, // 2: api.contact.ModifyContact.nickname_jianpin:type_name -> google.protobuf.StringValue
-	26, // 3: api.contact.ModifyContact.nickname_quanpin:type_name -> google.protobuf.StringValue
-	27, // 4: api.contact.ModifyContact.gender:type_name -> api.base.Gender
-	28, // 5: api.contact.ModifyContact.avatar_buffer:type_name -> api.base.Buffer
-	26, // 6: api.contact.ModifyContact.remark:type_name -> google.protobuf.StringValue
-	26, // 7: api.contact.ModifyContact.remark_jianpin:type_name -> google.protobuf.StringValue
-	26, // 8: api.contact.ModifyContact.remark_quanpin:type_name -> google.protobuf.StringValue
-	10, // 9: api.contact.ModifyContact.chatroom_info_list:type_name -> api.contact.ModifyContact.ChatroomInfo
-	26, // 10: api.contact.ModifyContact.domain_list:type_name -> google.protobuf.StringValue
-	11, // 11: api.contact.ModifyContact.sns_user_info:type_name -> api.contact.ModifyContact.SnsUserInfo
-	12, // 12: api.contact.ModifyContact.customized_info:type_name -> api.contact.ModifyContact.CustomizedInfo
-	13, // 13: api.contact.ModifyContact.additional_contact_list:type_name -> api.contact.ModifyContact.AdditionalContactList
-	15, // 14: api.contact.ModifyContact.members:type_name -> api.contact.ModifyContact.ChatroomMemberData
-	14, // 15: api.contact.ModifyContact.mobile_info:type_name -> api.contact.ModifyContact.MobileInfo
-	2,  // 16: api.contact.ListAllContactsResponse.contacts:type_name -> api.contact.ContactInfo
-	1,  // 17: api.contact.GetContactDetailResponse.contact_list:type_name -> api.contact.ModifyContact
-	26, // 18: api.contact.SearchContactResponse.username:type_name -> google.protobuf.StringValue
-	26, // 19: api.contact.SearchContactResponse.nickname:type_name -> google.protobuf.StringValue
-	26, // 20: api.contact.SearchContactResponse.nickname_jianpin:type_name -> google.protobuf.StringValue
-	26, // 21: api.contact.SearchContactResponse.nickname_quanpin:type_name -> google.protobuf.StringValue
-	27, // 22: api.contact.SearchContactResponse.gender:type_name -> api.base.Gender
-	28, // 23: api.contact.SearchContactResponse.avatar_buffer:type_name -> api.base.Buffer
-	18, // 24: api.contact.SearchContactResponse.sns_user_info:type_name -> api.contact.SearchContactResponse.SnsUserInfo
-	19, // 25: api.contact.SearchContactResponse.customized_info:type_name -> api.contact.SearchContactResponse.CustomizedInfo
-	20, // 26: api.contact.SearchContactResponse.contact_list:type_name -> api.contact.SearchContactResponse.SearchContactItem
-	28, // 27: api.contact.SearchContactResponse.response_buffer:type_name -> api.base.Buffer
-	21, // 28: api.contact.SearchContactResponse.open_im_contact_list:type_name -> api.contact.SearchContactResponse.OpenIMContact
-	23, // 29: api.contact.LbsResponse.list:type_name -> api.contact.LbsResponse.LbsInfo
-	26, // 30: api.contact.ModifyContact.ChatroomInfo.username:type_name -> google.protobuf.StringValue
-	26, // 31: api.contact.ModifyContact.ChatroomInfo.nickname:type_name -> google.protobuf.StringValue
-	16, // 32: api.contact.ModifyContact.AdditionalContactList.item:type_name -> api.contact.ModifyContact.AdditionalContactList.LinkedinItem
-	17, // 33: api.contact.ModifyContact.ChatroomMemberData.list:type_name -> api.contact.ModifyContact.ChatroomMemberData.MemberInfo
-	26, // 34: api.contact.SearchContactResponse.SearchContactItem.username:type_name -> google.protobuf.StringValue
-	26, // 35: api.contact.SearchContactResponse.SearchContactItem.nickname:type_name -> google.protobuf.StringValue
-	26, // 36: api.contact.SearchContactResponse.SearchContactItem.nickname_jianpin:type_name -> google.protobuf.StringValue
-	26, // 37: api.contact.SearchContactResponse.SearchContactItem.nickname_quanpin:type_name -> google.protobuf.StringValue
-	27, // 38: api.contact.SearchContactResponse.SearchContactItem.gender:type_name -> api.base.Gender
-	28, // 39: api.contact.SearchContactResponse.SearchContactItem.avatar_buffer:type_name -> api.base.Buffer
-	18, // 40: api.contact.SearchContactResponse.SearchContactItem.sns_user_info:type_name -> api.contact.SearchContactResponse.SnsUserInfo
-	19, // 41: api.contact.SearchContactResponse.SearchContactItem.customized_info:type_name -> api.contact.SearchContactResponse.CustomizedInfo
-	22, // 42: api.contact.SearchContactResponse.OpenIMContact.custom_info:type_name -> api.contact.SearchContactResponse.OpenIMContact.CustomInfo
-	27, // 43: api.contact.SearchContactResponse.OpenIMContact.gender:type_name -> api.base.Gender
-	27, // 44: api.contact.LbsResponse.LbsInfo.gender:type_name -> api.base.Gender
-	24, // 45: api.contact.LbsResponse.LbsInfo.sns_user_info:type_name -> api.contact.LbsResponse.LbsInfo.SnsUserInfo
-	25, // 46: api.contact.LbsResponse.LbsInfo.customized_info:type_name -> api.contact.LbsResponse.LbsInfo.CustomizedInfo
-	47, // [47:47] is the sub-list for method output_type
-	47, // [47:47] is the sub-list for method input_type
-	47, // [47:47] is the sub-list for extension type_name
-	47, // [47:47] is the sub-list for extension extendee
-	0,  // [0:47] is the sub-list for field type_name
+	10, // 0: api.contact.OperateResponse.result:type_name -> api.contact.OperateResponse.Result
+	28, // 1: api.contact.ModifyContact.username:type_name -> google.protobuf.StringValue
+	28, // 2: api.contact.ModifyContact.nickname:type_name -> google.protobuf.StringValue
+	28, // 3: api.contact.ModifyContact.nickname_jianpin:type_name -> google.protobuf.StringValue
+	28, // 4: api.contact.ModifyContact.nickname_quanpin:type_name -> google.protobuf.StringValue
+	29, // 5: api.contact.ModifyContact.gender:type_name -> api.base.Gender
+	30, // 6: api.contact.ModifyContact.avatar_buffer:type_name -> api.base.Buffer
+	28, // 7: api.contact.ModifyContact.remark:type_name -> google.protobuf.StringValue
+	28, // 8: api.contact.ModifyContact.remark_jianpin:type_name -> google.protobuf.StringValue
+	28, // 9: api.contact.ModifyContact.remark_quanpin:type_name -> google.protobuf.StringValue
+	11, // 10: api.contact.ModifyContact.chatroom_info_list:type_name -> api.contact.ModifyContact.ChatroomInfo
+	28, // 11: api.contact.ModifyContact.domain_list:type_name -> google.protobuf.StringValue
+	12, // 12: api.contact.ModifyContact.sns_user_info:type_name -> api.contact.ModifyContact.SnsUserInfo
+	13, // 13: api.contact.ModifyContact.customized_info:type_name -> api.contact.ModifyContact.CustomizedInfo
+	14, // 14: api.contact.ModifyContact.additional_contact_list:type_name -> api.contact.ModifyContact.AdditionalContactList
+	16, // 15: api.contact.ModifyContact.members:type_name -> api.contact.ModifyContact.ChatroomMemberData
+	15, // 16: api.contact.ModifyContact.mobile_info:type_name -> api.contact.ModifyContact.MobileInfo
+	2,  // 17: api.contact.ListAllContactsResponse.contacts:type_name -> api.contact.ContactInfo
+	31, // 18: api.contact.GetContactDetailResponse.base_response:type_name -> api.base.BaseResponse
+	1,  // 19: api.contact.GetContactDetailResponse.contact_list:type_name -> api.contact.ModifyContact
+	19, // 20: api.contact.GetContactDetailResponse.ticket:type_name -> api.contact.GetContactDetailResponse.VerifyUserValidTicket
+	31, // 21: api.contact.SearchContactResponse.base_response:type_name -> api.base.BaseResponse
+	28, // 22: api.contact.SearchContactResponse.username:type_name -> google.protobuf.StringValue
+	28, // 23: api.contact.SearchContactResponse.nickname:type_name -> google.protobuf.StringValue
+	28, // 24: api.contact.SearchContactResponse.nickname_jianpin:type_name -> google.protobuf.StringValue
+	28, // 25: api.contact.SearchContactResponse.nickname_quanpin:type_name -> google.protobuf.StringValue
+	29, // 26: api.contact.SearchContactResponse.gender:type_name -> api.base.Gender
+	30, // 27: api.contact.SearchContactResponse.avatar_buffer:type_name -> api.base.Buffer
+	20, // 28: api.contact.SearchContactResponse.sns_user_info:type_name -> api.contact.SearchContactResponse.SnsUserInfo
+	21, // 29: api.contact.SearchContactResponse.customized_info:type_name -> api.contact.SearchContactResponse.CustomizedInfo
+	22, // 30: api.contact.SearchContactResponse.contact_list:type_name -> api.contact.SearchContactResponse.SearchContactItem
+	30, // 31: api.contact.SearchContactResponse.response_buffer:type_name -> api.base.Buffer
+	23, // 32: api.contact.SearchContactResponse.open_im_contact_list:type_name -> api.contact.SearchContactResponse.OpenIMContact
+	31, // 33: api.contact.VerifyUserResponse.base_response:type_name -> api.base.BaseResponse
+	31, // 34: api.contact.LbsResponse.base_response:type_name -> api.base.BaseResponse
+	25, // 35: api.contact.LbsResponse.list:type_name -> api.contact.LbsResponse.LbsInfo
+	31, // 36: api.contact.UploadContactResponse.base_response:type_name -> api.base.BaseResponse
+	28, // 37: api.contact.ModifyContact.ChatroomInfo.username:type_name -> google.protobuf.StringValue
+	28, // 38: api.contact.ModifyContact.ChatroomInfo.nickname:type_name -> google.protobuf.StringValue
+	17, // 39: api.contact.ModifyContact.AdditionalContactList.item:type_name -> api.contact.ModifyContact.AdditionalContactList.LinkedinItem
+	18, // 40: api.contact.ModifyContact.ChatroomMemberData.list:type_name -> api.contact.ModifyContact.ChatroomMemberData.MemberInfo
+	28, // 41: api.contact.SearchContactResponse.SearchContactItem.username:type_name -> google.protobuf.StringValue
+	28, // 42: api.contact.SearchContactResponse.SearchContactItem.nickname:type_name -> google.protobuf.StringValue
+	28, // 43: api.contact.SearchContactResponse.SearchContactItem.nickname_jianpin:type_name -> google.protobuf.StringValue
+	28, // 44: api.contact.SearchContactResponse.SearchContactItem.nickname_quanpin:type_name -> google.protobuf.StringValue
+	29, // 45: api.contact.SearchContactResponse.SearchContactItem.gender:type_name -> api.base.Gender
+	30, // 46: api.contact.SearchContactResponse.SearchContactItem.avatar_buffer:type_name -> api.base.Buffer
+	20, // 47: api.contact.SearchContactResponse.SearchContactItem.sns_user_info:type_name -> api.contact.SearchContactResponse.SnsUserInfo
+	21, // 48: api.contact.SearchContactResponse.SearchContactItem.customized_info:type_name -> api.contact.SearchContactResponse.CustomizedInfo
+	24, // 49: api.contact.SearchContactResponse.OpenIMContact.custom_info:type_name -> api.contact.SearchContactResponse.OpenIMContact.CustomInfo
+	29, // 50: api.contact.SearchContactResponse.OpenIMContact.gender:type_name -> api.base.Gender
+	29, // 51: api.contact.LbsResponse.LbsInfo.gender:type_name -> api.base.Gender
+	26, // 52: api.contact.LbsResponse.LbsInfo.sns_user_info:type_name -> api.contact.LbsResponse.LbsInfo.SnsUserInfo
+	27, // 53: api.contact.LbsResponse.LbsInfo.customized_info:type_name -> api.contact.LbsResponse.LbsInfo.CustomizedInfo
+	54, // [54:54] is the sub-list for method output_type
+	54, // [54:54] is the sub-list for method input_type
+	54, // [54:54] is the sub-list for extension type_name
+	54, // [54:54] is the sub-list for extension extendee
+	0,  // [0:54] is the sub-list for field type_name
 }
 
 func init() { file_api_contact_contact_api_proto_init() }
@@ -3492,12 +3698,15 @@ func file_api_contact_contact_api_proto_init() {
 	if File_api_contact_contact_api_proto != nil {
 		return
 	}
+	file_api_contact_contact_api_proto_msgTypes[0].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[1].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[2].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[3].OneofWrappers = []any{}
+	file_api_contact_contact_api_proto_msgTypes[5].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[6].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[7].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[8].OneofWrappers = []any{}
+	file_api_contact_contact_api_proto_msgTypes[9].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[10].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[11].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[12].OneofWrappers = []any{}
@@ -3514,13 +3723,15 @@ func file_api_contact_contact_api_proto_init() {
 	file_api_contact_contact_api_proto_msgTypes[23].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[24].OneofWrappers = []any{}
 	file_api_contact_contact_api_proto_msgTypes[25].OneofWrappers = []any{}
+	file_api_contact_contact_api_proto_msgTypes[26].OneofWrappers = []any{}
+	file_api_contact_contact_api_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_contact_contact_api_proto_rawDesc), len(file_api_contact_contact_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

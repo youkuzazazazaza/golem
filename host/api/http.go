@@ -174,7 +174,13 @@ func (r *Request) DoProto(result proto.Message) error {
 	if data, err := r.Do(); err != nil {
 		return err
 	} else {
-		if err := protojson.Unmarshal(data, result); err != nil {
+		options := protojson.UnmarshalOptions{}
+		if err := options.Unmarshal(data, result); err == nil {
+			return nil
+		}
+		decoder := json.NewDecoder(bytes.NewReader(data))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(result); err != nil {
 			return fmt.Errorf("[http] 反序列化出现错误: %w", err)
 		}
 	}

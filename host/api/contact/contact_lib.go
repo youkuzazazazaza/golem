@@ -60,10 +60,11 @@ func (l lib) Search(keyword string, fromScene, searchScene uint32) (*SearchConta
 	if resp == nil || err != nil {
 		return nil, err
 	}
-	return &SearchContactResponse{
-		Username: resp.GetUsername(),
-		Nickname: resp.GetNickname(),
-	}, nil
+	var result SearchContactResponse
+	if err := api.TransformProto(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 // Verify 通过好友验证

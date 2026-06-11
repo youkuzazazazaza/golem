@@ -7,11 +7,13 @@
 package labelapi
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	base "github.com/sbgayhub/golem/host/api/base"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -24,8 +26,7 @@ const (
 // OperateResponse 通用操作响应
 type OperateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,18 +61,11 @@ func (*OperateResponse) Descriptor() ([]byte, []int) {
 	return file_api_label_label_api_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OperateResponse) GetCode() int32 {
+func (x *OperateResponse) GetBaseResponse() *base.BaseResponse {
 	if x != nil {
-		return x.Code
+		return x.BaseResponse
 	}
-	return 0
-}
-
-func (x *OperateResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
+	return nil
 }
 
 // Pair 标签对（镜像 golem label.Pair，字段编号完全一致）
@@ -130,8 +124,9 @@ func (x *Pair) GetId() uint32 {
 // ListLabelsResponse 获取标签列表响应（镜像 golem GetContactListResponse，字段号从 2 开始）
 type ListLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"` // 对应 golem field 2
-	List          []*Pair                `protobuf:"bytes,3,rep,name=list,proto3" json:"list,omitempty"`          // 对应 golem field 3
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	Count         *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"`                                  // 对应 golem field 2
+	List          []*Pair                `protobuf:"bytes,3,rep,name=list,proto3" json:"list,omitempty"`                                           // 对应 golem field 3
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,6 +161,13 @@ func (*ListLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_api_label_label_api_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *ListLabelsResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *ListLabelsResponse) GetCount() uint32 {
 	if x != nil && x.Count != nil {
 		return *x.Count
@@ -183,8 +185,9 @@ func (x *ListLabelsResponse) GetList() []*Pair {
 // AddLabelResponse 添加标签响应（镜像 golem AddContactResponse，字段号从 2 开始）
 type AddLabelResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"` // 对应 golem field 2
-	List          *Pair                  `protobuf:"bytes,3,opt,name=list,proto3,oneof" json:"list,omitempty"`    // 对应 golem field 3
+	BaseResponse  *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"` // 基础响应
+	Count         *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"`                                  // 对应 golem field 2
+	List          *Pair                  `protobuf:"bytes,3,opt,name=list,proto3,oneof" json:"list,omitempty"`                                     // 对应 golem field 3
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -219,6 +222,13 @@ func (*AddLabelResponse) Descriptor() ([]byte, []int) {
 	return file_api_label_label_api_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *AddLabelResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
+}
+
 func (x *AddLabelResponse) GetCount() uint32 {
 	if x != nil && x.Count != nil {
 		return *x.Count
@@ -237,22 +247,26 @@ var File_api_label_label_api_proto protoreflect.FileDescriptor
 
 const file_api_label_label_api_proto_rawDesc = "" +
 	"\n" +
-	"\x19api/label/label_api.proto\x12\tapi.label\"?\n" +
-	"\x0fOperateResponse\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"D\n" +
+	"\x19api/label/label_api.proto\x12\tapi.label\x1a\x13api/base/base.proto\"e\n" +
+	"\x0fOperateResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01B\x10\n" +
+	"\x0e_base_response\"D\n" +
 	"\x04Pair\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x13\n" +
 	"\x02id\x18\x02 \x01(\rH\x01R\x02id\x88\x01\x01B\a\n" +
 	"\x05_nameB\x05\n" +
-	"\x03_id\"^\n" +
-	"\x12ListLabelsResponse\x12\x19\n" +
-	"\x05count\x18\x02 \x01(\rH\x00R\x05count\x88\x01\x01\x12#\n" +
-	"\x04list\x18\x03 \x03(\v2\x0f.api.label.PairR\x04listB\b\n" +
-	"\x06_count\"j\n" +
-	"\x10AddLabelResponse\x12\x19\n" +
-	"\x05count\x18\x02 \x01(\rH\x00R\x05count\x88\x01\x01\x12(\n" +
-	"\x04list\x18\x03 \x01(\v2\x0f.api.label.PairH\x01R\x04list\x88\x01\x01B\b\n" +
+	"\x03_id\"\xb2\x01\n" +
+	"\x12ListLabelsResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x19\n" +
+	"\x05count\x18\x02 \x01(\rH\x01R\x05count\x88\x01\x01\x12#\n" +
+	"\x04list\x18\x03 \x03(\v2\x0f.api.label.PairR\x04listB\x10\n" +
+	"\x0e_base_responseB\b\n" +
+	"\x06_count\"\xbe\x01\n" +
+	"\x10AddLabelResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12\x19\n" +
+	"\x05count\x18\x02 \x01(\rH\x01R\x05count\x88\x01\x01\x12(\n" +
+	"\x04list\x18\x03 \x01(\v2\x0f.api.label.PairH\x02R\x04list\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\b\n" +
 	"\x06_countB\a\n" +
 	"\x05_listB3Z1github.com/sbgayhub/golem/host/api/label;labelapib\x06proto3"
 
@@ -274,15 +288,19 @@ var file_api_label_label_api_proto_goTypes = []any{
 	(*Pair)(nil),               // 1: api.label.Pair
 	(*ListLabelsResponse)(nil), // 2: api.label.ListLabelsResponse
 	(*AddLabelResponse)(nil),   // 3: api.label.AddLabelResponse
+	(*base.BaseResponse)(nil),  // 4: api.base.BaseResponse
 }
 var file_api_label_label_api_proto_depIdxs = []int32{
-	1, // 0: api.label.ListLabelsResponse.list:type_name -> api.label.Pair
-	1, // 1: api.label.AddLabelResponse.list:type_name -> api.label.Pair
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 0: api.label.OperateResponse.base_response:type_name -> api.base.BaseResponse
+	4, // 1: api.label.ListLabelsResponse.base_response:type_name -> api.base.BaseResponse
+	1, // 2: api.label.ListLabelsResponse.list:type_name -> api.label.Pair
+	4, // 3: api.label.AddLabelResponse.base_response:type_name -> api.base.BaseResponse
+	1, // 4: api.label.AddLabelResponse.list:type_name -> api.label.Pair
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_label_label_api_proto_init() }
@@ -290,6 +308,7 @@ func file_api_label_label_api_proto_init() {
 	if File_api_label_label_api_proto != nil {
 		return
 	}
+	file_api_label_label_api_proto_msgTypes[0].OneofWrappers = []any{}
 	file_api_label_label_api_proto_msgTypes[1].OneofWrappers = []any{}
 	file_api_label_label_api_proto_msgTypes[2].OneofWrappers = []any{}
 	file_api_label_label_api_proto_msgTypes[3].OneofWrappers = []any{}

@@ -30,11 +30,11 @@ func (w web) GetInfo() (*GetInfoResponse, error) {
 
 // GetItem 获取收藏项详情
 func (w web) GetItem(favId int32) (*GetFavItemResponse, error) {
-	var resp GetFavItemResponse
+	var resp BatchGetFavItemsResponse
 	if err := api.GetHttp().Get(fmt.Sprintf("/api/favor/item/%d", favId)).DoProto(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &GetFavItemResponse{Items: resp.GetObjects()}, nil
 }
 
 // BatchGetItems 批量获取收藏项（web 模式逐个查询聚合）
@@ -52,11 +52,11 @@ func (w web) BatchGetItems(favIds []int32) (*BatchGetFavItemsResponse, error) {
 
 // Delete 删除收藏项
 func (w web) Delete(favId int32) (*DeleteFavItemResponse, error) {
-	var resp DeleteFavItemResponse
+	var resp BatchDeleteFavItemsResponse
 	if err := api.GetHttp().Delete(fmt.Sprintf("/api/favor/item/%d", favId)).DoProto(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &DeleteFavItemResponse{Results: resp.GetResults()}, nil
 }
 
 // BatchDelete 批量删除收藏项（web 模式逐个删除聚合）
@@ -79,9 +79,17 @@ func (w web) Sync(key []byte) (*SyncFavorResponse, error) {
 	if len(key) > 0 {
 		req = req.Query("key", base64.StdEncoding.EncodeToString(key))
 	}
-	var resp SyncFavorResponse
-	if err := req.DoProto(&resp); err != nil {
+	var resp struct {
+		Items   []*SyncFavorItem `json:"items"`
+		Key     []byte           `json:"key"`
+		HasMore bool             `json:"hasMore"`
+	}
+	if err := req.DoJson(&resp); err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	return &SyncFavorResponse{
+		Items:   resp.Items,
+		Key:     resp.Key,
+		HasMore: resp.HasMore,
+	}, nil
 }

@@ -4,13 +4,14 @@ package api.label;
 
 option go_package = "github.com/sbgayhub/golem/host/api/label;labelapi";
 
+import "api/base/base.proto";
+
 
 // ==================== 通用响应 ====================
 
 // OperateResponse 通用操作响应
 message OperateResponse {
-  int32 code = 1;
-  string message = 2;
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
 }
 
 // ==================== 数据类型 ====================
@@ -25,6 +26,7 @@ message Pair {
 
 // ListLabelsResponse 获取标签列表响应（镜像 golem GetContactListResponse，字段号从 2 开始）
 message ListLabelsResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
   optional uint32 count = 2;  // 对应 golem field 2
   repeated Pair list = 3;     // 对应 golem field 3
 }
@@ -33,6 +35,7 @@ message ListLabelsResponse {
 
 // AddLabelResponse 添加标签响应（镜像 golem AddContactResponse，字段号从 2 开始）
 message AddLabelResponse {
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
   optional uint32 count = 2;  // 对应 golem field 2
   optional Pair list = 3;     // 对应 golem field 3
 }

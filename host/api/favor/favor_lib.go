@@ -9,7 +9,6 @@ import (
 	"golem/pkg/favor"
 
 	"github.com/sbgayhub/golem/host/api"
-	baseapi "github.com/sbgayhub/golem/host/api/base"
 )
 
 // lib 收藏服务 lib 实现（直接调用底层实现）
@@ -104,24 +103,23 @@ func (l lib) BatchDelete(favIds []int32) (*BatchDeleteFavItemsResponse, error) {
 }
 
 // Sync 同步收藏列表
-// 注意：golem Sync() 返回已解析的 SyncResult（Items/Key/HasMore），
-// 需要手动构造与 golem SyncResponse proto 对齐的 SyncFavorResponse。
 func (l lib) Sync(key []byte) (*SyncFavorResponse, error) {
 	resp, err := favor.Sync(key)
 	if resp == nil || err != nil {
 		return nil, err
 	}
 
-	keyBuf := baseapi.Buffer{Data: resp.Key}
-	var continueFlag uint32
-	if resp.HasMore {
-		continueFlag = 1
+	items := make([]*SyncFavorItem, 0, len(resp.Items))
+	for _, obj := range resp.Items {
+		var item SyncFavorItem
+		if err := api.TransformProto(obj, &item); err != nil {
+			return nil, err
+		}
+		items = append(items, &item)
 	}
-	code := int32(0)
-
 	return &SyncFavorResponse{
-		Code:         &code,
-		Key:          &keyBuf,
-		ContinueFlag: &continueFlag,
+		Items:   items,
+		Key:     resp.Key,
+		HasMore: resp.HasMore,
 	}, nil
 }

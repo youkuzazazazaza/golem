@@ -17,13 +17,14 @@ message OperateResponse {
 
 // ==================== 收藏信息 ====================
 
-// GetInfoResponse 获取收藏信息响应（镜像 golem GetInfoResponse，字段号从 2 开始）
+// GetInfoResponse 获取收藏信息响应（镜像 golem GetInfoResponse）
 message GetInfoResponse {
-  optional uint64 used_size = 2;            // 对应 golem field 2
-  optional uint64 total_size = 3;           // 对应 golem field 3
-  optional uint64 max_file_size = 4;        // 对应 golem field 4
-  optional int32 max_auto_upload_size = 5;  // 对应 golem field 5
-  optional int32 max_auto_download_size = 6; // 对应 golem field 6
+  optional .api.base.BaseResponse base_response = 1; // 基础响应
+  optional uint64 used_size = 2;            // 已使用容量
+  optional uint64 total_size = 3;           // 总容量
+  optional uint64 max_file_size = 4;        // 最大文件大小
+  optional int32 max_auto_upload_size = 5;  // 最大自动上传大小
+  optional int32 max_auto_download_size = 6; // 最大自动下载大小
 }
 
 // ==================== 收藏项信息 ====================
@@ -35,7 +36,16 @@ message FavorItem {
   optional string object = 3;
   optional uint32 flag = 4;
   optional uint32 update_time = 5;
-  optional uint32 update_sequence = 6; // 注意：golem 用 update_sequence，非 update_seq
+  optional uint32 update_sequence = 6;
+}
+
+message SyncFavorItem {
+  optional .api.base.BaseRequest base_request = 1; // 基础请求
+  optional string client_id = 2; // 客户端ID
+  uint32 type = 3; // 收藏类型
+  uint32 source_type = 4; // 来源类型
+  optional string source_id = 5; // 来源ID
+  optional string object = 6; // 收藏对象
 }
 
 // ==================== 获取收藏项 ====================
@@ -74,8 +84,7 @@ message BatchDeleteFavItemsResponse {
 
 // SyncFavorResponse 同步收藏列表响应（镜像 golem SyncResponse，字段编号完全一致）
 message SyncFavorResponse {
-  optional int32 code = 1;                  // 对应 golem field 1
-  optional api.base.Commands commands = 2;   // 对应 golem field 2
-  optional api.base.Buffer key = 3;          // 对应 golem field 3
-  optional uint32 continue_flag = 4;        // 对应 golem field 4
+  repeated SyncFavorItem items = 1; // 收藏项列表
+  bytes key = 2;                // 下次同步 Key
+  bool has_more = 3;            // 是否还有更多数据
 }

@@ -7,12 +7,13 @@
 package favorapi
 
 import (
-	base "github.com/sbgayhub/golem/host/api/base"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	base "github.com/sbgayhub/golem/host/api/base"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -75,14 +76,15 @@ func (x *OperateResponse) GetMessage() string {
 	return ""
 }
 
-// GetInfoResponse 获取收藏信息响应（镜像 golem GetInfoResponse，字段号从 2 开始）
+// GetInfoResponse 获取收藏信息响应（镜像 golem GetInfoResponse）
 type GetInfoResponse struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	UsedSize            *uint64                `protobuf:"varint,2,opt,name=used_size,json=usedSize,proto3,oneof" json:"used_size,omitempty"`                                      // 对应 golem field 2
-	TotalSize           *uint64                `protobuf:"varint,3,opt,name=total_size,json=totalSize,proto3,oneof" json:"total_size,omitempty"`                                   // 对应 golem field 3
-	MaxFileSize         *uint64                `protobuf:"varint,4,opt,name=max_file_size,json=maxFileSize,proto3,oneof" json:"max_file_size,omitempty"`                           // 对应 golem field 4
-	MaxAutoUploadSize   *int32                 `protobuf:"varint,5,opt,name=max_auto_upload_size,json=maxAutoUploadSize,proto3,oneof" json:"max_auto_upload_size,omitempty"`       // 对应 golem field 5
-	MaxAutoDownloadSize *int32                 `protobuf:"varint,6,opt,name=max_auto_download_size,json=maxAutoDownloadSize,proto3,oneof" json:"max_auto_download_size,omitempty"` // 对应 golem field 6
+	BaseResponse        *base.BaseResponse     `protobuf:"bytes,1,opt,name=base_response,json=baseResponse,proto3,oneof" json:"base_response,omitempty"`                           // 基础响应
+	UsedSize            *uint64                `protobuf:"varint,2,opt,name=used_size,json=usedSize,proto3,oneof" json:"used_size,omitempty"`                                      // 已使用容量
+	TotalSize           *uint64                `protobuf:"varint,3,opt,name=total_size,json=totalSize,proto3,oneof" json:"total_size,omitempty"`                                   // 总容量
+	MaxFileSize         *uint64                `protobuf:"varint,4,opt,name=max_file_size,json=maxFileSize,proto3,oneof" json:"max_file_size,omitempty"`                           // 最大文件大小
+	MaxAutoUploadSize   *int32                 `protobuf:"varint,5,opt,name=max_auto_upload_size,json=maxAutoUploadSize,proto3,oneof" json:"max_auto_upload_size,omitempty"`       // 最大自动上传大小
+	MaxAutoDownloadSize *int32                 `protobuf:"varint,6,opt,name=max_auto_download_size,json=maxAutoDownloadSize,proto3,oneof" json:"max_auto_download_size,omitempty"` // 最大自动下载大小
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -115,6 +117,13 @@ func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetInfoResponse) Descriptor() ([]byte, []int) {
 	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetInfoResponse) GetBaseResponse() *base.BaseResponse {
+	if x != nil {
+		return x.BaseResponse
+	}
+	return nil
 }
 
 func (x *GetInfoResponse) GetUsedSize() uint64 {
@@ -160,7 +169,7 @@ type FavorItem struct {
 	Object         *string                `protobuf:"bytes,3,opt,name=object,proto3,oneof" json:"object,omitempty"`
 	Flag           *uint32                `protobuf:"varint,4,opt,name=flag,proto3,oneof" json:"flag,omitempty"`
 	UpdateTime     *uint32                `protobuf:"varint,5,opt,name=update_time,json=updateTime,proto3,oneof" json:"update_time,omitempty"`
-	UpdateSequence *uint32                `protobuf:"varint,6,opt,name=update_sequence,json=updateSequence,proto3,oneof" json:"update_sequence,omitempty"` // 注意：golem 用 update_sequence，非 update_seq
+	UpdateSequence *uint32                `protobuf:"varint,6,opt,name=update_sequence,json=updateSequence,proto3,oneof" json:"update_sequence,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -237,6 +246,90 @@ func (x *FavorItem) GetUpdateSequence() uint32 {
 	return 0
 }
 
+type SyncFavorItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BaseRequest   *base.BaseRequest      `protobuf:"bytes,1,opt,name=base_request,json=baseRequest,proto3,oneof" json:"base_request,omitempty"` // 基础请求
+	ClientId      *string                `protobuf:"bytes,2,opt,name=client_id,json=clientId,proto3,oneof" json:"client_id,omitempty"`          // 客户端ID
+	Type          uint32                 `protobuf:"varint,3,opt,name=type,proto3" json:"type,omitempty"`                                       // 收藏类型
+	SourceType    uint32                 `protobuf:"varint,4,opt,name=source_type,json=sourceType,proto3" json:"source_type,omitempty"`         // 来源类型
+	SourceId      *string                `protobuf:"bytes,5,opt,name=source_id,json=sourceId,proto3,oneof" json:"source_id,omitempty"`          // 来源ID
+	Object        *string                `protobuf:"bytes,6,opt,name=object,proto3,oneof" json:"object,omitempty"`                              // 收藏对象
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SyncFavorItem) Reset() {
+	*x = SyncFavorItem{}
+	mi := &file_api_favor_favor_api_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncFavorItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncFavorItem) ProtoMessage() {}
+
+func (x *SyncFavorItem) ProtoReflect() protoreflect.Message {
+	mi := &file_api_favor_favor_api_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncFavorItem.ProtoReflect.Descriptor instead.
+func (*SyncFavorItem) Descriptor() ([]byte, []int) {
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SyncFavorItem) GetBaseRequest() *base.BaseRequest {
+	if x != nil {
+		return x.BaseRequest
+	}
+	return nil
+}
+
+func (x *SyncFavorItem) GetClientId() string {
+	if x != nil && x.ClientId != nil {
+		return *x.ClientId
+	}
+	return ""
+}
+
+func (x *SyncFavorItem) GetType() uint32 {
+	if x != nil {
+		return x.Type
+	}
+	return 0
+}
+
+func (x *SyncFavorItem) GetSourceType() uint32 {
+	if x != nil {
+		return x.SourceType
+	}
+	return 0
+}
+
+func (x *SyncFavorItem) GetSourceId() string {
+	if x != nil && x.SourceId != nil {
+		return *x.SourceId
+	}
+	return ""
+}
+
+func (x *SyncFavorItem) GetObject() string {
+	if x != nil && x.Object != nil {
+		return *x.Object
+	}
+	return ""
+}
+
 // GetFavItemResponse 获取收藏项详情响应
 type GetFavItemResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -247,7 +340,7 @@ type GetFavItemResponse struct {
 
 func (x *GetFavItemResponse) Reset() {
 	*x = GetFavItemResponse{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[3]
+	mi := &file_api_favor_favor_api_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -259,7 +352,7 @@ func (x *GetFavItemResponse) String() string {
 func (*GetFavItemResponse) ProtoMessage() {}
 
 func (x *GetFavItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[3]
+	mi := &file_api_favor_favor_api_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -272,7 +365,7 @@ func (x *GetFavItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFavItemResponse.ProtoReflect.Descriptor instead.
 func (*GetFavItemResponse) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{3}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetFavItemResponse) GetItems() []*FavorItem {
@@ -293,7 +386,7 @@ type BatchGetFavItemsResponse struct {
 
 func (x *BatchGetFavItemsResponse) Reset() {
 	*x = BatchGetFavItemsResponse{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[4]
+	mi := &file_api_favor_favor_api_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -305,7 +398,7 @@ func (x *BatchGetFavItemsResponse) String() string {
 func (*BatchGetFavItemsResponse) ProtoMessage() {}
 
 func (x *BatchGetFavItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[4]
+	mi := &file_api_favor_favor_api_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -318,7 +411,7 @@ func (x *BatchGetFavItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetFavItemsResponse.ProtoReflect.Descriptor instead.
 func (*BatchGetFavItemsResponse) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{4}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *BatchGetFavItemsResponse) GetCount() uint32 {
@@ -346,7 +439,7 @@ type DeleteResult struct {
 
 func (x *DeleteResult) Reset() {
 	*x = DeleteResult{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[5]
+	mi := &file_api_favor_favor_api_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -358,7 +451,7 @@ func (x *DeleteResult) String() string {
 func (*DeleteResult) ProtoMessage() {}
 
 func (x *DeleteResult) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[5]
+	mi := &file_api_favor_favor_api_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +464,7 @@ func (x *DeleteResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteResult.ProtoReflect.Descriptor instead.
 func (*DeleteResult) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{5}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteResult) GetCode() int32 {
@@ -398,7 +491,7 @@ type DeleteFavItemResponse struct {
 
 func (x *DeleteFavItemResponse) Reset() {
 	*x = DeleteFavItemResponse{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[6]
+	mi := &file_api_favor_favor_api_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -410,7 +503,7 @@ func (x *DeleteFavItemResponse) String() string {
 func (*DeleteFavItemResponse) ProtoMessage() {}
 
 func (x *DeleteFavItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[6]
+	mi := &file_api_favor_favor_api_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -423,7 +516,7 @@ func (x *DeleteFavItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFavItemResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFavItemResponse) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{6}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteFavItemResponse) GetResults() []*DeleteResult {
@@ -444,7 +537,7 @@ type BatchDeleteFavItemsResponse struct {
 
 func (x *BatchDeleteFavItemsResponse) Reset() {
 	*x = BatchDeleteFavItemsResponse{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[7]
+	mi := &file_api_favor_favor_api_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -456,7 +549,7 @@ func (x *BatchDeleteFavItemsResponse) String() string {
 func (*BatchDeleteFavItemsResponse) ProtoMessage() {}
 
 func (x *BatchDeleteFavItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[7]
+	mi := &file_api_favor_favor_api_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -469,7 +562,7 @@ func (x *BatchDeleteFavItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchDeleteFavItemsResponse.ProtoReflect.Descriptor instead.
 func (*BatchDeleteFavItemsResponse) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{7}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BatchDeleteFavItemsResponse) GetCount() uint32 {
@@ -489,17 +582,16 @@ func (x *BatchDeleteFavItemsResponse) GetResults() []*DeleteResult {
 // SyncFavorResponse 同步收藏列表响应（镜像 golem SyncResponse，字段编号完全一致）
 type SyncFavorResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          *int32                 `protobuf:"varint,1,opt,name=code,proto3,oneof" json:"code,omitempty"`                                     // 对应 golem field 1
-	Commands      *base.Commands         `protobuf:"bytes,2,opt,name=commands,proto3,oneof" json:"commands,omitempty"`                              // 对应 golem field 2
-	Key           *base.Buffer           `protobuf:"bytes,3,opt,name=key,proto3,oneof" json:"key,omitempty"`                                        // 对应 golem field 3
-	ContinueFlag  *uint32                `protobuf:"varint,4,opt,name=continue_flag,json=continueFlag,proto3,oneof" json:"continue_flag,omitempty"` // 对应 golem field 4
+	Items         []*SyncFavorItem       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`                     // 收藏项列表
+	Key           []byte                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`                         // 下次同步 Key
+	HasMore       bool                   `protobuf:"varint,3,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"` // 是否还有更多数据
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SyncFavorResponse) Reset() {
 	*x = SyncFavorResponse{}
-	mi := &file_api_favor_favor_api_proto_msgTypes[8]
+	mi := &file_api_favor_favor_api_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -511,7 +603,7 @@ func (x *SyncFavorResponse) String() string {
 func (*SyncFavorResponse) ProtoMessage() {}
 
 func (x *SyncFavorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_favor_favor_api_proto_msgTypes[8]
+	mi := &file_api_favor_favor_api_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -524,35 +616,28 @@ func (x *SyncFavorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncFavorResponse.ProtoReflect.Descriptor instead.
 func (*SyncFavorResponse) Descriptor() ([]byte, []int) {
-	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{8}
+	return file_api_favor_favor_api_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SyncFavorResponse) GetCode() int32 {
-	if x != nil && x.Code != nil {
-		return *x.Code
-	}
-	return 0
-}
-
-func (x *SyncFavorResponse) GetCommands() *base.Commands {
+func (x *SyncFavorResponse) GetItems() []*SyncFavorItem {
 	if x != nil {
-		return x.Commands
+		return x.Items
 	}
 	return nil
 }
 
-func (x *SyncFavorResponse) GetKey() *base.Buffer {
+func (x *SyncFavorResponse) GetKey() []byte {
 	if x != nil {
 		return x.Key
 	}
 	return nil
 }
 
-func (x *SyncFavorResponse) GetContinueFlag() uint32 {
-	if x != nil && x.ContinueFlag != nil {
-		return *x.ContinueFlag
+func (x *SyncFavorResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
 	}
-	return 0
+	return false
 }
 
 var File_api_favor_favor_api_proto protoreflect.FileDescriptor
@@ -562,14 +647,16 @@ const file_api_favor_favor_api_proto_rawDesc = "" +
 	"\x19api/favor/favor_api.proto\x12\tapi.favor\x1a\x13api/base/base.proto\"?\n" +
 	"\x0fOperateResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xd3\x02\n" +
-	"\x0fGetInfoResponse\x12 \n" +
-	"\tused_size\x18\x02 \x01(\x04H\x00R\busedSize\x88\x01\x01\x12\"\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xa7\x03\n" +
+	"\x0fGetInfoResponse\x12@\n" +
+	"\rbase_response\x18\x01 \x01(\v2\x16.api.base.BaseResponseH\x00R\fbaseResponse\x88\x01\x01\x12 \n" +
+	"\tused_size\x18\x02 \x01(\x04H\x01R\busedSize\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"total_size\x18\x03 \x01(\x04H\x01R\ttotalSize\x88\x01\x01\x12'\n" +
-	"\rmax_file_size\x18\x04 \x01(\x04H\x02R\vmaxFileSize\x88\x01\x01\x124\n" +
-	"\x14max_auto_upload_size\x18\x05 \x01(\x05H\x03R\x11maxAutoUploadSize\x88\x01\x01\x128\n" +
-	"\x16max_auto_download_size\x18\x06 \x01(\x05H\x04R\x13maxAutoDownloadSize\x88\x01\x01B\f\n" +
+	"total_size\x18\x03 \x01(\x04H\x02R\ttotalSize\x88\x01\x01\x12'\n" +
+	"\rmax_file_size\x18\x04 \x01(\x04H\x03R\vmaxFileSize\x88\x01\x01\x124\n" +
+	"\x14max_auto_upload_size\x18\x05 \x01(\x05H\x04R\x11maxAutoUploadSize\x88\x01\x01\x128\n" +
+	"\x16max_auto_download_size\x18\x06 \x01(\x05H\x05R\x13maxAutoDownloadSize\x88\x01\x01B\x10\n" +
+	"\x0e_base_responseB\f\n" +
 	"\n" +
 	"_used_sizeB\r\n" +
 	"\v_total_sizeB\x10\n" +
@@ -589,7 +676,21 @@ const file_api_favor_favor_api_proto_rawDesc = "" +
 	"\a_objectB\a\n" +
 	"\x05_flagB\x0e\n" +
 	"\f_update_timeB\x12\n" +
-	"\x10_update_sequence\"@\n" +
+	"\x10_update_sequence\"\x9c\x02\n" +
+	"\rSyncFavorItem\x12=\n" +
+	"\fbase_request\x18\x01 \x01(\v2\x15.api.base.BaseRequestH\x00R\vbaseRequest\x88\x01\x01\x12 \n" +
+	"\tclient_id\x18\x02 \x01(\tH\x01R\bclientId\x88\x01\x01\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\rR\x04type\x12\x1f\n" +
+	"\vsource_type\x18\x04 \x01(\rR\n" +
+	"sourceType\x12 \n" +
+	"\tsource_id\x18\x05 \x01(\tH\x02R\bsourceId\x88\x01\x01\x12\x1b\n" +
+	"\x06object\x18\x06 \x01(\tH\x03R\x06object\x88\x01\x01B\x0f\n" +
+	"\r_base_requestB\f\n" +
+	"\n" +
+	"_client_idB\f\n" +
+	"\n" +
+	"_source_idB\t\n" +
+	"\a_object\"@\n" +
 	"\x12GetFavItemResponse\x12*\n" +
 	"\x05items\x18\x01 \x03(\v2\x14.api.favor.FavorItemR\x05items\"o\n" +
 	"\x18BatchGetFavItemsResponse\x12\x19\n" +
@@ -606,16 +707,11 @@ const file_api_favor_favor_api_proto_rawDesc = "" +
 	"\x1bBatchDeleteFavItemsResponse\x12\x19\n" +
 	"\x05count\x18\x02 \x01(\rH\x00R\x05count\x88\x01\x01\x121\n" +
 	"\aresults\x18\x03 \x03(\v2\x17.api.favor.DeleteResultR\aresultsB\b\n" +
-	"\x06_count\"\xe4\x01\n" +
-	"\x11SyncFavorResponse\x12\x17\n" +
-	"\x04code\x18\x01 \x01(\x05H\x00R\x04code\x88\x01\x01\x123\n" +
-	"\bcommands\x18\x02 \x01(\v2\x12.api.base.CommandsH\x01R\bcommands\x88\x01\x01\x12'\n" +
-	"\x03key\x18\x03 \x01(\v2\x10.api.base.BufferH\x02R\x03key\x88\x01\x01\x12(\n" +
-	"\rcontinue_flag\x18\x04 \x01(\rH\x03R\fcontinueFlag\x88\x01\x01B\a\n" +
-	"\x05_codeB\v\n" +
-	"\t_commandsB\x06\n" +
-	"\x04_keyB\x10\n" +
-	"\x0e_continue_flagB3Z1github.com/sbgayhub/golem/host/api/favor;favorapib\x06proto3"
+	"\x06_count\"p\n" +
+	"\x11SyncFavorResponse\x12.\n" +
+	"\x05items\x18\x01 \x03(\v2\x18.api.favor.SyncFavorItemR\x05items\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\fR\x03key\x12\x19\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMoreB3Z1github.com/sbgayhub/golem/host/api/favor;favorapib\x06proto3"
 
 var (
 	file_api_favor_favor_api_proto_rawDescOnce sync.Once
@@ -629,32 +725,34 @@ func file_api_favor_favor_api_proto_rawDescGZIP() []byte {
 	return file_api_favor_favor_api_proto_rawDescData
 }
 
-var file_api_favor_favor_api_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_api_favor_favor_api_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_api_favor_favor_api_proto_goTypes = []any{
 	(*OperateResponse)(nil),             // 0: api.favor.OperateResponse
 	(*GetInfoResponse)(nil),             // 1: api.favor.GetInfoResponse
 	(*FavorItem)(nil),                   // 2: api.favor.FavorItem
-	(*GetFavItemResponse)(nil),          // 3: api.favor.GetFavItemResponse
-	(*BatchGetFavItemsResponse)(nil),    // 4: api.favor.BatchGetFavItemsResponse
-	(*DeleteResult)(nil),                // 5: api.favor.DeleteResult
-	(*DeleteFavItemResponse)(nil),       // 6: api.favor.DeleteFavItemResponse
-	(*BatchDeleteFavItemsResponse)(nil), // 7: api.favor.BatchDeleteFavItemsResponse
-	(*SyncFavorResponse)(nil),           // 8: api.favor.SyncFavorResponse
-	(*base.Commands)(nil),               // 9: api.base.Commands
-	(*base.Buffer)(nil),                 // 10: api.base.Buffer
+	(*SyncFavorItem)(nil),               // 3: api.favor.SyncFavorItem
+	(*GetFavItemResponse)(nil),          // 4: api.favor.GetFavItemResponse
+	(*BatchGetFavItemsResponse)(nil),    // 5: api.favor.BatchGetFavItemsResponse
+	(*DeleteResult)(nil),                // 6: api.favor.DeleteResult
+	(*DeleteFavItemResponse)(nil),       // 7: api.favor.DeleteFavItemResponse
+	(*BatchDeleteFavItemsResponse)(nil), // 8: api.favor.BatchDeleteFavItemsResponse
+	(*SyncFavorResponse)(nil),           // 9: api.favor.SyncFavorResponse
+	(*base.BaseResponse)(nil),           // 10: api.base.BaseResponse
+	(*base.BaseRequest)(nil),            // 11: api.base.BaseRequest
 }
 var file_api_favor_favor_api_proto_depIdxs = []int32{
-	2,  // 0: api.favor.GetFavItemResponse.items:type_name -> api.favor.FavorItem
-	2,  // 1: api.favor.BatchGetFavItemsResponse.objects:type_name -> api.favor.FavorItem
-	5,  // 2: api.favor.DeleteFavItemResponse.results:type_name -> api.favor.DeleteResult
-	5,  // 3: api.favor.BatchDeleteFavItemsResponse.results:type_name -> api.favor.DeleteResult
-	9,  // 4: api.favor.SyncFavorResponse.commands:type_name -> api.base.Commands
-	10, // 5: api.favor.SyncFavorResponse.key:type_name -> api.base.Buffer
-	6,  // [6:6] is the sub-list for method output_type
-	6,  // [6:6] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	10, // 0: api.favor.GetInfoResponse.base_response:type_name -> api.base.BaseResponse
+	11, // 1: api.favor.SyncFavorItem.base_request:type_name -> api.base.BaseRequest
+	2,  // 2: api.favor.GetFavItemResponse.items:type_name -> api.favor.FavorItem
+	2,  // 3: api.favor.BatchGetFavItemsResponse.objects:type_name -> api.favor.FavorItem
+	6,  // 4: api.favor.DeleteFavItemResponse.results:type_name -> api.favor.DeleteResult
+	6,  // 5: api.favor.BatchDeleteFavItemsResponse.results:type_name -> api.favor.DeleteResult
+	3,  // 6: api.favor.SyncFavorResponse.items:type_name -> api.favor.SyncFavorItem
+	7,  // [7:7] is the sub-list for method output_type
+	7,  // [7:7] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_api_favor_favor_api_proto_init() }
@@ -664,9 +762,9 @@ func file_api_favor_favor_api_proto_init() {
 	}
 	file_api_favor_favor_api_proto_msgTypes[1].OneofWrappers = []any{}
 	file_api_favor_favor_api_proto_msgTypes[2].OneofWrappers = []any{}
-	file_api_favor_favor_api_proto_msgTypes[4].OneofWrappers = []any{}
+	file_api_favor_favor_api_proto_msgTypes[3].OneofWrappers = []any{}
 	file_api_favor_favor_api_proto_msgTypes[5].OneofWrappers = []any{}
-	file_api_favor_favor_api_proto_msgTypes[7].OneofWrappers = []any{}
+	file_api_favor_favor_api_proto_msgTypes[6].OneofWrappers = []any{}
 	file_api_favor_favor_api_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -674,7 +772,7 @@ func file_api_favor_favor_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_favor_favor_api_proto_rawDesc), len(file_api_favor_favor_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
