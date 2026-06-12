@@ -29,6 +29,7 @@ const (
 	ContactService_BlacklistAdd_FullMethodName    = "/contact.ContactService/BlacklistAdd"
 	ContactService_BlacklistRemove_FullMethodName = "/contact.ContactService/BlacklistRemove"
 	ContactService_Search_FullMethodName          = "/contact.ContactService/Search"
+	ContactService_GetOwner_FullMethodName        = "/contact.ContactService/GetOwner"
 )
 
 // ContactServiceClient is the client API for ContactService service.
@@ -50,6 +51,7 @@ type ContactServiceClient interface {
 	BlacklistAdd(ctx context.Context, in *BlacklistAdd_Request, opts ...grpc.CallOption) (*BlacklistAdd_Response, error)
 	BlacklistRemove(ctx context.Context, in *BlacklistRemove_Request, opts ...grpc.CallOption) (*BlacklistRemove_Response, error)
 	Search(ctx context.Context, in *Search_Request, opts ...grpc.CallOption) (*Search_Response, error)
+	GetOwner(ctx context.Context, in *GetOwner_Request, opts ...grpc.CallOption) (*GetOwner_Response, error)
 }
 
 type contactServiceClient struct {
@@ -160,6 +162,16 @@ func (c *contactServiceClient) Search(ctx context.Context, in *Search_Request, o
 	return out, nil
 }
 
+func (c *contactServiceClient) GetOwner(ctx context.Context, in *GetOwner_Request, opts ...grpc.CallOption) (*GetOwner_Response, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOwner_Response)
+	err := c.cc.Invoke(ctx, ContactService_GetOwner_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContactServiceServer is the server API for ContactService service.
 // All implementations must embed UnimplementedContactServiceServer
 // for forward compatibility.
@@ -179,6 +191,7 @@ type ContactServiceServer interface {
 	BlacklistAdd(context.Context, *BlacklistAdd_Request) (*BlacklistAdd_Response, error)
 	BlacklistRemove(context.Context, *BlacklistRemove_Request) (*BlacklistRemove_Response, error)
 	Search(context.Context, *Search_Request) (*Search_Response, error)
+	GetOwner(context.Context, *GetOwner_Request) (*GetOwner_Response, error)
 	mustEmbedUnimplementedContactServiceServer()
 }
 
@@ -218,6 +231,9 @@ func (UnimplementedContactServiceServer) BlacklistRemove(context.Context, *Black
 }
 func (UnimplementedContactServiceServer) Search(context.Context, *Search_Request) (*Search_Response, error) {
 	return nil, status.Error(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedContactServiceServer) GetOwner(context.Context, *GetOwner_Request) (*GetOwner_Response, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOwner not implemented")
 }
 func (UnimplementedContactServiceServer) mustEmbedUnimplementedContactServiceServer() {}
 func (UnimplementedContactServiceServer) testEmbeddedByValue()                        {}
@@ -420,6 +436,24 @@ func _ContactService_Search_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContactService_GetOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOwner_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContactServiceServer).GetOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContactService_GetOwner_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContactServiceServer).GetOwner(ctx, req.(*GetOwner_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContactService_ServiceDesc is the grpc.ServiceDesc for ContactService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -466,6 +500,10 @@ var ContactService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Search",
 			Handler:    _ContactService_Search_Handler,
+		},
+		{
+			MethodName: "GetOwner",
+			Handler:    _ContactService_GetOwner_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

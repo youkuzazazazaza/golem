@@ -22,6 +22,8 @@ type Ability interface {
 	BlacklistRemove(username string) error
 	// Search 搜索联系人
 	Search(keyword string, fromScene, searchScene uint32) *Contact
+	// GetOwner 获取机器人所有者信息
+	GetOwner() *Contact
 }
 
 // Instance 联系人能力实例（由 host/ability 层注入）

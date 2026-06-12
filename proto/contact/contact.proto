@@ -79,6 +79,7 @@ service ContactService {
   rpc BlacklistAdd(BlacklistAdd.Request) returns (BlacklistAdd.Response);
   rpc BlacklistRemove(BlacklistRemove.Request) returns (BlacklistRemove.Response);
   rpc Search(Search.Request) returns (Search.Response);
+  rpc GetOwner(GetOwner.Request) returns (GetOwner.Response);
 }
 
 message Get {
@@ -181,5 +182,12 @@ message Search {
   }
   message Response {
     Contact contacts = 1; // 联系人
+  }
+}
+
+message GetOwner {
+  message Request { }
+  message Response {
+    Contact owner = 1;
   }
 }

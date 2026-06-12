@@ -12,6 +12,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	contactapi "github.com/sbgayhub/golem/host/api/contact"
+	hc "github.com/sbgayhub/golem/host/config"
 	sdk "github.com/sbgayhub/golem/sdk/contact"
 )
 
@@ -247,6 +248,15 @@ func (a *ability) Search(keyword string, fromScene, searchScene uint32) *sdk.Con
 		Type:     sdk.ContactType_CONTACT_TYPE_FRIEND,
 		Data:     nil,
 	}
+}
+
+// GetOwner 获取机器人所有者信息
+func (a *ability) GetOwner() *sdk.Contact {
+	ownerID := hc.Get().Owner
+	if ownerID == "" {
+		return nil
+	}
+	return a.Get(ownerID)
 }
 
 func cloneSelfInfo(self *sdk.SelfInfo) *sdk.SelfInfo {

@@ -113,6 +113,15 @@ func (c Client) Search(keyword string, fromScene, searchScene uint32) *Contact {
 	return resp.Contacts
 }
 
+// GetOwner 获取机器人所有者信息
+func (c Client) GetOwner() *Contact {
+	resp, err := c.Client.GetOwner(context.Background(), &GetOwner_Request{})
+	if err != nil || resp.Owner == nil {
+		return nil
+	}
+	return resp.Owner
+}
+
 // Server 实现 ContactServiceServer 接口，将 gRPC 请求委托给 Ability 实现
 type Server struct {
 	UnimplementedContactServiceServer
@@ -195,4 +204,10 @@ func (s Server) Search(ctx context.Context, request *Search_Request) (*Search_Re
 		return nil, errors.New("not found")
 	}
 	return &Search_Response{Contacts: contact}, nil
+}
+
+// GetOwner 获取机器人所有者信息
+func (s Server) GetOwner(ctx context.Context, request *GetOwner_Request) (*GetOwner_Response, error) {
+	owner := s.Impl.GetOwner()
+	return &GetOwner_Response{Owner: owner}, nil
 }
