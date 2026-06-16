@@ -1,10 +1,18 @@
 package plugin
 
-import "slices"
+import (
+	"slices"
+
+	"github.com/sbgayhub/golem/host/config"
+)
 
 // isAllowed 检查发送者是否被允许调用插件
 func isAllowed(sender string, w *wrapper) bool {
 	if w.Config == nil {
+		return true
+	}
+
+	if config.Get().Owner == sender {
 		return true
 	}
 
