@@ -1,340 +1,811 @@
-# Golem Plugins 插件合集
+# Golem 插件开发指南
 
-- example：示例插件
+本文档提供完整的 Golem 插件开发教程，包括插件编写、构建、配置和部署。
 
-## 创建一个插件
+## 📚 目录
 
-插件是一个独立的 Go 可执行程序，通过 `github.com/sbgayhub/golem/sdk/plugin` 暴露给宿主。最小插件只需要实现 `plugin.Plugin` 接口；如果需要处理事件、命令或被其他插件调用，再按需实现对应的小接口。
+- [快速开始](#快速开始)
+- [插件架构](#插件架构)
+- [开发教程](#开发教程)
+- [现有插件](#现有插件)
+- [最佳实践](#最佳实践)
+- [常见问题](#常见问题)
 
-### 1. 创建插件目录和模块
+---
 
-建议每个插件独立放在 `plugins/<plugin-name>` 目录下：
+## 🚀 快速开始
+
+### 方式一：基于 Example 示例（强烈推荐）
+
+Example 是一个**完整的示例插件**，展示了所有插件功能。强烈建议先学习它：
 
 ```bash
-mkdir plugins/my_plugin
-cd plugins/my_plugin
+# 1. 查看 Example 插件
+cd plugins/example
+cat README.md  # 阅读详细文档
+
+# 2. 复制 Example 作为起点
+cd ..
+cp -r example my-plugin
+cd my-plugin
+
+# 3. 修改插件信息
+vim main.go  # 修改 GetMetadata() 中的插件名称、描述等
+
+# 4. 删除不需要的功能，保留需要的部分
+
+# 5. 构建
+go mod tidy
+go build .
+```
+
+**为什么选择 Example？**
+- ✅ 完整展示所有插件接口
+- ✅ 包含详细的代码注释
+- ✅ 提供最佳实践示例
+- ✅ 可以直接运行和测试
+
+### 方式二：从零创建（推荐有经验的开发者）
+
+```bash
+# 1. 创建插件目录
+mkdir my-plugin
+cd my-plugin
+
+# 2. 初始化模块
 go mod init golem_plugin_my_plugin
+
+# 3. 添加 SDK 依赖
+# 如果在 golem 项目内开发，使用本地 SDK
+cat >> go.mod << 'EOF'
+
+require github.com/sbgayhub/golem/sdk v0.1.1
+
+replace github.com/sbgayhub/golem/sdk => ../../sdk
+EOF
+
+# 4. 创建 main.go（参考下面的教程）
+# 5. 构建
+go mod tidy
+go build .
 ```
 
-如果插件目录在本仓库内开发，可以在 `go.mod` 中使用本地 SDK：
+---
 
-```go
-module golem_plugin_my_plugin
+## 🏗 插件架构
 
-go 1.25.0
+### 核心概念
 
-require github.com/sbgayhub/golem/sdk v0.0.0
+Golem 插件是独立的 Go 可执行程序，通过 gRPC 与主机（Host）通信。插件系统基于接口设计，支持按需实现不同能力。
 
-replace github.com/sbgayhub/golem/sdk => ../../go_sdk
+### 插件生命周期
+
+```
+┌─────────────┐
+│   加载插件   │ ← Host 启动时加载插件可执行文件
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  注入能力    │ ← Host 根据插件字段注入所需能力
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  OnLoad()   │ ← 插件初始化回调
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  运行中...   │ ← 处理事件、命令、调用等
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ OnUnload()  │ ← 插件卸载前回调
+└─────────────┘
 ```
 
-### 2. 导入依赖
+### 插件接口
 
-按需导入 SDK 包。`plugin` 是必需依赖；其他能力包只在插件实际使用时导入。
+| 接口 | 用途 | 必须实现 |
+|------|------|----------|
+| `Plugin` | 基础插件接口，提供元数据 | ✅ 是 |
+| `Lifecycle` | 生命周期回调 | ❌ 否 |
+| `EventPlugin` | 订阅和处理事件 | ❌ 否 |
+| `CommandPlugin` | 处理命令 | ❌ 否 |
+| `CalledPlugin` | 被其他插件调用 | ❌ 否 |
 
-```go
-import (
-	"log/slog"
-	"strings"
+---
 
-	"github.com/sbgayhub/golem/sdk/contact"
-	"github.com/sbgayhub/golem/sdk/message"
-	"github.com/sbgayhub/golem/sdk/plugin"
-)
-```
+## 🛠 SDK 能力说明
 
-常用包说明：
+插件通过声明不同的 Ability 字段来获取所需能力。Host 会在插件加载时自动注入这些能力。
 
-- `plugin`：插件启动、元数据、事件、命令、配置、会话等基础能力。
-- `message`：发送、转发、撤回、下载消息。
-- `contact`：联系人查询、列表、备注、好友操作等。
-- 其他能力包按需导入，例如 `chatroom`、`label`、`miniapp`、`cdn`、`favor`、`login`。
+### 插件核心能力
 
-### 3. 定义配置和插件结构体
+#### ConfigAbility - 配置管理能力
 
-插件结构体用于声明插件自身状态，并通过字段嵌入或声明要使用的能力。宿主会按字段类型注入能力实例。
+提供配置文件的读写和热更新功能。
 
 ```go
-type Config struct {
-	Prefix string `toml:"prefix" comment:"回复前缀"`
-}
-
 type MyPlugin struct {
-	plugin.ConfigAbility[Config]
+    plugin.ConfigAbility[Config]  // 嵌入配置能力
+}
 
-	message message.Ability
-	contact contact.Ability
-	session plugin.SessionAbility
+type Config struct {
+    Prefix string `toml:"prefix" comment:"消息前缀"`
+    MaxLen int    `toml:"max_len" comment:"最大长度"`
+}
+
+func (p *MyPlugin) someMethod() {
+    // 读取配置
+    prefix := p.Config.Prefix
+    
+    // 修改配置
+    p.Config.Prefix = "new prefix"
+    
+    // 保存到配置文件（会触发热更新）
+    if err := p.SaveConfig(p); err != nil {
+        slog.Error("保存配置失败", "err", err)
+    }
 }
 ```
 
-注意事项：
+**特点**：
+- 自动从 `plugins/config.toml` 读取配置
+- 支持配置热更新（文件改变自动重新加载）
+- 线程安全的配置访问
+- 提供 `SaveConfig()` 方法持久化配置
 
-- `plugin.ConfigAbility[T]` 用于声明插件配置，并提供 `SaveConfig` 保存配置。
-- `message.Ability`、`contact.Ability`、`plugin.SessionAbility` 等字段表示插件需要宿主注入对应能力。
-- 字段可以命名声明；匿名嵌入也支持，但命名字段更直观，适合多个能力并存的场景。
-- 只声明当前插件真实使用的能力，避免无意义依赖。
+#### SessionAbility - 会话劫持能力
 
-### 4. 实现基础插件接口
-
-所有插件都必须实现 `plugin.Plugin` 接口，也就是 `GetMetadata` 方法。
-
-```go
-func (p *MyPlugin) GetMetadata() *plugin.Metadata {
-	return &plugin.Metadata{
-		Name:        "my_plugin",
-		Author:      "your-name",
-		Version:     "1.0.0",
-		Description: "my plugin",
-		Next:        false,
-		Priority:    0,
-		AlwaysRun:   false,
-	}
-}
-```
-
-`Name` 会作为插件唯一标识，并对应 `plugins/config.toml` 中的配置段。
-
-### 5. 按需实现事件插件接口
-
-如果插件需要接收事件，实现 `plugin.EventPlugin`：
+允许插件独占某个用户的消息处理，实现多轮对话。
 
 ```go
-func (p *MyPlugin) GetSubscriptions() []string {
-	return []string{"message::text"}
+type MyPlugin struct {
+    session plugin.SessionAbility  // 声明会话能力
 }
 
 func (p *MyPlugin) OnEvent(e *plugin.Event) (bool, error) {
-	msg, ok := e.Payload.(*plugin.Event_Message)
-	if !ok {
-		return false, nil
-	}
-
-	content := strings.TrimSpace(msg.Message.Content)
-	if content == "" {
-		return false, nil
-	}
-
-	reply := p.Config.Prefix + content
-	_, err := p.message.Send(&message.Message{
-		Receiver: &contact.Contact{Username: e.Sender},
-		Content:  reply,
-	})
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+    // 劫持会话 10 秒，期间该用户的消息只发送给这个插件
+    p.session.Hold(p, e.Sender, 10*time.Second)
+    
+    // 释放会话（通常不需要手动调用，超时会自动释放）
+    p.session.Release(e.Sender)
+    
+    return true, nil
 }
 ```
 
-返回值约定：
+**使用场景**：
+- 多轮对话（如问答、表单填写）
+- 需要上下文的交互
+- 临时独占用户输入
 
-- `bool` 表示事件是否已被当前插件处理。
-- `error` 返回非空时表示处理失败，宿主会记录错误。
+**注意事项**：
+- 会话过期后会触发 `session::expired` 事件
+- 设置 `AlwaysRun: true` 的插件不受会话劫持影响
+- 同一用户同时只能被一个插件劫持
 
-### 6. 按需实现命令插件接口
+#### CallerAbility - 插件调用能力
 
-如果插件需要响应命令，实现 `plugin.CommandPlugin`。推荐使用结构体标签声明命令参数，再交给 SDK 绑定和分发。
+允许插件调用其他插件提供的能力。
 
 ```go
-type EchoCommand struct {
-	_      struct{} `cmd:"my echo" help:"回显文本" usage:"/my echo <text> [--upper]" example:"/my echo hello --upper"`
-	Text   string   `arg:"text" help:"回显内容" required:"true" variadic:"true"`
-	Upper  bool     `flag:"upper" help:"转换为大写" value:"false"`
+type MyPlugin struct {
+    caller plugin.CallerAbility  // 声明调用能力
 }
 
-func (p *MyPlugin) GetCommands() []string {
-	return plugin.CommandCommands()
-}
-
-func (p *MyPlugin) OnCommand(cmd *plugin.Command) (string, error) {
-	return plugin.DispatchCommand(cmd)
-}
-
-func (p *MyPlugin) handleEcho(cmd EchoCommand) (string, error) {
-	text := cmd.Text
-	if cmd.Upper {
-		text = strings.ToUpper(text)
-	}
-	return text, nil
+func (p *MyPlugin) processData(text string) (string, error) {
+    // 调用 formatter 插件的格式化能力
+    resultType, data, err := p.caller.CallPlugin(
+        "formatter",           // 目标插件名称
+        "formatter:format",    // 能力名称
+        map[string]string{     // 参数
+            "text": text,
+            "style": "upper",
+        },
+    )
+    
+    if err != nil {
+        return "", fmt.Errorf("调用失败: %w", err)
+    }
+    
+    // resultType: "text", "json", "bool" 等
+    // data: []byte 类型的返回数据
+    return string(data), nil
 }
 ```
 
-命令处理函数需要在 `main` 中注册：
+**使用场景**：
+- 复用其他插件的功能
+- 构建插件协作系统
+- 分离关注点（如格式化、验证分离）
+
+**注意事项**：
+- 被调用插件必须实现 `CalledPlugin` 接口
+- 能力名称建议带插件前缀避免冲突
+- 调用是同步的，注意性能影响
+
+---
+
+### 消息相关能力
+
+#### message.Ability - 消息处理能力
 
 ```go
-if err := plugin.RegisterCommand(p.handleEcho); err != nil {
-	slog.Error("注册命令失败", "err", err)
-	return
+type MyPlugin struct {
+    message message.Ability
+}
+
+func (p *MyPlugin) sendMessage(username, content string) error {
+    // 发送文本消息
+    _, err := p.message.Send(&message.Message{
+        Type:     message.TypeText,  // 必须指定类型
+        Receiver: &contact.Contact{Username: username},
+        Content:  content,
+    })
+    return err
+}
+
+func (p *MyPlugin) sendImage(username, imagePath string) error {
+    // 发送图片
+    _, err := p.message.Send(&message.Message{
+        Type:     message.TypeImage,
+        Receiver: &contact.Contact{Username: username},
+        Path:     imagePath,  // 本地图片路径
+    })
+    return err
+}
+
+func (p *MyPlugin) forwardMessage(msgId, toUser string) error {
+    // 转发消息
+    return p.message.Forward(msgId, toUser)
+}
+
+func (p *MyPlugin) revokeMessage(msgId string) error {
+    // 撤回消息
+    return p.message.Revoke(msgId)
 }
 ```
 
-### 7. 按需实现被调用插件接口
+**支持的消息类型**：
+- `message.TypeText` - 文本
+- `message.TypeImage` - 图片
+- `message.TypeVideo` - 视频
+- `message.TypeVoice` - 语音
+- `message.TypeFile` - 文件
 
-如果插件需要给其他插件或宿主暴露能力，实现 `plugin.CalledPlugin`：
+---
+
+### 联系人相关能力
+
+#### contact.Ability - 联系人管理能力
 
 ```go
-import "fmt"
-
-func (p *MyPlugin) GetCapabilities() []string {
-	return []string{"echo"}
+type MyPlugin struct {
+    contact contact.Ability
 }
 
-func (p *MyPlugin) OnCall(capability string, args map[string]string) (string, []byte, error) {
-	switch capability {
-	case "echo":
-		return "text", []byte(args["text"]), nil
-	default:
-		return "", nil, fmt.Errorf("unsupported capability: %s", capability)
-	}
+func (p *MyPlugin) getContactInfo(username string) (*contact.Contact, error) {
+    // 获取联系人信息
+    return p.contact.Get(username)
 }
-```
 
-### 8. 启动插件
+func (p *MyPlugin) listFriends() ([]*contact.Contact, error) {
+    // 获取好友列表
+    return p.contact.List()
+}
 
-在 `main` 函数中创建插件实例，初始化默认配置，注册命令，然后调用 `plugin.Start`。
-
-```go
-func main() {
-	p := &MyPlugin{
-		ConfigAbility: plugin.ConfigAbility[Config]{
-			Config: Config{
-				Prefix: "echo: ",
-			},
-		},
-	}
-
-	if err := plugin.RegisterCommand(p.handleEcho); err != nil {
-		slog.Error("注册命令失败", "err", err)
-		return
-	}
-
-	plugin.Start(p)
+func (p *MyPlugin) getOwner() (*contact.Contact, error) {
+    // 获取机器人主人信息
+    return p.contact.GetOwner()
 }
 ```
 
-### 9. 完整示例
+---
+
+### 其他能力
+
+| 能力 | 说明 |
+|------|------|
+| `chatroom.Ability` | 群聊管理（成员、公告、邀请等） |
+| `moments.Ability` | 朋友圈操作 |
+| `payment.Ability` | 支付相关 |
+| `cdn.Ability` | CDN 资源下载 |
+| `favor.Ability` | 收藏管理 |
+| `label.Ability` | 标签管理 |
+| `miniapp.Ability` | 小程序 |
+| `official.Ability` | 公众号 |
+
+**详细文档**：请参考各包的源码注释或 SDK 文档。
+
+---
+
+## 📖 开发教程
+
+### 1. 创建插件结构
+
+定义插件主结构体：
 
 ```go
 package main
 
 import (
-	"log/slog"
-	"strings"
-
-	"github.com/sbgayhub/golem/sdk/contact"
-	"github.com/sbgayhub/golem/sdk/message"
-	"github.com/sbgayhub/golem/sdk/plugin"
+    "github.com/sbgayhub/golem/sdk/plugin"
+    "github.com/sbgayhub/golem/sdk/message"
+    "github.com/sbgayhub/golem/sdk/contact"
 )
 
-type Config struct {
-	Prefix string `toml:"prefix" comment:"回复前缀"`
-}
-
+// MyPlugin 插件主结构
 type MyPlugin struct {
-	plugin.ConfigAbility[Config]
-
-	message message.Ability
+    // 配置能力（可选，仅在需要配置时添加）
+    plugin.ConfigAbility[Config]
+    
+    // 需要的能力（按需声明）
+    message message.Ability    // 消息能力
+    contact contact.Ability    // 联系人能力
+    session plugin.SessionAbility  // 会话劫持能力
 }
 
-type EchoCommand struct {
-	_     struct{} `cmd:"my echo" help:"回显文本" usage:"/my echo <text> [--upper]" example:"/my echo hello --upper"`
-	Text  string   `arg:"text" help:"回显内容" required:"true" variadic:"true"`
-	Upper bool     `flag:"upper" help:"转换为大写" value:"false"`
-}
-
-func (p *MyPlugin) GetMetadata() *plugin.Metadata {
-	return &plugin.Metadata{
-		Name:        "my_plugin",
-		Author:      "your-name",
-		Version:     "1.0.0",
-		Description: "my plugin",
-		Next:        false,
-		Priority:    0,
-		AlwaysRun:   false,
-	}
-}
-
-func (p *MyPlugin) GetSubscriptions() []string {
-	return []string{"message::text"}
-}
-
-func (p *MyPlugin) OnEvent(e *plugin.Event) (bool, error) {
-	msg, ok := e.Payload.(*plugin.Event_Message)
-	if !ok {
-		return false, nil
-	}
-
-	content := strings.TrimSpace(msg.Message.Content)
-	if content == "" {
-		return false, nil
-	}
-
-	_, err := p.message.Send(&message.Message{
-		Receiver: &contact.Contact{Username: e.Sender},
-		Content:  p.Config.Prefix + content,
-	})
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (p *MyPlugin) GetCommands() []string {
-	return plugin.CommandCommands()
-}
-
-func (p *MyPlugin) OnCommand(cmd *plugin.Command) (string, error) {
-	return plugin.DispatchCommand(cmd)
-}
-
-func (p *MyPlugin) handleEcho(cmd EchoCommand) (string, error) {
-	text := cmd.Text
-	if cmd.Upper {
-		text = strings.ToUpper(text)
-	}
-	return p.Config.Prefix + text, nil
-}
-
-func main() {
-	p := &MyPlugin{
-		ConfigAbility: plugin.ConfigAbility[Config]{
-			Config: Config{
-				Prefix: "echo: ",
-			},
-		},
-	}
-
-	if err := plugin.RegisterCommand(p.handleEcho); err != nil {
-		slog.Error("注册命令失败", "err", err)
-		return
-	}
-
-	plugin.Start(p)
+// Config 插件配置结构（可选）
+// 只有在需要配置管理时才定义
+type Config struct {
+    Prefix string `toml:"prefix" comment:"消息前缀"`
+    MaxLen int    `toml:"max_len" comment:"最大长度"`
 }
 ```
 
-### 10. 配置插件
+**能力注入说明**：
+- Host 会自动识别插件结构体中的能力字段
+- 字段类型必须是对应的 `Ability` 接口
+- 字段名可以自定义（小写字母开头）
+- 只声明实际使用的能力，避免不必要的依赖
 
-在 `plugins/config.toml` 中添加同名配置段：
+### 2. 实现基础接口（必须）
+
+所有插件必须实现 `GetMetadata()` 方法：
+
+```go
+func (p *MyPlugin) GetMetadata() *plugin.Metadata {
+    return &plugin.Metadata{
+        Name:        "my_plugin",        // 插件名（唯一标识）
+        Author:      "your-name",        // 作者
+        Version:     "1.0.0",            // 版本号
+        Description: "我的插件",         // 描述
+        Priority:    0,                  // 优先级（越小越先执行）
+        Next:        false,              // 是否传递给下一个插件
+        AlwaysRun:   false,              // 是否总是运行
+    }
+}
+```
+
+**元数据字段说明**：
+- `Name`: 插件唯一标识，需与配置文件中的段名一致
+- `Priority`: 优先级，数值越小越先执行（支持负数）
+- `Next`: true 表示成功处理事件后，允许后续插件继续处理
+- `AlwaysRun`: true 表示即使会话被劫持也继续响应事件
+
+### 3. 实现生命周期回调（可选）
+
+```go
+// OnLoad 插件加载时调用
+func (p *MyPlugin) OnLoad() error {
+    slog.Info("插件加载", "name", p.GetMetadata().Name)
+    
+    // 初始化资源、加载配置等
+    if p.Config.MaxLen == 0 {
+        p.Config.MaxLen = 100
+    }
+    
+    return nil
+}
+
+// OnUnload 插件卸载时调用
+func (p *MyPlugin) OnUnload() error {
+    slog.Info("插件卸载", "name", p.GetMetadata().Name)
+    
+    // 清理资源、保存状态等
+    return nil
+}
+```
+
+### 4. 实现事件处理（可选）
+
+如果插件需要响应消息或其他事件：
+
+```go
+// GetSubscriptions 返回订阅的事件列表
+func (p *MyPlugin) GetSubscriptions() []string {
+    return []string{
+        message.TypeText.Topic(),    // 推荐：使用类型常量避免手写错误
+        message.TypeImage.Topic(),   // 图片消息
+        message.TypeVideo.Topic(),   // 视频消息
+    }
+}
+
+// OnEvent 事件处理函数
+func (p *MyPlugin) OnEvent(e *plugin.Event) (bool, error) {
+    // 解析事件载荷
+    msg, ok := e.Payload.(*plugin.Event_Message)
+    if !ok {
+        return false, nil
+    }
+    
+    // 过滤条件
+    if msg.Message.Content == "" {
+        return false, nil
+    }
+    
+    // 处理消息
+    reply := p.Config.Prefix + msg.Message.Content
+    _, err := p.message.Send(&message.Message{
+        Type:     message.TypeText,  // 必须指定消息类型
+        Receiver: &contact.Contact{Username: e.Sender},
+        Content:  reply,
+    })
+    
+    if err != nil {
+        return false, err
+    }
+    
+    // 返回 true 表示已处理，false 表示未处理
+    return true, nil
+}
+```
+
+**推荐做法**：使用 `message.TypeXxx.Topic()` 获取事件主题，避免手写字符串出错。
+
+**事件类型**：
+- `message.TypeText.Topic()` - 文本消息
+- `message.TypeImage.Topic()` - 图片消息
+- `message.TypeVideo.Topic()` - 视频消息
+- `message.TypeVoice.Topic()` - 语音消息
+- `message.TypeFile.Topic()` - 文件消息
+- 或字符串：`"contact::add"`, `"chatroom::join"` 等
+- `chatroom::join` - 入群事件
+
+### 5. 实现命令处理（可选）
+
+使用结构体标签声明命令：
+
+```go
+// EchoCommand 命令结构体
+type EchoCommand struct {
+    // 命令元数据（必须是第一个字段）
+    _ struct{} `cmd:"echo" help:"回显消息" usage:"/echo <text> [--upper]" example:"/echo hello --upper"`
+    
+    // 可选：嵌入此字段可获取原始命令数据（发送者、原始文本等）
+    *plugin.Command
+    
+    // 命令参数
+    Text  string `arg:"text" help:"回显内容" required:"true" variadic:"true"`
+    Upper bool   `flag:"upper" help:"转为大写" value:"false"`
+}
+
+// GetCommands 返回命令列表
+func (p *MyPlugin) GetCommands() []string {
+    return plugin.CommandCommands()  // 自动扫描已注册的命令
+}
+
+// OnCommand 命令分发
+func (p *MyPlugin) OnCommand(cmd *plugin.Command) (string, error) {
+    return plugin.DispatchCommand(cmd)
+}
+
+// handleEcho 命令处理函数
+func (p *MyPlugin) handleEcho(cmd EchoCommand) (string, error) {
+    // 如果嵌入了 *plugin.Command，可以访问原始命令信息
+    // sender := cmd.Sender
+    // rawText := cmd.Text
+    
+    text := cmd.Text
+    if cmd.Upper {
+        text = strings.ToUpper(text)
+    }
+    return p.Config.Prefix + text, nil
+}
+```
+
+**在 main 中注册命令**：
+
+```go
+func main() {
+    p := &MyPlugin{
+        ConfigAbility: plugin.ConfigAbility[Config]{
+            Config: Config{Prefix: ">> "},
+        },
+    }
+    
+    // 注册命令处理函数
+    if err := plugin.RegisterCommand(p.handleEcho); err != nil {
+        slog.Error("注册命令失败", "err", err)
+        return
+    }
+    
+    plugin.Start(p)
+}
+```
+
+### 6. 实现被调用接口（可选）
+
+如果插件需要被其他插件调用：
+
+```go
+// GetCapabilities 返回插件提供的能力列表
+// 注意：能力名称应该唯一，建议使用插件名作为前缀避免冲突
+func (p *MyPlugin) GetCapabilities() []string {
+    return []string{
+        "myplugin:format",    // 使用前缀确保唯一性
+        "myplugin:validate",
+    }
+}
+
+// OnCall 处理能力调用
+func (p *MyPlugin) OnCall(capability string, args map[string]string) (string, []byte, error) {
+    switch capability {
+    case "myplugin:format":
+        text := args["text"]
+        result := p.Config.Prefix + text
+        return "text", []byte(result), nil
+        
+    case "myplugin:validate":
+        text := args["text"]
+        valid := len(text) <= p.Config.MaxLen
+        return "bool", []byte(fmt.Sprint(valid)), nil
+        
+    default:
+        return "", nil, fmt.Errorf("unsupported capability: %s", capability)
+    }
+}
+```
+
+**调用其他插件的能力**：
+
+```go
+type MyPlugin struct {
+    plugin.ConfigAbility[Config]
+    caller plugin.CallerAbility  // 需要声明 CallerAbility
+}
+
+func (p *MyPlugin) someMethod() error {
+    // 调用其他插件提供的能力
+    resultType, data, err := p.caller.CallPlugin(
+        "otherplugin",              // 目标插件名称
+        "otherplugin:format",       // 能力名称
+        map[string]string{          // 参数
+            "text": "hello",
+        },
+    )
+    if err != nil {
+        return err
+    }
+    
+    // resultType: "text", "json", "bool" 等
+    // data: 返回的数据（[]byte）
+    result := string(data)
+    
+    return nil
+}
+```
+
+### 7. 启动插件
+
+```go
+func main() {
+    // 创建插件实例
+    p := &MyPlugin{
+        ConfigAbility: plugin.ConfigAbility[Config]{
+            Config: Config{
+                Prefix: ">> ",
+                MaxLen: 200,
+            },
+        },
+    }
+    
+    // 注册命令（如果有）
+    if err := plugin.RegisterCommand(p.handleEcho); err != nil {
+        slog.Error("注册命令失败", "err", err)
+        return
+    }
+    
+    // 启动插件
+    plugin.Start(p)
+}
+```
+
+### 8. 配置文件
+
+在 `plugins/config.toml` 中添加插件配置：
 
 ```toml
 [my_plugin]
-enable = true
-mode = 'blacklist'
-limits = []
+enable = true             # 是否启用
+mode = 'blacklist'        # 过滤模式：whitelist/blacklist/disabled
+limits = []               # 黑白名单列表（用户名或群ID）
 
-[my_plugin.config]
-prefix = 'echo: '
+[my_plugin.config]        # 插件自定义配置
+prefix = '>> '
+max_len = 200
 ```
 
-### 11. 编译
+**配置模式说明**：
+- `whitelist`: 白名单模式，只处理 limits 中的消息
+- `blacklist`: 黑名单模式，忽略 limits 中的消息
+- `disabled`: 不过滤
 
-在插件目录中执行：
+### 9. 构建和部署
 
 ```bash
+# 构建插件
 go mod tidy
-go build -o my_plugin.exe .
+go build -o my_plugin.exe
+
+# 部署：将可执行文件放到 plugins 目录
+cp my_plugin.exe ../
+
+# 重启 Host 或使用热加载功能
 ```
 
-宿主加载插件时需要拿到编译后的可执行文件路径。插件名、配置段名和 `GetMetadata().Name` 建议保持一致，降低配置和排错成本。
+---
+
+## 🔌 现有插件
+
+以下是官方插件的简要说明，详细文档请查看各插件目录的 README.md。
+
+| 插件 | 说明 |
+|------|------|
+| **example** | 完整示例插件，展示所有插件功能 |
+| **ai** | OpenAI 兼容接口的 AI 对话插件 |
+| **cron** | 根据 cron 表达式定时执行任务 |
+| **meme** | 表情包生成插件，支持多种模板 |
+| **statistics** | 群聊消息统计和排行插件 |
+| **news** | 新闻推送插件 |
+| **reread** | 复读机插件 |
+| **universal** | 规则驱动的通用 API 请求插件 |
+| **video_parser** | 视频在线解析插件 |
+| **gg** | 图片生成插件，基于 gg 库 |
+
+---
+
+
+## 💡 最佳实践
+
+### 1. 错误处理
+
+```go
+func (p *MyPlugin) OnEvent(e *plugin.Event) (bool, error) {
+    // 使用结构化日志
+    slog.Info("收到事件", "type", e.Type, "sender", e.Sender)
+    
+    // 错误不要吞掉，返回给 Host
+    result, err := p.doSomething()
+    if err != nil {
+        slog.Error("处理失败", "err", err)
+        return false, err
+    }
+    
+    return true, nil
+}
+```
+
+### 2. 并发安全
+
+```go
+type MyPlugin struct {
+    plugin.ConfigAbility[Config]
+    mu    sync.RWMutex
+    cache map[string]string
+}
+
+func (p *MyPlugin) Set(key, value string) {
+    p.mu.Lock()
+    defer p.mu.Unlock()
+    p.cache[key] = value
+}
+```
+
+### 3. 配置热更新
+
+```go
+func (p *MyPlugin) OnEvent(e *plugin.Event) (bool, error) {
+    // ConfigAbility 提供线程安全的配置访问
+    maxLen := p.Config.MaxLen
+    
+    // 修改配置并保存
+    if someCondition {
+        p.Config.MaxLen = 300
+        p.SaveConfig()  // 保存到文件
+    }
+    
+    return true, nil
+}
+```
+
+### 4. 资源清理
+
+```go
+func (p *MyPlugin) OnLoad() error {
+    // 初始化资源
+    p.db = openDatabase()
+    return nil
+}
+
+func (p *MyPlugin) OnUnload() error {
+    // 清理资源
+    if p.db != nil {
+        p.db.Close()
+    }
+    return nil
+}
+```
+
+---
+
+## ❓ 常见问题
+
+### Q: 插件修改后如何热更新？
+
+A: 
+1. **插件代码更新**：重新编译后，向机器人发送命令（需要管理员权限）：
+   ```
+   /pm reload <plugin_name>
+   ```
+   例如：`/pm reload ai`
+
+2. **插件配置更新**：修改 `plugins/config.toml` 后，Host 会自动检测并热更新配置，无需手动重载。
+
+### Q: 如何调试插件？
+
+A: 
+1. 使用 `slog` 输出日志
+2. Host 会显示插件的标准输出和错误
+3. 可以使用 Delve 调试器 attach 到插件进程
+
+### Q: 插件之间如何通信？
+
+A: 使用 `CallerAbility` 和 `CalledPlugin` 接口：
+
+```go
+// 在插件中声明 CallerAbility
+type MyPlugin struct {
+    caller plugin.CallerAbility
+}
+
+// 调用其他插件（注意：能力名称应包含插件前缀）
+resultType, data, err := p.caller.CallPlugin(
+    "other_plugin",              // 插件名称
+    "other_plugin:format",       // 能力名称（建议带前缀）
+    map[string]string{
+        "text": "hello",
+    },
+)
+```
+
+### Q: 如何持久化数据？
+
+A: 
+1. 使用 `ConfigAbility` 保存简单配置
+2. 使用数据库（SQLite/MySQL 等）
+3. 使用文件系统
+
+### Q: 性能优化建议？
+
+A:
+1. 避免在事件处理中做耗时操作
+2. 使用 goroutine 处理异步任务
+3. 合理使用缓存
+4. 及时释放资源
+
+---
+
+## 📞 获取帮助
+
+- 查看示例插件源码：`plugins/example/`
+- 阅读 SDK 文档：`../SDK_USAGE.md`
+- 提交 Issue：https://github.com/sbgayhub/golem/issues
+
+---
+
+**Happy Coding! 🎉**
