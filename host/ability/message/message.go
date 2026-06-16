@@ -175,6 +175,17 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		}
 		result.NewId = resp.GetNewId()
 		result.CreateTime = uint32(resp.GetCreateTime())
+	case sdk.TypeAppChatRecord.Code:
+		data := msg.GetApp()
+		if data == nil {
+			return nil, nil
+		}
+		resp, err := a.api.SendApp(msg.Receiver.Username, data.Xml, int32(data.SubType))
+		if err != nil {
+			return nil, err
+		}
+		result.NewId = resp.GetNewId()
+		result.CreateTime = uint32(resp.GetCreateTime())
 
 	default:
 		slog.Debug("发送消息", "content", msg.Content)
