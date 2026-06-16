@@ -23,9 +23,10 @@ type aiSetCommand struct {
 }
 
 type aiPromptCommand struct {
-	_      struct{} `cmd:"ai prompt" help:"切换或设置提示词" usage:"/ai prompt <name> [-p prompt]" example:"/ai prompt default\n/ai prompt roleplay -p \"你是一个微信聊天机器人\""`
-	Name   string   `arg:"name" help:"提示词名称" required:"true"`
-	Prompt *string  `flag:"p,prompt" help:"提示词内容；提供后会新增或更新该提示词并切换到它"`
+	_       struct{} `cmd:"ai prompt" help:"切换或设置提示词" usage:"/ai prompt <name> [-p prompt]" example:"/ai prompt default\n/ai prompt roleplay -p \"你是一个微信聊天机器人\""`
+	Name    string   `arg:"name" help:"提示词名称" required:"true"`
+	Prompt  *string  `flag:"p,prompt" help:"提示词内容；提供后会新增或更新该提示词并切换到它"`
+	Command *plugin.Command
 }
 
 type aiClearContextCommand struct {
@@ -44,7 +45,7 @@ func registerCommands(p *AiPlugin) error {
 		func() error { return plugin.RegisterCommand(p.handleSet) },
 		func() error { return plugin.RegisterCommand(p.handlePrompt) },
 		func() error { return plugin.RegisterCommand(p.handleClearContext) },
-		func() error { return plugin.RegisterCommand(p.handleHelp) },
+		//func() error { return plugin.RegisterCommand(p.handleHelp) },
 	}
 	for _, register := range handlers {
 		if err := register(); err != nil {
@@ -81,13 +82,6 @@ func (p *AiPlugin) handleSet(cmd aiSetCommand) (string, error) {
 		return "", fmt.Errorf("保存 AI 配置失败: %w", err)
 	}
 	return "AI 配置已更新", nil
-}
-
-func (p *AiPlugin) applySetCommand(cmd aiSetCommand) error {
-	p.configMu.Lock()
-	defer p.configMu.Unlock()
-
-	return p.applySetCommandLocked(cmd)
 }
 
 func (p *AiPlugin) applySetCommandLocked(cmd aiSetCommand) error {
@@ -140,6 +134,9 @@ func (p *AiPlugin) handlePrompt(cmd aiPromptCommand) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	p.clearContext(commandSessionKey(cmd.Command))
+
 	if err := p.SaveConfig(p); err != nil {
 		return "", fmt.Errorf("保存 AI 配置失败: %w", err)
 	}
@@ -147,12 +144,6 @@ func (p *AiPlugin) handlePrompt(cmd aiPromptCommand) (string, error) {
 		return fmt.Sprintf("提示词已保存并切换：%s", p.Config.ActivePrompt), nil
 	}
 	return fmt.Sprintf("已切换提示词：%s", p.Config.ActivePrompt), nil
-}
-
-func (p *AiPlugin) applyPromptCommand(cmd aiPromptCommand) (bool, error) {
-	p.configMu.Lock()
-	defer p.configMu.Unlock()
-	return p.applyPromptCommandLocked(cmd)
 }
 
 func (p *AiPlugin) applyPromptCommandLocked(cmd aiPromptCommand) (bool, error) {
@@ -184,21 +175,6 @@ func (p *AiPlugin) handleClearContext(cmd aiClearContextCommand) (string, error)
 	}
 	p.clearContext(key)
 	return fmt.Sprintf("上下文已清理：%s", key), nil
-}
-
-func (p *AiPlugin) handleHelp(aiHelpCommand) (string, error) {
-	return strings.Join([]string{
-		"AI 插件",
-		"",
-		"命令：",
-		"/ai get",
-		"/ai set [-u url] [-k api_key] [-m model] [-r reply_rate] [--max-context n] [--timeout n]",
-		"/ai prompt <name> [-p prompt]",
-		"/ai clear-context [-t target]",
-		"/ai help",
-		"",
-		"说明：reply_rate 取值 0~1；被 @ 登录账号昵称或引用机器人消息时必定回复，普通消息按概率回复。",
-	}, "\n"), nil
 }
 
 func commandSessionKey(cmd *plugin.Command) string {
