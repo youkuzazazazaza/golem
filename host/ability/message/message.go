@@ -164,6 +164,18 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		}
 		result.NewId = resp.GetNewId()
 		result.CreateTime = uint32(resp.GetCreateTime())
+	case sdk.TypeAppLink.Code:
+		data := msg.GetApp()
+		if data == nil {
+			return nil, nil
+		}
+		resp, err := a.api.SendLink(msg.Receiver.Username, data.Title, data.Desc, data.Url, data.Xml)
+		if err != nil {
+			return nil, err
+		}
+		result.NewId = resp.GetNewId()
+		result.CreateTime = uint32(resp.GetCreateTime())
+
 	default:
 		slog.Debug("发送消息", "content", msg.Content)
 	}
