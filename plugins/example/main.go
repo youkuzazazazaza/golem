@@ -2,123 +2,99 @@ package main
 
 import (
 	"log/slog"
-	"strings"
-	"time"
+	"sync"
 
 	"github.com/sbgayhub/golem/sdk/contact"
 	"github.com/sbgayhub/golem/sdk/message"
 	"github.com/sbgayhub/golem/sdk/plugin"
 )
 
+// Config 插件配置结构
+// 演示如何定义插件配置，支持通过 TOML 文件配置
 type Config struct {
-	Name    string `toml:"name" comment:"姓名"`
-	Age     int32  `toml:"age" comment:"年龄"`
-	Address string `toml:"address" comment:"地址"`
+	EchoPrefix   string `toml:"echo_prefix" comment:"回显消息的前缀"`
+	ReplyEnabled bool   `toml:"reply_enabled" comment:"是否自动回复"`
+	MaxLength    int    `toml:"max_length" comment:"消息最大长度"`
 }
 
+// ExamplePlugin 示例插件
+// 这个插件演示了 Golem 插件系统的所有核心功能：
+// 1. 基础插件接口（必须）
+// 2. 生命周期管理
+// 3. 事件订阅和处理
+// 4. 命令处理
+// 5. 被调用能力（供其他插件调用）
+// 6. 配置管理
+// 7. 会话劫持
 type ExamplePlugin struct {
+	// 配置能力（提供配置读写功能）
 	plugin.ConfigAbility[Config]
-	timer   *time.Timer
-	message message.Ability
-	session plugin.SessionAbility
-	//commands *plugin.CommandRegistry
+
+	// 需要的能力（Host 会自动注入）
+	message message.Ability       // 消息发送/接收能力
+	contact contact.Ability       // 联系人管理能力
+	session plugin.SessionAbility // 会话劫持能力
+	caller  plugin.CallerAbility  // 调用其他插件能力
+
+	// 插件内部状态
+	mu       sync.RWMutex
+	sessions map[string]*SessionData // 会话数据
+	stats    Stats                   // 统计数据
 }
 
-type ExampleEcho struct {
-	_      struct{} `cmd:"example echo" help:"回显文本" usage:"/example echo <text> [--prefix 前缀]" example:"/example echo hello --prefix 测试"`
-	Text   string   `arg:"text" help:"回显内容" required:"true" variadic:"true"`
-	Prefix string   `flag:"prefix" help:"回显前缀"`
-	Upper  bool     `flag:"upper" help:"转换为大写" value:"false"`
+// Stats 统计数据
+type Stats struct {
+	TotalMessages int
+	TotalCommands int
+	TotalCalls    int
 }
 
+// GetMetadata 返回插件元数据
+// 这是所有插件必须实现的接口
 func (p *ExamplePlugin) GetMetadata() *plugin.Metadata {
 	return &plugin.Metadata{
-		Name:        "example",
-		Author:      "ovo",
-		Version:     "1.0.0",
-		Description: "example plugin",
-		Next:        false,
-		Priority:    0,
-		AlwaysRun:   false,
+		Name:        "example",                       // 插件唯一标识
+		Author:      "Golem Team",                    // 作者
+		Version:     "2.0.0",                         // 版本号
+		Description: "完整示例插件，展示所有插件功能", // 描述
+		Priority:    0,                               // 优先级（越小越先执行）
+		Next:        false,                           // 是否传递给下一个插件
+		AlwaysRun:   false,                           // 是否总是运行（忽略黑白名单）
 	}
-}
-
-func (p *ExamplePlugin) GetSubscriptions() []string {
-	return []string{"message::text", "session::expired"}
-}
-
-func (p *ExamplePlugin) GetCommands() []string {
-	return plugin.CommandCommands()
-}
-
-func (p *ExamplePlugin) OnCommand(cmd *plugin.Command) (string, error) {
-	return plugin.DispatchCommand(cmd)
-}
-
-func (p *ExamplePlugin) handleEcho(echo ExampleEcho) (string, error) {
-	text := echo.Text
-	if echo.Upper {
-		text = strings.ToUpper(text)
-	}
-	if echo.Prefix != "" {
-		text = echo.Prefix + text
-	}
-	return text, nil
-}
-
-func (p *ExamplePlugin) OnEvent(e *plugin.Event) (bool, error) {
-	slog.Error("接收到事件", "topic", e.Topic)
-	if e.Topic == "session::expired" {
-		slog.Info("接收到会话过期事件")
-		p.message.Send(&message.Message{Receiver: &contact.Contact{Username: e.Sender}, Content: "会话到期咯"})
-		return true, nil
-	}
-
-	msg := e.Payload.(*plugin.Event_Message)
-	slog.Info("[example] 获取配置", "config", p.Config)
-	p.Config.Name = msg.Message.Content
-
-	p.session.Hold(p, e.Sender, 10*time.Second)
-	p.timer.Reset(10 * time.Second)
-
-	if err := p.SaveConfig(p); err != nil {
-		slog.Error("保存配置出现错误", "err", err)
-		return false, err
-	}
-
-	//// 使用新的统一 Message 接口发送消息
-	//msg := &message.Message{
-	//	Type:     message.MessageType_MESSAGE_TYPE_TEXT,
-	//	Receiver: &contact.Contact{Username: "wxid_hello"},
-	//	Data: &message.Message_Text{Text: &message.TextData{
-	//		Content: "this is a test message",
-	//	}},
-	//}
-	//
-	//if _, err := p.message.Send(msg); err != nil {
-	//	slog.Error("[example] 发送消息失败", "err", err)
-	//	return false, err
-	//} else {
-	//	slog.Error("[example] 发送消息成功")
-	//}
-
-	return true, nil
 }
 
 func main() {
-	p := ExamplePlugin{
-		timer: time.NewTimer(10 * time.Second),
+	// 创建插件实例
+	p := &ExamplePlugin{
+		ConfigAbility: plugin.ConfigAbility[Config]{
+			Config: Config{
+				EchoPrefix:   "[Echo] ",
+				ReplyEnabled: true,
+				MaxLength:    500,
+			},
+		},
 	}
+
+	// 注册所有命令处理函数
 	if err := plugin.RegisterCommand(p.handleEcho); err != nil {
-		slog.Error("注册命令失败", "err", err)
+		slog.Error("[example] 注册 echo 命令失败", "err", err)
 		return
 	}
-	go func() {
-		slog.Info("插件已启动，等待会话到期")
-		<-p.timer.C
-		slog.Info("会话到期")
-		p.message.Send(&message.Message{Receiver: &contact.Contact{Username: "ovo"}, Content: "会话到期咯"})
-	}()
+	if err := plugin.RegisterCommand(p.handleStatus); err != nil {
+		slog.Error("[example] 注册 status 命令失败", "err", err)
+		return
+	}
+	if err := plugin.RegisterCommand(p.handleConfig); err != nil {
+		slog.Error("[example] 注册 config 命令失败", "err", err)
+		return
+	}
+	if err := plugin.RegisterCommand(p.handleSession); err != nil {
+		slog.Error("[example] 注册 session 命令失败", "err", err)
+		return
+	}
 
-	plugin.Start(&p)
+	slog.Info("[example] 示例插件启动中...")
+
+	// 启动插件
+	plugin.Start(p)
 }
