@@ -200,6 +200,42 @@ replace github.com/sbgayhub/golem/sdk => ../sdk
 
 详细说明请查看 [plugins/readme.md](plugins/readme.md)
 
+## 🎮 系统命令
+
+系统提供了内置命令用于管理插件和联系人。
+
+### ⚠️ 安全提示
+
+**务必配置 Owner（机器人管理员）！**
+
+在 `host/data/config.toml` 中配置：
+```toml
+owner = "wxid_xxx"              # 推荐：使用微信 ID
+# 或使用其他匹配方式
+owner = "nickname::张三"         # 按昵称
+owner = "remark::管理员"          # 按备注
+```
+
+- **未配置 Owner**：所有人都可执行命令，存在信息泄露风险
+- **已配置 Owner**：只有 Owner 可执行命令，确保安全
+
+### 插件管理 (/pm)
+```bash
+/pm list              # 查看所有插件
+/pm reload <name>     # 热更新插件
+/pm enable <name>     # 启用插件
+/pm disable <name>    # 禁用插件
+/pm info <name>       # 查看插件信息
+```
+
+### 联系人缓存 (/cm)
+```bash
+/cm contact           # 刷新联系人缓存
+/cm chatroom          # 刷新群成员缓存（群聊中使用）
+```
+
+详细命令说明请查看 [插件开发指南](plugins/readme.md#系统内置命令)
+
 ## 🛠 开发环境
 
 ### 要求
