@@ -10,7 +10,7 @@ func (p *AiPlugin) appendContext(key string, msg openAIMessage) {
 		p.sessions = map[string][]openAIMessage{}
 	}
 	items := append(p.sessions[key], msg)
-	limit := p.maxContextMessages()
+	limit := p.getMaxContextMessages(key)
 	if len(items) > limit {
 		items = items[len(items)-limit:]
 	}

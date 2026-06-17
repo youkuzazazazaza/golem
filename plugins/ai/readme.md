@@ -6,6 +6,7 @@
 
 - **OpenAI 兼容接口**：支持所有兼容 OpenAI API 格式的大模型服务（OpenAI、DeepSeek、通义千问、Kimi 等）
 - **多提示词管理**：支持创建和切换多个提示词配置，满足不同场景需求
+- **会话级配置隔离**：每个群聊/私聊可独立配置回复概率、提示词和上下文长度
 - **智能上下文**：自动维护对话上下文，支持连续对话
 - **灵活回复策略**：
   - 私聊：默认自动回复所有消息
@@ -49,7 +50,9 @@
 
 ## 命令说明
 
-### `/ai get`
+### 全局配置命令
+
+#### `/ai get`
 
 查看当前 AI 配置。
 
@@ -67,7 +70,7 @@ timeout=60
 prompt=你是一个友好的助手
 ```
 
-### `/ai set`
+#### `/ai set`
 
 更新 AI 配置。
 
@@ -89,15 +92,9 @@ prompt=你是一个友好的助手
 
 # 调整群聊回复概率为 20%
 /ai set -r 0.2
-
-# 增加上下文长度
-/ai set --max-context 300
-
-# 设置超时时间为 120 秒
-/ai set --timeout 120
 ```
 
-### `/ai prompt`
+#### `/ai prompt`
 
 切换或设置提示词。
 
@@ -117,12 +114,9 @@ prompt=你是一个友好的助手
 
 # 创建新提示词
 /ai prompt tech -p "你是一个技术专家"
-
-# 更新现有提示词
-/ai prompt tech -p "你是一个全栈开发专家，精通前后端技术"
 ```
 
-### `/ai clear-context`
+#### `/ai clear-context`
 
 清理对话上下文。
 
@@ -131,29 +125,106 @@ prompt=你是一个友好的助手
 /ai clear-context [-t target]
 ```
 
-**参数**：
-- `-t, --target`：会话标识（不传则清理当前会话）
-
 **示例**：
 ```bash
 # 清理当前会话上下文
 /ai clear-context
 
 # 清理指定群聊上下文
-/ai clear-context -t chatroom::123456@chatroom
+/ai clear-context -t chatroom:123456@chatroom
+```
 
-# 清理指定私聊上下文
-/ai clear-context -t private::wxid_abc123
+### 会话配置命令
+
+#### `/ai session-get`
+
+查看会话配置（支持查看当前会话或指定会话的配置）。
+
+**用法**：
+```bash
+/ai session-get [-t target]
+```
+
+**示例**：
+```bash
+# 查看当前会话配置
+/ai session-get
+
+# 查看指定会话配置
+/ai session-get -t chatroom:123@chatroom
+```
+
+#### `/ai session-set`
+
+设置会话配置（为指定会话单独配置回复率、提示词、上下文长度）。
+
+**用法**：
+```bash
+/ai session-set [-t target] [-r reply_rate] [-p prompt] [-c max_context]
+```
+
+**参数**：
+- `-t, --target`：会话 key（不传则设置当前会话）
+- `-r, --reply-rate`：回复概率，取值 0~1
+- `-p, --prompt`：提示词名称
+- `-c, --max-context`：上下文消息数
+
+**示例**：
+```bash
+# 设置当前群聊高频回复，使用猫娘人格
+/ai session-set -r 0.8 -p meow
+
+# 设置指定群聊必定回复
+/ai session-set -t chatroom:123@chatroom -r 1.0
+
+# 设置好友私聊短期记忆
+/ai session-set -t private:wxid_friend -c 50
+```
+
+#### `/ai session-reset`
+
+重置会话配置为全局默认值。
+
+**用法**：
+```bash
+/ai session-reset [-t target]
+```
+
+**示例**：
+```bash
+# 重置当前会话
+/ai session-reset
+
+# 重置指定会话
+/ai session-reset -t chatroom:123@chatroom
+```
+
+#### `/ai session-list`
+
+列出所有自定义会话配置。
+
+**示例**：
+```bash
+/ai session-list
+```
+
+**输出示例**：
+```
+共 3 个自定义会话配置：
+chatroom:123@chatroom, rate=0.8, prompt=meow, ctx=500
+chatroom:456@chatroom, rate=1, prompt=zuan
+private:wxid_friend, ctx=50
 ```
 
 ## 配置详解
 
 ### 配置文件
 
-配置文件位于 `~/.golem/plugins/ai.toml`，首次启动时自动生成。
+配置文件位于 `host/plugins/config.toml`，支持全局配置和会话级配置。
 
 **完整配置示例**：
 ```toml
+[ai.config]
 # OpenAI 兼容接口地址
 base_url = "https://api.deepseek.com/v1"
 
@@ -176,11 +247,24 @@ max_context_messages = 200
 http_timeout_seconds = 60
 
 # 提示词映射
-[prompts]
+[ai.config.prompts]
 default = "你是一个友好的助手"
 roleplay = "你是一个幽默风趣的聊天机器人"
 assistant = "你是一个专业的技术助手"
+
+# 会话级配置（覆盖全局配置）
+[ai.config.session_configs]
+"chatroom:123@chatroom" = { reply_rate = 0.8, active_prompt = "meow", max_context_messages = 500 }
+"chatroom:456@chatroom" = { reply_rate = 1.0, active_prompt = "zuan" }
+"private:wxid_friend" = { reply_rate = 1.0 }
 ```
+
+### 配置优先级
+
+**会话配置 > 全局配置**
+
+- 未配置会话级设置的群聊/私聊使用全局配置
+- 会话配置只需设置需要覆盖的项，其他项自动使用全局值
 
 ### 回复策略
 
@@ -366,11 +450,16 @@ assistant = "你是一个专业的技术助手"
 ## 开发信息
 
 - **插件名称**：ai
-- **版本**：1.0.0
+- **版本**：1.1.0
 - **作者**：ovo
 - **SDK 版本**：golem/sdk v0.1.1
 
 ## 更新日志
+
+### v1.1.0
+- 新增会话级配置隔离功能
+- 新增 4 个会话管理命令（session-get/set/reset/list）
+- 代码重构优化，拆分模块结构
 
 ### v1.0.0
 - 初始版本发布

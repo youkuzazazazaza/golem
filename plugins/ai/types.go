@@ -29,3 +29,10 @@ type quoteInfo struct {
 	DisplayName string
 	Content     string
 }
+
+// SessionConfig 会话级配置（所有字段为指针，nil 表示使用全局配置）
+type SessionConfig struct {
+	ReplyRate          *float64 `toml:"reply_rate,omitempty"`
+	ActivePrompt       *string  `toml:"active_prompt,omitempty"`
+	MaxContextMessages *int     `toml:"max_context_messages,omitempty"`
+}
