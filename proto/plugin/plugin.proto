@@ -4,6 +4,7 @@ package plugin;
 
 import "message/types.proto";
 import "plugin/command.proto";
+import "google/protobuf/struct.proto";
 
 
 // metadata 插件元数据
@@ -27,7 +28,27 @@ message Event {
     string system = 4; // 系统消息
     message.Message message = 5; // 消息
     SessionExpired session_expired = 6; // 会话到期
+    ChangeEvent change = 7; // 通用变更事件
   }
+}
+
+// ChangeEvent 通用变更事件
+message ChangeEvent {
+  string domain = 1; // 变更域：contact/user/chatroom_member/chatroom_member_display_name
+  string action = 2; // 操作：create/modify/delete
+  string subject = 3; // 变更主体ID
+  string parent = 4; // 父级主体ID，例如群ID
+  repeated FieldChange changes = 5; // 字段变更列表
+  bytes old_value = 6; // 旧对象JSON
+  bytes new_value = 7; // 新对象JSON
+}
+
+// FieldChange 字段变更
+message FieldChange {
+  string path = 1; // proto json_name 路径
+  string action = 2; // create/modify/delete
+  google.protobuf.Value old_value = 3; // 旧值
+  google.protobuf.Value new_value = 4; // 新值
 }
 
 // SessionExpired 会话到期事件
