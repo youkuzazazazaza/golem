@@ -156,7 +156,7 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 			result.NewId = item.GetNewId()
 			result.CreateTime = item.GetCreateTime()
 		}
-	case sdk.TypeApplication.Code:
+	case sdk.TypeApplication.Code, sdk.TypeAppChatRecord.Code, sdk.TypeAppMusic.Code:
 		data := msg.GetApp()
 		resp, err := a.api.SendApp(receiver, data.GetXml(), int32(data.GetSubType()))
 		if err != nil {
@@ -169,18 +169,7 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		if data == nil {
 			return nil, nil
 		}
-		resp, err := a.api.SendLink(msg.Receiver.Username, data.Title, data.Desc, data.Url, data.Xml)
-		if err != nil {
-			return nil, err
-		}
-		result.NewId = resp.GetNewId()
-		result.CreateTime = uint32(resp.GetCreateTime())
-	case sdk.TypeAppChatRecord.Code:
-		data := msg.GetApp()
-		if data == nil {
-			return nil, nil
-		}
-		resp, err := a.api.SendApp(msg.Receiver.Username, data.Xml, int32(data.SubType))
+		resp, err := a.api.SendLink(receiver, data.Title, data.Desc, data.Url, data.Xml)
 		if err != nil {
 			return nil, err
 		}
