@@ -4,12 +4,10 @@ package config
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sync"
 
 	"golem/config"
@@ -46,10 +44,10 @@ func Save() error {
 
 // 内部使用
 func save(cfg *HostConfig) error {
-	marshal, _ := json.Marshal(cfg)
-	_ = marshal
-	t := reflect.ValueOf(cfg).Elem().Type()
-	slog.Info(fmt.Sprintf("[%s] %s", t.Name(), t.Field(0).Tag.Get("comment")))
+	//marshal, _ := json.Marshal(cfg)
+	//_ = marshal
+	//t := reflect.ValueOf(cfg).Elem().Type()
+	//slog.Info(fmt.Sprintf("[%s] %s", t.Name(), t.Field(0).Tag.Get("comment")))
 	data, err := toml.Marshal(cfg)
 	if err != nil {
 		return err
