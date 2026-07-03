@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   APP_NAME: golem_lib
-  VERSION: 0.0.1
+  VERSION: 0.0.3
   BUILD_DIR: build
   LDFLAGS: -s -w
 
