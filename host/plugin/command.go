@@ -122,15 +122,17 @@ func parseCommand(raw string, sender *contact.Contact) (*parsedCommand, bool, er
 	}
 
 	rest := tokens[1:]
-	if len(rest) == 0 {
-		return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
-	}
-	if isHelpToken(rest[0]) {
-		cmd.Help = true
-		return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
+	schema, sub, remaining := matchCommandSchema(main, rest, target.commandSchemas)
+	if sub != "" {
+		if len(rest) == 0 {
+			return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
+		}
+		if isHelpToken(rest[0]) {
+			cmd.Help = true
+			return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
+		}
 	}
 
-	schema, sub, remaining := matchCommandSchema(main, rest, target.commandSchemas)
 	cmd.Sub = sub
 	if schema == nil {
 		return nil, true, fmt.Errorf("未知子命令：/%s %s", main, rest[0])
