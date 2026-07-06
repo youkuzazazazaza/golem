@@ -245,16 +245,20 @@ func (p *DemosPlugin) httpGetWithHeaders(urlStr string, headers map[string]strin
 	return strings.TrimSpace(string(body)), nil
 }
 
-func (p *DemosPlugin) downloadMedia(urlStr string) ([]byte, error) {
+func (p *DemosPlugin) downloadMedia(urlStr string) ([]byte, string, error) {
 	resp, err := p.client.Get(urlStr)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
+		return nil, "", fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
-	return io.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, "", err
+	}
+	return data, resp.Header.Get("Content-Type"), nil
 }
 
 func (p *DemosPlugin) getRedirectURL(u string) (string, error) {
@@ -301,7 +305,7 @@ func (p *DemosPlugin) sendText(receiver *contact.Contact, text string) {
 }
 
 func (p *DemosPlugin) sendImage(receiver *contact.Contact, imageURL string) error {
-	data, err := p.downloadMedia(imageURL)
+	data, _, err := p.downloadMedia(imageURL)
 	if err != nil {
 		return err
 	}
@@ -394,42 +398,203 @@ func (p *DemosPlugin) sendNativeVideo(receiver *contact.Contact, videoURL string
 }
 
 func (p *DemosPlugin) sendVoice(receiver *contact.Contact, audioURL string) {
-	data, err := p.downloadMedia(audioURL)
+	data, contentType, err := p.downloadMedia(audioURL)
 	if err != nil {
+		slog.Error("[demos] 语音下载失败", "url", audioURL, "err", err)
 		p.sendText(receiver, "语音获取失败，请稍后再试")
 		return
 	}
 
-	tmpFile, err := os.CreateTemp("", "demos-audio-*.mp3")
+	inputFile, err := os.CreateTemp("", "demos-audio-src-*")
 	if err != nil {
 		p.sendText(receiver, "语音处理失败")
 		return
 	}
-	defer os.Remove(tmpFile.Name())
-	if _, err := tmpFile.Write(data); err != nil {
+	inputPath := inputFile.Name()
+	defer os.Remove(inputPath)
+	if _, err := inputFile.Write(data); err != nil {
+		_ = inputFile.Close()
 		p.sendText(receiver, "语音处理失败")
 		return
 	}
-	_ = tmpFile.Close()
+	if err := inputFile.Close(); err != nil {
+		p.sendText(receiver, "语音处理失败")
+		return
+	}
 
-	durationSec, err := p.mediaDuration(tmpFile.Name())
-	if err != nil {
-		durationSec = 0
+	srcFormatCode := detectAudioFormatCode(data)
+	slog.Info("[demos] 语音源文件信息",
+		"url", audioURL,
+		"content_type", contentType,
+		"src_format", srcFormatCode,
+		"src_size", len(data),
+		"src_header", hexHeader(data, 16),
+	)
+
+	voicePath := inputPath
+	converted := false
+	if srcFormatCode != 0 && srcFormatCode != 4 {
+		convertedFile, err := os.CreateTemp("", "demos-audio-*.amr")
+		if err != nil {
+			p.sendText(receiver, "语音处理失败")
+			return
+		}
+		convertedPath := convertedFile.Name()
+		_ = convertedFile.Close()
+		defer os.Remove(convertedPath)
+
+		if err := convertToAMR(inputPath, convertedPath); err != nil {
+			slog.Error("[demos] 转换语音为 AMR 失败", "url", audioURL, "err", err)
+			p.sendText(receiver, "语音发送失败，链接："+audioURL)
+			return
+		}
+		voicePath = convertedPath
+		converted = true
 	}
+
+	voiceData, err := os.ReadFile(voicePath)
+	if err != nil {
+		p.sendText(receiver, "语音处理失败")
+		return
+	}
+
+	finalFormatCode := detectAudioFormatCode(voiceData)
+	durationMs, err := p.mediaDurationMs(voicePath)
+	if err != nil {
+		slog.Warn("[demos] 获取语音时长失败，使用默认值", "err", err)
+		durationMs = 5000
+	}
+
+	if converted && !isValidAMRNB(voiceData) {
+		slog.Error("[demos] AMR 转码结果校验失败：文件头不是 AMR-NB",
+			"size", len(voiceData),
+			"duration_ms", durationMs,
+			"detected_format", finalFormatCode,
+			"header_hex", hexHeader(voiceData, 16),
+		)
+		p.sendText(receiver, "语音发送失败，链接："+audioURL)
+		return
+	}
+
+	slog.Info("[demos] 语音准备发送",
+		"converted", converted,
+		"final_format", finalFormatCode,
+		"size", len(voiceData),
+		"duration_ms", durationMs,
+		"header_hex", hexHeader(voiceData, 16),
+	)
 
 	msg := &message.Message{
 		Type:     message.TypeVoice,
 		Receiver: receiver,
 		Content:  "[语音]",
 		Data: &message.Message_Voice{Voice: &message.VoiceData{
-			Media:    &message.Media{Data: data},
-			Duration: uint32(durationSec * 1000),
+			Media:    &message.Media{Data: voiceData},
+			Duration: uint32(durationMs),
 		}},
 	}
 	if _, err := p.message.Send(msg); err != nil {
-		slog.Error("[demos] 发送语音失败", "err", err)
-		p.sendText(receiver, "语音发送失败，链接："+audioURL)
+		if strings.Contains(err.Error(), "code: -104") {
+			slog.Warn("[demos] 语音发送返回 -104（经验证语音已实际送达，跳过降级文本）",
+				"err", err,
+				"converted", converted,
+				"duration_ms", durationMs,
+				"size", len(voiceData),
+				"valid_amr_nb", isValidAMRNB(voiceData),
+			)
+		} else {
+			slog.Error("[demos] 发送语音失败",
+				"err", err,
+				"converted", converted,
+				"detected_format", finalFormatCode,
+				"duration_ms", durationMs,
+				"size", len(voiceData),
+				"header_hex", hexHeader(voiceData, 16),
+				"valid_amr_nb", isValidAMRNB(voiceData),
+			)
+			p.sendText(receiver, "语音发送失败，链接："+audioURL)
+		}
 	}
+}
+
+func detectAudioFormatCode(data []byte) int {
+	if len(data) >= 9 && string(data[:9]) == "#!SILK_V3" {
+		return 4
+	}
+	if len(data) >= 6 && strings.HasPrefix(string(data[:6]), "#!AMR") {
+		return 0
+	}
+	if len(data) >= 12 {
+		if string(data[:3]) == "ID3" || (data[0] == 0xFF && (data[1]&0xE0) == 0xE0) {
+			return 2
+		}
+		if string(data[:4]) == "RIFF" && string(data[8:12]) == "WAVE" {
+			return 3
+		}
+	}
+	return -1
+}
+
+func convertToAMR(inputPath, outputPath string) error {
+	cmd := exec.Command("ffmpeg",
+		"-i", inputPath,
+		"-acodec", "amr_nb",
+		"-ar", "8000",
+		"-ac", "1",
+		"-ab", "12.2k",
+		"-f", "amr",
+		"-y",
+		outputPath,
+	)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("ffmpeg 转 AMR 失败: %w, output: %s", err, strings.TrimSpace(string(output)))
+	}
+	return nil
+}
+
+// isValidAMRNB 校验是否为合法的 AMR-NB 文件（微信语音要求）。
+// AMR-NB 文件头为 "#!AMR\n"（6 字节: 0x23 0x21 0x41 0x4D 0x52 0x0A）。
+// AMR-WB 文件头为 "#!AMR-WB\n"，微信不接收。
+func isValidAMRNB(data []byte) bool {
+	return len(data) >= 6 &&
+		data[0] == 0x23 && data[1] == 0x21 && data[2] == 0x41 &&
+		data[3] == 0x4D && data[4] == 0x52 && data[5] == 0x0A
+}
+
+func hexHeader(data []byte, max int) string {
+	if len(data) < max {
+		max = len(data)
+	}
+	if max == 0 {
+		return ""
+	}
+	var sb strings.Builder
+	for i := 0; i < max; i++ {
+		if i > 0 {
+			sb.WriteByte(' ')
+		}
+		fmt.Fprintf(&sb, "%02X", data[i])
+	}
+	return sb.String()
+}
+
+func (p *DemosPlugin) mediaDurationMs(path string) (int, error) {
+	cmd := exec.Command("ffprobe",
+		"-v", "error",
+		"-show_entries", "format=duration",
+		"-of", "default=noprint_wrappers=1:nokey=1",
+		path,
+	)
+	output, err := cmd.Output()
+	if err != nil {
+		return 0, err
+	}
+	d, err := strconv.ParseFloat(strings.TrimSpace(string(output)), 64)
+	if err != nil {
+		return 0, err
+	}
+	return int(d * 1000), nil
 }
 
 func (p *DemosPlugin) mediaDuration(path string) (int, error) {
