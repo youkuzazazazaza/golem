@@ -30,8 +30,8 @@ type Config struct {
 	HeisiVideoURL string `toml:"heisi_video_url" comment:"黑丝视频API"`
 	BaisiVideoURL string `toml:"baisi_video_url" comment:"白丝视频API"`
 	// 搜图方式多种，可以百度图片网页，这里用的是 https://www.apihz.cn/api/apihzbqbbaidu.html 提供的
-	SearchURL     string `toml:"search_url" comment:"搜索图片API（默认使用 apihz.cn 的百度表情搜图）"`
-	VideoRate     int    `toml:"video_rate" comment:"视频触发概率(0-100)"`
+	SearchURL string `toml:"search_url" comment:"搜索图片API（默认使用 apihz.cn 的百度表情搜图）"`
+	VideoRate int    `toml:"video_rate" comment:"视频触发概率(0-100)"`
 }
 
 // SetuPlugin 色图插件
@@ -77,7 +77,6 @@ func (p *SetuPlugin) GetMetadata() *plugin.Metadata {
 }
 
 func (p *SetuPlugin) OnLoad() error {
-	p.ensureDefaults()
 	slog.Info("[setu] 色图插件加载成功",
 		"img_url", p.Config.ImgURL,
 		"video_rate", p.Config.VideoRate,
@@ -99,8 +98,6 @@ func (p *SetuPlugin) GetSubscriptions() []string {
 
 // OnEvent 处理事件
 func (p *SetuPlugin) OnEvent(e *plugin.Event) (bool, error) {
-	p.ensureDefaults()
-
 	msg := e.Payload.(*plugin.Event_Message).Message
 	if msg == nil {
 		return false, nil
@@ -141,46 +138,17 @@ func (p *SetuPlugin) OnEvent(e *plugin.Event) (bool, error) {
 	return false, nil
 }
 
-// ensureDefaults 确保配置不为空
-func (p *SetuPlugin) ensureDefaults() {
-	if p.Config.ImgURL == "" {
-		p.Config.ImgURL = "https://api.52vmy.cn/api/img/tu/girl?type=text"
-	}
-	if p.Config.BoyURL == "" {
-		p.Config.BoyURL = "https://api.52vmy.cn/api/img/tu/boy?type=text"
-	}
-	if p.Config.HeisiURL == "" {
-		p.Config.HeisiURL = "http://api.yujn.cn/api/heisi.php?"
-	}
-	if p.Config.BaisiURL == "" {
-		p.Config.BaisiURL = "http://api.yujn.cn/api/baisi.php?"
-	}
-	if p.Config.HeisiVideoURL == "" {
-		p.Config.HeisiVideoURL = "http://api.yujn.cn/api/heisis.php?type=video"
-	}
-	if p.Config.BaisiVideoURL == "" {
-		p.Config.BaisiVideoURL = "http://api.yujn.cn/api/baisis.php?type=video"
-	}
-	if p.Config.SearchURL == "" {
-		// 搜图方式多种，可以百度图片网页，这里用的是 https://www.apihz.cn/api/apihzbqbbaidu.html 提供的
-		p.Config.SearchURL = "https://cn.apihz.cn/api/img/apihzbqbbaidu.php?id=88888888&key=88888888&limit=10&page=1&words="
-	}
-	if p.Config.VideoRate == 0 {
-		p.Config.VideoRate = 50
-	}
-}
-
 // handlePlmm 处理漂亮妹妹
 func (p *SetuPlugin) handlePlmm(receiver *contact.Contact) (bool, error) {
 	slog.Info("[setu] 处理漂亮妹妹请求", "api", p.Config.ImgURL)
-	
+
 	imgURL, err := p.httpGet(p.Config.ImgURL)
 	if err != nil {
 		slog.Error("[setu] 获取漂亮妹妹图片失败", "err", err)
 		p.sendText(receiver, "获取漂亮妹妹图片失败: "+err.Error())
 		return true, nil
 	}
-	
+
 	if imgURL == "" {
 		slog.Warn("[setu] 漂亮妹妹 API 返回空内容")
 		p.sendText(receiver, "获取漂亮妹妹图片失败: API 返回空内容")
@@ -211,7 +179,7 @@ func (p *SetuPlugin) handleHeisi(receiver *contact.Contact) (bool, error) {
 		// 视频失败，降级发送图片
 		slog.Warn("[setu] 黑丝视频失败，降级发送图片", "err", err)
 	}
-	
+
 	if err := p.sendImage(receiver, p.Config.HeisiURL); err != nil {
 		slog.Error("[setu] 发送黑丝图片失败", "err", err)
 		p.sendText(receiver, "发送图片失败")
@@ -233,7 +201,7 @@ func (p *SetuPlugin) handleBaisi(receiver *contact.Contact) (bool, error) {
 		// 视频失败，降级发送图片
 		slog.Warn("[setu] 白丝视频失败，降级发送图片", "err", err)
 	}
-	
+
 	if err := p.sendImage(receiver, p.Config.BaisiURL); err != nil {
 		slog.Error("[setu] 发送白丝图片失败", "err", err)
 		p.sendText(receiver, "发送图片失败")
@@ -331,7 +299,7 @@ func (p *SetuPlugin) handleSearch(receiver *contact.Contact, keyword string) (bo
 // httpGet 发送 HTTP GET 请求
 func (p *SetuPlugin) httpGet(urlStr string) (string, error) {
 	slog.Debug("[setu] HTTP GET 请求", "url", urlStr)
-	
+
 	resp, err := p.client.Get(urlStr)
 	if err != nil {
 		slog.Error("[setu] HTTP 请求失败", "url", urlStr, "err", err)
@@ -539,8 +507,8 @@ func main() {
 				HeisiVideoURL: "http://api.yujn.cn/api/heisis.php?type=video",
 				BaisiVideoURL: "http://api.yujn.cn/api/baisis.php?type=video",
 				// 搜图方式多种，可以百度图片网页，这里用的是 https://www.apihz.cn/api/apihzbqbbaidu.html 提供的
-				SearchURL:     "https://cn.apihz.cn/api/img/apihzbqbbaidu.php?id=88888888&key=88888888&limit=10&page=1&words=",
-				VideoRate:     50,
+				SearchURL: "https://cn.apihz.cn/api/img/apihzbqbbaidu.php?id=88888888&key=88888888&limit=10&page=1&words=",
+				VideoRate: 50,
 			},
 		},
 		client: newHTTPClient(),
