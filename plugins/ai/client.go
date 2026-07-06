@@ -42,7 +42,7 @@ func (p *AiPlugin) chat(sessionKey string) (string, error) {
 	messages := make([]openAIMessage, 0, p.getMaxContextMessages(sessionKey)+1)
 	activePrompt := p.getActivePrompt(sessionKey)
 	if prompt, ok := config.Prompts[activePrompt]; ok && strings.TrimSpace(prompt) != "" {
-		messages = append(messages, openAIMessage{Role: "system", Content: p.getPreMadePrompts() + prompt})
+		messages = append(messages, openAIMessage{Role: "system", Content: prompt + p.getPreMadePrompts()})
 	}
 	messages = append(messages, p.contextMessages(sessionKey)...)
 	if len(messages) == 0 {
