@@ -123,29 +123,29 @@ func parseCommand(raw string, sender *contact.Contact) (*parsedCommand, bool, er
 
 	rest := tokens[1:]
 	schema, sub, remaining := matchCommandSchema(main, rest, target.commandSchemas)
-	if sub != "" {
-		if len(rest) == 0 {
-			return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
-		}
-		if isHelpToken(rest[0]) {
-			cmd.Help = true
-			return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
-		}
-	}
 
 	cmd.Sub = sub
-	if schema == nil {
-		return nil, true, fmt.Errorf("未知子命令：/%s %s", main, rest[0])
-	}
-	if containsHelp(remaining) {
-		cmd.Help = true
-		return &parsedCommand{cmd: cmd, wrapper: target, schema: schema, help: renderCommandHelp(schema)}, true, nil
+	if schema != nil {
+		if containsHelp(remaining) {
+			cmd.Help = true
+			return &parsedCommand{cmd: cmd, wrapper: target, schema: schema, help: renderCommandHelp(schema)}, true, nil
+		}
+
+		if err := parseCommandArgs(cmd, schema, remaining); err != nil {
+			return nil, true, fmt.Errorf("🚨 %w\n\n%s", err, renderCommandHelp(schema))
+		}
+		return &parsedCommand{cmd: cmd, wrapper: target, schema: schema}, true, nil
 	}
 
-	if err := parseCommandArgs(cmd, schema, remaining); err != nil {
-		return nil, true, fmt.Errorf("🚨 %w\n\n%s", err, renderCommandHelp(schema))
+	if len(rest) == 0 {
+		return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
 	}
-	return &parsedCommand{cmd: cmd, wrapper: target, schema: schema}, true, nil
+	if isHelpToken(rest[0]) {
+		cmd.Help = true
+		return &parsedCommand{cmd: cmd, wrapper: target, help: renderMainHelp(main, target.commandSchemas)}, true, nil
+	}
+
+	return nil, true, fmt.Errorf("未知子命令：/%s %s", main, rest[0])
 }
 
 func tokenize(input string) ([]string, error) {
