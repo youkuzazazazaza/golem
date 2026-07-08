@@ -15,6 +15,7 @@ import (
 const (
 	analysisDBName   = "analysis.db"
 	statisticsDBName = "statistics.db"
+	profileDBName    = "profile.db" // 画像库（独立于 statistics.db）
 	defaultRankLimit = 10
 )
 
@@ -23,6 +24,7 @@ var errInvalidMessage = errors.New("invalid message")
 type store struct {
 	analysis   *sql.DB
 	statistics *sql.DB
+	profile    *sql.DB
 }
 
 type rankEntry struct {
@@ -62,7 +64,14 @@ func openStore(dir string) (*store, error) {
 		return nil, fmt.Errorf("打开统计数据库失败: %w", err)
 	}
 
-	st := &store{analysis: analysis, statistics: statistics}
+	profile, err := sql.Open("sqlite", filepath.Join(dir, profileDBName))
+	if err != nil {
+		_ = analysis.Close()
+		_ = statistics.Close()
+		return nil, fmt.Errorf("打开画像数据库失败: %w", err)
+	}
+
+	st := &store{analysis: analysis, statistics: statistics, profile: profile}
 	if err := st.Init(); err != nil {
 		_ = st.Close()
 		return nil, err
@@ -103,11 +112,24 @@ func (s *store) Init() error {
 	if _, err := s.statistics.Exec(`CREATE INDEX IF NOT EXISTS idx_statistics_sender ON statistics(sender);`); err != nil {
 		return fmt.Errorf("创建统计索引失败: %w", err)
 	}
+
+	// 画像表：独立存放于 profile.db，与消息库 statistics.db 分离，互不影响。
+	// updated_at 用 datetime('now','localtime')，与 statistics 表 timestamp 的本地时间存储保持一致。
+	if _, err := s.profile.Exec(`CREATE TABLE IF NOT EXISTS profiles (
+		chatroom  TEXT NOT NULL DEFAULT '',
+		member    TEXT NOT NULL,
+		profile   TEXT,
+		last_msg_id INTEGER DEFAULT 0,
+		updated_at DATETIME,
+		PRIMARY KEY (chatroom, member)
+	);`); err != nil {
+		return fmt.Errorf("创建画像表失败: %w", err)
+	}
 	return nil
 }
 
 func (s *store) Ping() error {
-	if s == nil || s.analysis == nil || s.statistics == nil {
+	if s == nil || s.analysis == nil || s.statistics == nil || s.profile == nil {
 		return errors.New("store is not initialized")
 	}
 	if err := s.analysis.Ping(); err != nil {
@@ -115,6 +137,9 @@ func (s *store) Ping() error {
 	}
 	if err := s.statistics.Ping(); err != nil {
 		return fmt.Errorf("统计数据库连接失败: %w", err)
+	}
+	if err := s.profile.Ping(); err != nil {
+		return fmt.Errorf("画像数据库连接失败: %w", err)
 	}
 	return nil
 }
@@ -126,6 +151,9 @@ func (s *store) Close() error {
 	}
 	if s.statistics != nil {
 		result = errors.Join(result, s.statistics.Close())
+	}
+	if s.profile != nil {
+		result = errors.Join(result, s.profile.Close())
 	}
 	return result
 }
@@ -245,4 +273,94 @@ func (s *store) QueryTotal(sender, dateFilter string) (totalSummary, error) {
 		return total, fmt.Errorf("遍历消息类型汇总失败: %w", err)
 	}
 	return total, nil
+}
+
+// loadProfile 读取已有画像；返回 (record, found)
+func (s *store) loadProfile(chatroom, member string) (profileRecord, bool) {
+	var rec profileRecord
+	err := s.profile.QueryRow(
+		`SELECT chatroom, member, profile, last_msg_id, updated_at FROM profiles WHERE chatroom=? AND member=?`,
+		chatroom, member,
+	).Scan(&rec.Chatroom, &rec.Member, &rec.Profile, &rec.LastMsgID, &rec.UpdatedAt)
+	if err != nil {
+		return profileRecord{}, false
+	}
+	return rec, true
+}
+
+// saveProfile 新增或更新画像（覆盖写）
+func (s *store) saveProfile(rec profileRecord) error {
+	_, err := s.profile.Exec(
+		`INSERT INTO profiles (chatroom, member, profile, last_msg_id, updated_at)
+		VALUES (?, ?, ?, ?, datetime('now','localtime'))
+		ON CONFLICT(chatroom, member) DO UPDATE SET
+			profile=excluded.profile,
+			last_msg_id=excluded.last_msg_id,
+			updated_at=datetime('now','localtime');`,
+		rec.Chatroom, rec.Member, rec.Profile, rec.LastMsgID,
+	)
+	return err
+}
+
+// queryHistory 拉取成员历史发言（用于人物画像）。
+// chatroom 为空表示全局（跨群）查询，按 member 匹配；否则按 sender(群)+member 匹配。
+// sinceID>0 表示只取该 id 之后的新增消息（增量）；sinceID<=0 取全部（冷启动）。
+// limit>0 限制返回条数（冷启动安全天花板，取最近的 limit 条）；limit<=0 不限制。
+// 注：statistics 表的 timestamp 已按本地时间存储（record() 用 datetime(?, 'unixepoch', 'localtime')），
+// 这里直接读取，不再二次转换时区。
+func (s *store) queryHistory(chatroom, member string, sinceID int64, limit int) ([]historyMsg, error) {
+	var (
+		rows *sql.Rows
+		err  error
+	)
+	const cols = "id, content, timestamp"
+	if chatroom == "" {
+		if limit > 0 {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE member=? AND type='文本' AND id>?
+				ORDER BY id DESC LIMIT ?`, member, sinceID, limit)
+		} else {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE member=? AND type='文本' AND id>?
+				ORDER BY id`, member, sinceID)
+		}
+	} else {
+		if limit > 0 {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE sender=? AND member=? AND type='文本' AND id>?
+				ORDER BY id DESC LIMIT ?`, chatroom, member, sinceID, limit)
+		} else {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE sender=? AND member=? AND type='文本' AND id>?
+				ORDER BY id`, chatroom, member, sinceID)
+		}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("查询历史发言失败: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	var msgs []historyMsg
+	for rows.Next() {
+		var m historyMsg
+		if err := rows.Scan(&m.ID, &m.Content, &m.Timestamp); err != nil {
+			return nil, fmt.Errorf("读取历史发言失败: %w", err)
+		}
+		msgs = append(msgs, m)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// 冷启动走 ORDER BY id DESC LIMIT，这里反转回时间正序，便于顺序分析
+	if limit > 0 {
+		for i, j := 0, len(msgs)-1; i < j; i, j = i+1, j-1 {
+			msgs[i], msgs[j] = msgs[j], msgs[i]
+		}
+	}
+	return msgs, nil
 }
