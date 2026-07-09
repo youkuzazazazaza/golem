@@ -25,6 +25,13 @@ type store struct {
 	statistics *sql.DB
 }
 
+// historyMsg 从 statistics 表取出的单条历史发言（供 statistics.query_messages 能力序列化返回）
+type historyMsg struct {
+	ID        int64  `json:"id"`
+	Content   string `json:"content"`
+	Timestamp string `json:"timestamp"`
+}
+
 type rankEntry struct {
 	Member string
 	Count  int
@@ -245,4 +252,67 @@ func (s *store) QueryTotal(sender, dateFilter string) (totalSummary, error) {
 		return total, fmt.Errorf("遍历消息类型汇总失败: %w", err)
 	}
 	return total, nil
+}
+
+// queryMessages 拉取成员历史发言（供 statistics.query_messages 能力调用）。
+// chatroom 为空表示全局（跨群）查询，按 member 匹配；否则按 sender(群)+member 匹配。
+// sinceID>0 表示只取该 id 之后的新增消息（增量）；sinceID<=0 取全部（冷启动）。
+// limit>0 限制返回条数（取最近的 limit 条）；limit<=0 不限制。返回时间正序。
+// 注：statistics 表的 timestamp 已按本地时间存储（record() 用 datetime(?, 'unixepoch', 'localtime')），
+// 这里直接读取，不再二次转换时区。
+func (s *store) queryMessages(chatroom, member string, sinceID int64, limit int) ([]historyMsg, error) {
+	var (
+		rows *sql.Rows
+		err  error
+	)
+	const cols = "id, content, timestamp"
+	if chatroom == "" {
+		if limit > 0 {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE member=? AND type='文本' AND id>?
+				ORDER BY id DESC LIMIT ?`, member, sinceID, limit)
+		} else {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE member=? AND type='文本' AND id>?
+				ORDER BY id`, member, sinceID)
+		}
+	} else {
+		if limit > 0 {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE sender=? AND member=? AND type='文本' AND id>?
+				ORDER BY id DESC LIMIT ?`, chatroom, member, sinceID, limit)
+		} else {
+			rows, err = s.statistics.Query(
+				`SELECT `+cols+` FROM statistics
+				WHERE sender=? AND member=? AND type='文本' AND id>?
+				ORDER BY id`, chatroom, member, sinceID)
+		}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("查询历史发言失败: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	var msgs []historyMsg
+	for rows.Next() {
+		var m historyMsg
+		if err := rows.Scan(&m.ID, &m.Content, &m.Timestamp); err != nil {
+			return nil, fmt.Errorf("读取历史发言失败: %w", err)
+		}
+		msgs = append(msgs, m)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// 冷启动走 ORDER BY id DESC LIMIT，这里反转回时间正序，便于顺序分析
+	if limit > 0 {
+		for i, j := 0, len(msgs)-1; i < j; i, j = i+1, j-1 {
+			msgs[i], msgs[j] = msgs[j], msgs[i]
+		}
+	}
+	return msgs, nil
 }

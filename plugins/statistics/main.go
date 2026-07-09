@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log/slog"
+	"strconv"
 	"sync"
 
 	"github.com/sbgayhub/golem/sdk/chatroom"
@@ -10,6 +12,8 @@ import (
 	"github.com/sbgayhub/golem/sdk/message"
 	"github.com/sbgayhub/golem/sdk/plugin"
 )
+
+const capabilityQueryMessages = "statistics.query_messages"
 
 func main() {
 	plugin.Start(&StatisticsPlugin{})
@@ -28,8 +32,8 @@ func (p *StatisticsPlugin) GetMetadata() *plugin.Metadata {
 	return &plugin.Metadata{
 		Name:        "statistics",
 		Author:      "ovo",
-		Version:     "1.0.0",
-		Description: "消息统计插件，记录消息并提供群发言排行和详情",
+		Version:     "1.2.0",
+		Description: "消息统计插件，记录消息并提供群发言排行/详情；暴露 statistics.query_messages 能力供其它插件查询历史发言",
 		Priority:    -1 << 31,
 		Next:        true,
 		AlwaysRun:   true,
@@ -38,6 +42,53 @@ func (p *StatisticsPlugin) GetMetadata() *plugin.Metadata {
 
 func (p *StatisticsPlugin) GetSubscriptions() []string {
 	return []string{"message"}
+}
+
+// GetCapabilities 声明本插件可被其它插件调用的能力
+func (p *StatisticsPlugin) GetCapabilities() []string {
+	return []string{capabilityQueryMessages}
+}
+
+// OnCall 处理其它插件的调用请求
+func (p *StatisticsPlugin) OnCall(capability string, args map[string]string) (string, []byte, error) {
+	switch capability {
+	case capabilityQueryMessages:
+		return p.handleQueryMessages(args)
+	default:
+		return "", nil, errors.New("unsupported capability: " + capability)
+	}
+}
+
+// handleQueryMessages 查询成员历史发言，返回 JSON 数组（时间正序）。
+// 入参：member（必）、chatroom（可选，空=跨群）、since_id（可选，默认0）、limit（可选，默认0=不限）
+func (p *StatisticsPlugin) handleQueryMessages(args map[string]string) (string, []byte, error) {
+	member := args["member"]
+	if member == "" {
+		return "", nil, errors.New("member is required")
+	}
+	chatroom := args["chatroom"] // 空表示跨群全局
+	sinceID, _ := strconv.ParseInt(args["since_id"], 10, 64)
+	limit, _ := strconv.Atoi(args["limit"])
+
+	p.mu.Lock()
+	store := p.store
+	p.mu.Unlock()
+	if store == nil {
+		return "", nil, errors.New("store is not initialized")
+	}
+
+	msgs, err := store.queryMessages(chatroom, member, sinceID, limit)
+	if err != nil {
+		return "", nil, err
+	}
+	if msgs == nil {
+		msgs = []historyMsg{} // 保证返回 [] 而非 null
+	}
+	data, err := json.Marshal(msgs)
+	if err != nil {
+		return "", nil, err
+	}
+	return "json", data, nil
 }
 
 func (p *StatisticsPlugin) OnLoad() error {
