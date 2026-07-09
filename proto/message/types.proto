@@ -71,8 +71,9 @@ message VoiceData {
 message VideoData {
   Media media = 1;        // 媒体信息
   uint32 duration = 2;    // 视频时长（秒）
-  string thumb_url = 3;   // 缩略图 URL
-  string new_md5 = 4;     // 新视频 MD5
+  bytes thumb = 3;        // 缩略图
+  string thumb_url = 4;   // 缩略图 URL
+  string new_md5 = 5;     // 新视频 MD5
 }
 
 // EmojiData 表情消息数据

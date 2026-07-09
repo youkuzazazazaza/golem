@@ -559,8 +559,9 @@ type VideoData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Media         *Media                 `protobuf:"bytes,1,opt,name=media,proto3" json:"media,omitempty"`                       // 媒体信息
 	Duration      uint32                 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"`                // 视频时长（秒）
-	ThumbUrl      string                 `protobuf:"bytes,3,opt,name=thumb_url,json=thumbUrl,proto3" json:"thumb_url,omitempty"` // 缩略图 URL
-	NewMd5        string                 `protobuf:"bytes,4,opt,name=new_md5,json=newMd5,proto3" json:"new_md5,omitempty"`       // 新视频 MD5
+	Thumb         []byte                 `protobuf:"bytes,3,opt,name=thumb,proto3" json:"thumb,omitempty"`                       // 缩略图
+	ThumbUrl      string                 `protobuf:"bytes,4,opt,name=thumb_url,json=thumbUrl,proto3" json:"thumb_url,omitempty"` // 缩略图 URL
+	NewMd5        string                 `protobuf:"bytes,5,opt,name=new_md5,json=newMd5,proto3" json:"new_md5,omitempty"`       // 新视频 MD5
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -607,6 +608,13 @@ func (x *VideoData) GetDuration() uint32 {
 		return x.Duration
 	}
 	return 0
+}
+
+func (x *VideoData) GetThumb() []byte {
+	if x != nil {
+		return x.Thumb
+	}
+	return nil
 }
 
 func (x *VideoData) GetThumbUrl() string {
@@ -871,12 +879,13 @@ const file_message_types_proto_rawDesc = "" +
 	"\x06height\x18\x03 \x01(\rR\x06height\"M\n" +
 	"\tVoiceData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x1a\n" +
-	"\bduration\x18\x02 \x01(\rR\bduration\"\x83\x01\n" +
+	"\bduration\x18\x02 \x01(\rR\bduration\"\x99\x01\n" +
 	"\tVideoData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x1a\n" +
-	"\bduration\x18\x02 \x01(\rR\bduration\x12\x1b\n" +
-	"\tthumb_url\x18\x03 \x01(\tR\bthumbUrl\x12\x17\n" +
-	"\anew_md5\x18\x04 \x01(\tR\x06newMd5\"E\n" +
+	"\bduration\x18\x02 \x01(\rR\bduration\x12\x14\n" +
+	"\x05thumb\x18\x03 \x01(\fR\x05thumb\x12\x1b\n" +
+	"\tthumb_url\x18\x04 \x01(\tR\bthumbUrl\x12\x17\n" +
+	"\anew_md5\x18\x05 \x01(\tR\x06newMd5\"E\n" +
 	"\tEmojiData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x12\n" +
 	"\x04desc\x18\x02 \x01(\tR\x04desc\"\x8f\x01\n" +
