@@ -39,7 +39,7 @@ func (p *ProfilePlugin) GetMetadata() *plugin.Metadata {
 		Name:        "profile",
 		Author:      "ovo",
 		Version:     "1.0.0",
-		Description: "群成员人物画像插件：基于历史发言经 AI 生成/增量更新画像并渲染图片发送。历史发言经 statistics.query_messages 能力获取，LLM 经 ai.chat，图片经 text.to.image。",
+		Description: "群成员人物画像插件：基于历史发言经 AI 生成/增量更新画像并渲染图片发送。历史发言经 statistics.query_messages 能力获取，LLM 经 ai.chat；按配置 RenderImage 决定渲染图片（经 markdown.to.image，要求 LLM 输出 markdown）或发送纯文本（要求 LLM 输出无 markdown 符号的纯文本）。",
 		Priority:    0,
 		Next:        false,
 		AlwaysRun:   false,
@@ -134,11 +134,11 @@ func (p *ProfilePlugin) sendText(receiver *contact.Contact, content string) erro
 	return err
 }
 
-// sendProfileResult 按配置决定把画像渲染成图片（经 gg 插件 text.to.image）还是发纯文本。
+// sendProfileResult 按配置决定把画像渲染成图片（经 gg 插件 markdown.to.image）还是发纯文本。
 // render_image=true 时尝试渲染图片；gg 未启用/渲染失败自动回退文本。render_image=false 直接发文本。
 func (p *ProfilePlugin) sendProfileResult(receiver *contact.Contact, text string) error {
 	if normalizeConfig(p.Config).RenderImage {
-		if data, err := p.renderTextToImage(text); err == nil && len(data) > 0 {
+		if data, err := p.renderMarkdownToImage(text); err == nil && len(data) > 0 {
 			if imgErr := p.sendImage(receiver, data); imgErr == nil {
 				return nil
 			}
@@ -149,18 +149,18 @@ func (p *ProfilePlugin) sendProfileResult(receiver *contact.Contact, text string
 	return p.sendText(receiver, text)
 }
 
-// renderTextToImage 调用 text.to.image 能力把文本渲染成 PNG
-func (p *ProfilePlugin) renderTextToImage(text string) ([]byte, error) {
+// renderMarkdownToImage 调用 markdown.to.image 能力把 markdown 画像渲染成 PNG
+func (p *ProfilePlugin) renderMarkdownToImage(text string) ([]byte, error) {
 	if p.caller == nil {
-		return nil, fmt.Errorf("caller 未注入（需要 gg 插件提供 text.to.image）")
+		return nil, fmt.Errorf("caller 未注入（需要 gg 插件提供 markdown.to.image）")
 	}
-	mime, data, err := p.caller.CallPlugin("text.to.image", map[string]string{"context": text})
+	mime, data, err := p.caller.CallPlugin("markdown.to.image", map[string]string{"context": text})
 	if err != nil {
 		return nil, err
 	}
 	_ = mime
 	if len(data) == 0 {
-		return nil, fmt.Errorf("text.to.image 返回空数据")
+		return nil, fmt.Errorf("markdown.to.image 返回空数据")
 	}
 	return data, nil
 }

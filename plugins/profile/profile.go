@@ -273,9 +273,9 @@ func (p *ProfilePlugin) generate(scopeChatroom, memberWxid, displayName string, 
 	quant := summarizeQuant(msgs)
 	var final string
 	if exists && !rebuild {
-		final, err = p.callAIMerge(displayName, rec.Profile, observations, quant)
+		final, err = p.callAIMerge(displayName, rec.Profile, observations, quant, cfg.RenderImage)
 	} else {
-		final, err = p.callAIMerge(displayName, "", observations, quant)
+		final, err = p.callAIMerge(displayName, "", observations, quant, cfg.RenderImage)
 	}
 	if err != nil {
 		return "", fmt.Errorf("生成画像失败: %w", err)
@@ -335,11 +335,11 @@ func (p *ProfilePlugin) callAIChunk(ch []historyMsg) (string, error) {
 	return p.callAI(string(payload))
 }
 
-// callAIMerge 合并已有画像与新增观察，产出完整画像
-func (p *ProfilePlugin) callAIMerge(displayName, existing string, observations []string, quant string) (string, error) {
+// callAIMerge 合并已有画像与新增观察，产出完整画像。renderImage 决定系统提示要求 LLM 输出 markdown 还是纯文本。
+func (p *ProfilePlugin) callAIMerge(displayName, existing string, observations []string, quant string, renderImage bool) (string, error) {
 	user := buildMergeUserContent(displayName, existing, observations, quant)
 	payload, err := json.Marshal(aiChatPayload{
-		System:   systemMerge,
+		System:   systemMergeForRender(renderImage),
 		Messages: []chatMessage{{Role: "user", Content: user}},
 	})
 	if err != nil {
