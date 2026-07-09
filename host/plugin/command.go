@@ -111,7 +111,7 @@ func parseCommand(raw string, sender *contact.Contact) (*parsedCommand, bool, er
 		return nil, true, fmt.Errorf("命令缺少解析 schema：/%s", main)
 	}
 	if sender != nil && sender.GetUsername() != "" && !isAllowed(sender.GetUsername(), target) {
-		return nil, true, fmt.Errorf("无权执行命令：/%s", main)
+		return nil, true, fmt.Errorf("插件未启用或无权执行命令：/%s", main)
 	}
 
 	cmd := &sdk.Command{
