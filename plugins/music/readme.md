@@ -5,8 +5,8 @@
 ## 功能特性
 
 - 关键词触发搜索歌曲
-- 返回微信音乐卡片（AppMsg），支持播放、封面、歌词
-- 随机 AppID：从 220+ 个微信开放平台 AppID 中随机选取，使来源显示更具多样性
+- 返回音乐卡片（AppMsg），支持播放、封面、歌词
+- 随机 AppID：从 220+ 个开放平台 AppID 中随机选取，使来源显示更具多样性
 
 ## 使用方式
 
@@ -25,7 +25,7 @@ music bohemian rhapsody
 1. 接收文本消息，检测是否以 `音乐 `、`点歌 `、`music ` 开头
 2. 提取歌曲名，URL 编码后请求搜索 API
 3. 解析 JSON 响应，取第一条结果
-4. 构造微信 AppMsg XML（含随机 AppID）
+4. 构造 AppMsg XML（含随机 AppID）
 5. 以音乐卡片消息发送给发送者
 
 ## 配置
@@ -37,7 +37,7 @@ music bohemian rhapsody
 ```
 plugins/music/
 ├── main.go       # 插件主逻辑（元数据、事件订阅、OnEvent 处理）
-├── provider.go   # 微信 AppID 映射表及随机选取函数
+├── provider.go   #  AppID 映射表及随机选取函数
 └── go.mod        # 模块定义
 ```
 

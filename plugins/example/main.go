@@ -53,13 +53,13 @@ type Stats struct {
 // 这是所有插件必须实现的接口
 func (p *ExamplePlugin) GetMetadata() *plugin.Metadata {
 	return &plugin.Metadata{
-		Name:        "example",                       // 插件唯一标识
-		Author:      "Golem Team",                    // 作者
-		Version:     "2.0.0",                         // 版本号
+		Name:        "example",         // 插件唯一标识
+		Author:      "Golem Team",      // 作者
+		Version:     "2.0.0",           // 版本号
 		Description: "完整示例插件，展示所有插件功能", // 描述
-		Priority:    0,                               // 优先级（越小越先执行）
-		Next:        false,                           // 是否传递给下一个插件
-		AlwaysRun:   false,                           // 是否总是运行（忽略黑白名单）
+		Priority:    0,                 // 优先级（越小越先执行）
+		Next:        false,             // 是否传递给下一个插件
+		AlwaysRun:   false,             // 是否总是运行（忽略黑白名单）
 	}
 }
 

@@ -28,7 +28,7 @@ https://v.douyin.com/xxxxx/
 # 快手分享链接
 https://v.kuaishou.com/xxxxx
 
-# 视频号分享链接（微信视频号）
+# 视频号分享链接
 https://channels.weixin.qq.com/xxxxx
 ```
 
@@ -69,7 +69,7 @@ https://channels.weixin.qq.com/xxxxx
 - 分享链接格式：`https://v.kuaishou.com/xxxxx`
 - 提取信息：视频标题、作者名称、视频地址、封面图
 
-### 微信视频号（Channels）
+### 视频号（Channels）
 - 分享链接格式：`https://channels.weixin.qq.com/xxxxx`
 - 提取信息：视频标题、作者名称、视频地址、封面图
 

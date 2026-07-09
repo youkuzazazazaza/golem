@@ -757,7 +757,7 @@ func (p *MyPlugin) OnUnload() error {
 **配置方式**（在 `host/data/config.toml` 中）：
 
 ```toml
-# 推荐：使用 username（微信 ID）
+# 推荐：使用 username
 owner = "wxid_xxx"
 
 # 支持多种匹配策略
@@ -865,7 +865,7 @@ forbidden = "无权限执行此操作"
 
 **注意事项**：
 - `/cm chatroom` 命令只能在群聊中使用
-- 刷新缓存会从微信服务器重新拉取最新数据
+- 刷新缓存会从服务器重新拉取最新数据
 - 支持使用 `username::`、`nickname::`、`remark::` 前缀精确匹配
 
 ---

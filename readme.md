@@ -1,6 +1,6 @@
 # Golem
 
-一个基于 Go Plugin 的微信机器人插件框架，支持动态加载插件、热更新，让你轻松扩展微信机器人功能。
+一个基于 Go Plugin 的机器人插件框架，支持动态加载插件、热更新，让你轻松扩展机器人功能。
 
 ## ✨ 特性
 
@@ -210,7 +210,7 @@ replace github.com/sbgayhub/golem/sdk => ../sdk
 
 在 `host/data/config.toml` 中配置：
 ```toml
-owner = "wxid_xxx"              # 推荐：使用微信 ID
+owner = "wxid_xxx"              # 推荐：使用 ID
 # 或使用其他匹配方式
 owner = "nickname::张三"         # 按昵称
 owner = "remark::管理员"          # 按备注
