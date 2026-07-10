@@ -18,9 +18,11 @@ type Config struct {
 	ColdStartMaxMessages int `toml:"cold_start_max_messages" comment:"冷启动最多处理的消息条数（安全天花板），超出只取最近的部分。默认 2000"`
 	// ColdStartMaxChunks 冷启动最多分块数（安全天花板），超出丢弃最早的。默认 30
 	ColdStartMaxChunks int `toml:"cold_start_max_chunks" comment:"冷启动最多分块数（安全天花板），超出丢弃最早的。默认 30"`
-	// RenderImage 人物画像是否渲染成图片发送（经 gg 插件 text.to.image 能力）。默认 true；
-	// 设为 false 则发纯文本。gg 未启用或渲染失败时仍会自动回退为文本。
-	RenderImage bool `toml:"render_image" comment:"人物画像是否渲染成图片发送（经 gg 插件 text.to.image）。默认 true；设为 false 发纯文本。gg 未启用或渲染失败时自动回退文本"`
+	// RenderImage 人物画像是否渲染成图片发送。默认 true；
+	// true：系统提示要求 LLM 输出 markdown，经 gg 插件 markdown.to.image 能力渲染成 PNG 发送；
+	// false：系统提示要求 LLM 输出纯文本（无 markdown 符号），直接发送。
+	// gg 未启用或渲染失败时自动回退为文本。
+	RenderImage bool `toml:"render_image" comment:"画像是否渲染图片发送。true=经 markdown.to.image 渲染(LLM 输出 markdown)；false=发纯文本(LLM 不输出 markdown 符号)。默认 true；gg 未启用或渲染失败自动回退文本"`
 }
 
 func defaultConfig() Config {
