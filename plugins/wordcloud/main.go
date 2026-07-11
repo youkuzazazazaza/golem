@@ -72,7 +72,7 @@ func (p *WordCloudPlugin) GetMetadata() *plugin.Metadata {
 	return &plugin.Metadata{
 		Name:        "wordcloud",
 		Author:      "ovo",
-		Version:     "1.0.0",
+		Version:     "1.0.1",
 		Description: "词云插件：统计群聊历史发言生成词云图片。历史发言经 statistics.query_messages 能力获取（需启用 statistics 插件），图片经 CDN 上传发送。",
 		Priority:    0,
 		Next:        false,
@@ -129,6 +129,14 @@ func (p *WordCloudPlugin) loadFont() (*text.FontSource, error) {
 	return text.NewFontSource(embeddedFont)
 }
 
+// wordcloudHelpText 「词云帮助」回复的用法说明
+const wordcloudHelpText = "【词云】用法（仅群聊）：\n" +
+	"词云 → 全群近 7 天\n" +
+	"词云 今日 / 昨日 / 本周 / 本月 / 全部 → 指定时间范围\n" +
+	"词云 30天 → 近 N 天\n" +
+	"词云 @张三 / 词云 张三 → 指定成员词云\n" +
+	"可组合：词云 本周 @张三"
+
 // OnEvent 消息事件：检测「词云」触发语，异步生成并回复
 func (p *WordCloudPlugin) OnEvent(event *plugin.Event) (bool, error) {
 	payload, ok := event.GetPayload().(*plugin.Event_Message)
@@ -138,6 +146,11 @@ func (p *WordCloudPlugin) OnEvent(event *plugin.Event) (bool, error) {
 	msg := payload.Message
 	if msg.GetSender() == nil {
 		return false, nil
+	}
+
+	if strings.TrimSpace(msg.GetContent()) == "词云帮助" {
+		p.replyText(getReplyTo(msg), wordcloudHelpText)
+		return true, nil
 	}
 
 	trg, triggered := parseTrigger(msg, time.Now())
