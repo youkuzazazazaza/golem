@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/phsym/console-slog"
-	grpc "google.golang.org/grpc"
 )
 
 var clients = make(map[string]*plugin.Client)
@@ -33,13 +32,9 @@ func Start(p Plugin) {
 		TLSProvider:      nil,
 		Plugins:          map[string]plugin.Plugin{"plugin": &wrapper{impl: p}},
 		VersionedPlugins: nil,
-		//GRPCServer:       plugin.DefaultGRPCServer,
-		GRPCServer: func(options []grpc.ServerOption) *grpc.Server {
-			options = append(options, grpc.MaxSendMsgSize(50*1024*1024), grpc.MaxRecvMsgSize(50*1024*1024))
-			return grpc.NewServer(options...)
-		},
-		Logger: clientLogger,
-		Test:   nil,
+		GRPCServer:       plugin.DefaultGRPCServer,
+		Logger:           clientLogger,
+		Test:             nil,
 	})
 }
 
@@ -66,7 +61,7 @@ func Get(path string) (*Metadata, *Plugin, error) {
 		Logger:           creatManagerLogger(),
 		//PluginLogBufferSize: 0,
 		//AutoMTLS:            false,
-		GRPCDialOptions: []grpc.DialOption{grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(50*1024*1024), grpc.MaxCallSendMsgSize(50*1024*1024))},
+		//GRPCDialOptions: []grpc.DialOption{grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(50*1024*1024), grpc.MaxCallSendMsgSize(50*1024*1024))},
 		//GRPCBrokerMultiplex: false,
 		//SkipHostEnv:         false,
 		//UnixSocketConfig:    &plugin.UnixSocketConfig{},

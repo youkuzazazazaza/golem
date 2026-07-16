@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 
+	"github.com/sbgayhub/golem/sdk"
 	"google.golang.org/grpc"
 )
 
@@ -120,9 +121,9 @@ func (s Server) Download(request *Download_Request, stream grpc.ServerStreamingS
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 
-	buf := make([]byte, 3*1024*1024) // 3MB chunks
+	buf := make([]byte, sdk.PROTO_STREAM_CHUNK_SIZE)
 	for {
 		n, readErr := reader.Read(buf)
 		if n > 0 {

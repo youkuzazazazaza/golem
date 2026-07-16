@@ -187,6 +187,7 @@ func (c client) GetAbilities() []string {
 func (c client) serveAbility(register func(*grpc.Server)) uint32 {
 	id := c.broker.NextId()
 	go c.broker.AcceptAndServe(id, func(options []grpc.ServerOption) *grpc.Server {
+		options = append(options, grpc.MaxRecvMsgSize(64*1024*1024))
 		s := grpc.NewServer(options...)
 		register(s)
 		return s
@@ -652,7 +653,7 @@ func (s *server) SetConfig(ctx context.Context, req *SetConfig_Request) (*SetCon
 	if !field.IsValid() {
 		return &SetConfig_Response{Result: false}, nil
 	}
-	slog.Debug("[plugin wrapper] 注入插件配置", "config", string(req.Data))
+	slog.Debug("[plugin wrapper] 注入插件配置")
 	if err := toml.Unmarshal(req.Data, field.Addr().Interface()); err != nil {
 		return &SetConfig_Response{Result: false}, err
 	}
