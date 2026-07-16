@@ -11,6 +11,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	api "github.com/sbgayhub/golem/host/api/message"
 	"github.com/sbgayhub/golem/sdk/contact"
 	sdk "github.com/sbgayhub/golem/sdk/message"
@@ -62,7 +63,6 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 
 	var result sdk.Send_Response
 	receiver := msg.GetReceiver().GetUsername()
-	slog.Info(fmt.Sprintf("[%s] -> %s : %s", msg.GetType().GetDesc(), msg.GetReceiver().GetNickname(), msg.Content))
 
 	switch msg.GetType().GetCode() {
 	case sdk.TypeText.Code:
@@ -89,6 +89,7 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		if data.GetMedia() == nil {
 			break
 		}
+		msg.Content = humanize.Bytes(uint64(len(data.GetMedia().Data)))
 		resp, err := a.api.SendImage(receiver, bytes.NewReader(data.GetMedia().Data))
 		if err != nil {
 			return nil, err
@@ -101,11 +102,16 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 			Size: resp.GetSize(),
 		}
 	case sdk.TypeVoice.Code:
+		format := int32(4)
 		data := msg.GetVoice()
 		if data.GetMedia() == nil {
 			break
 		}
-		resp, err := a.api.SendVoice(receiver, bytes.NewReader(data.GetMedia().Data), int32(data.GetDuration()), 0)
+		if data != nil && data.Format == nil {
+			format = data.GetFormat()
+		}
+		msg.Content = fmt.Sprintf("%d s", data.GetDuration())
+		resp, err := a.api.SendVoice(receiver, bytes.NewReader(data.GetMedia().Data), int32(data.GetDuration()), format)
 		if err != nil {
 			return nil, err
 		}
@@ -120,6 +126,7 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		if data.GetMedia() == nil {
 			break
 		}
+		msg.Content = fmt.Sprintf("[%ds] %s", data.GetDuration(), humanize.Bytes(uint64(len(data.GetMedia().Data))))
 		resp, err := a.api.SendVideo(receiver, bytes.NewReader(data.GetThumb()), bytes.NewReader(data.GetMedia().Data), data.GetDuration())
 		if err != nil {
 			return nil, err
@@ -177,8 +184,9 @@ func (a *ability) Send(msg *sdk.Message) (*sdk.Send_Response, error) {
 		result.CreateTime = uint32(resp.GetCreateTime())
 
 	default:
-		slog.Debug("发送消息", "content", msg.Content)
+		slog.Debug("未知类型消息", "type", msg.Type, "content", msg.Content)
 	}
+	slog.Info(fmt.Sprintf("[%s] -> %s : %s", msg.GetType().GetDesc(), msg.GetReceiver().GetNickname(), msg.Content))
 
 	// 如果有撤回时间
 	if msg.Timestamp != 0 && result.NewId != 0 {

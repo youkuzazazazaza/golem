@@ -504,8 +504,9 @@ func (x *ImageData) GetHeight() uint32 {
 // VoiceData 语音消息数据
 type VoiceData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Media         *Media                 `protobuf:"bytes,1,opt,name=media,proto3" json:"media,omitempty"`        // 媒体信息
-	Duration      uint32                 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"` // 语音时长（毫秒）
+	Media         *Media                 `protobuf:"bytes,1,opt,name=media,proto3" json:"media,omitempty"`          // 媒体信息
+	Duration      uint32                 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"`   // 语音时长（毫秒）
+	Format        *int32                 `protobuf:"varint,3,opt,name=format,proto3,oneof" json:"format,omitempty"` // 语音格式 0=AMR, 1=SPEEX, 2=MP3, 3=WAVE, 4=SILK
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -550,6 +551,13 @@ func (x *VoiceData) GetMedia() *Media {
 func (x *VoiceData) GetDuration() uint32 {
 	if x != nil {
 		return x.Duration
+	}
+	return 0
+}
+
+func (x *VoiceData) GetFormat() int32 {
+	if x != nil && x.Format != nil {
+		return *x.Format
 	}
 	return 0
 }
@@ -876,10 +884,12 @@ const file_message_types_proto_rawDesc = "" +
 	"\tImageData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x14\n" +
 	"\x05width\x18\x02 \x01(\rR\x05width\x12\x16\n" +
-	"\x06height\x18\x03 \x01(\rR\x06height\"M\n" +
+	"\x06height\x18\x03 \x01(\rR\x06height\"u\n" +
 	"\tVoiceData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x1a\n" +
-	"\bduration\x18\x02 \x01(\rR\bduration\"\x99\x01\n" +
+	"\bduration\x18\x02 \x01(\rR\bduration\x12\x1b\n" +
+	"\x06format\x18\x03 \x01(\x05H\x00R\x06format\x88\x01\x01B\t\n" +
+	"\a_format\"\x99\x01\n" +
 	"\tVideoData\x12$\n" +
 	"\x05media\x18\x01 \x01(\v2\x0e.message.MediaR\x05media\x12\x1a\n" +
 	"\bduration\x18\x02 \x01(\rR\bduration\x12\x14\n" +
@@ -968,6 +978,7 @@ func file_message_types_proto_init() {
 		(*Message_Location)(nil),
 		(*Message_App)(nil),
 	}
+	file_message_types_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

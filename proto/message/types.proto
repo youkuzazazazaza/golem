@@ -65,6 +65,7 @@ message ImageData {
 message VoiceData {
   Media media = 1;    // 媒体信息
   uint32 duration = 2; // 语音时长（毫秒）
+  optional int32 format = 3; // 语音格式 0=AMR, 1=SPEEX, 2=MP3, 3=WAVE, 4=SILK
 }
 
 // VideoData 视频消息数据
